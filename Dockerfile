@@ -1,0 +1,3 @@
+FROM spark:python3@sha256:469921a4c3dbb534b17fa51ff4da61fa1fda3c27f0882fa7809b63c2c2bc2d8d
+
+WORKDIR /app
