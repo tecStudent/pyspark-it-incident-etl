@@ -1,0 +1,10 @@
+# Local datasets
+data/raw/
+data/bronze/
+data/silver/
+data/gold/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
