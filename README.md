@@ -1,19 +1,21 @@
 # PySpark IT Incident ETL
 
-Pipeline ETL local desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento de dados de incidentes de TI.
+Pipeline ETL local desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento e análise de dados de incidentes de TI.
 
 O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e foi estruturado como um projeto de portfólio de Engenharia de Dados.
 
-O pipeline processa **122.543 incidentes** desde um arquivo Excel bruto até tabelas analíticas na camada Gold.
+O pipeline processa **122.543 incidentes** desde um arquivo Excel bruto até tabelas analíticas na camada Gold e disponibiliza os principais indicadores em um dashboard web interativo.
 
 ## Arquitetura
 
 ```mermaid
 flowchart TD
-    A["Excel - 122.543 incidentes"] --> B["Raw CSV"]
+    A["Excel - 122.543 incidentes"] --> B["Raw - CSV"]
     B --> C["Bronze - Parquet"]
     C --> D["Silver - tratamento e Data Quality"]
     D --> E["Gold - métricas e agregações"]
+    E --> F["JSON - dados agregados"]
+    F --> G["Dashboard Web"]
 ```
 
 ### Raw
@@ -45,15 +47,43 @@ flowchart TD
 
 ### Gold
 
-São geradas três tabelas analíticas:
+São geradas quatro tabelas analíticas:
 
 | Tabela | Finalidade |
 | --- | --- |
 | `monthly_kpis` | Volume mensal, origem dos incidentes, KPI, média e P95 de duração |
 | `priority_summary` | Indicadores agregados por prioridade |
 | `team_summary` | Volume e indicadores de KPI por equipe |
+| `dashboard_summary` | Agregação multidimensional por período, prioridade e equipe para consumo do dashboard |
 
 As agregações utilizam recursos como `groupBy`, `agg`, agregações condicionais, `avg` e `percentile_approx`.
+
+## Dashboard
+
+O projeto inclui um dashboard web estático para visualização dos indicadores gerados pelo pipeline.
+
+O dashboard consome somente dados agregados da camada Gold exportados para JSON, sem expor o dataset bruto.
+
+### Indicadores
+
+- Total de incidentes.
+- Incidentes considerados no KPI.
+- Violações de KPI.
+- Percentual de compliance.
+- Evolução mensal de incidentes.
+- Distribuição por prioridade.
+- Volume por equipe.
+
+### Filtros interativos
+
+Os indicadores e gráficos podem ser filtrados simultaneamente por:
+
+- ano;
+- mês;
+- prioridade;
+- equipe.
+
+O dashboard foi desenvolvido com HTML, CSS, JavaScript e Chart.js e pode ser hospedado como site estático.
 
 ## Resultados da execução
 
@@ -69,9 +99,13 @@ Uma execução completa de referência processou:
 | Agregações mensais | 36 |
 | Prioridades | 5 |
 | Equipes | 17 |
+| Registros agregados para o dashboard | 683 |
+| Incidentes considerados no KPI | 25.600 |
+| Violações de KPI | 248 |
+| Compliance geral | 99,03% |
 | Testes automatizados | 5 passed |
 
-Na execução local de referência, o pipeline completo terminou em aproximadamente **128 segundos**. Esse tempo depende dos recursos disponíveis no computador e no Docker.
+Na execução local de referência, o pipeline de processamento até a camada Gold terminou em aproximadamente **128 segundos**. Esse tempo depende dos recursos disponíveis no computador e no Docker.
 
 ## Tecnologias
 
@@ -84,7 +118,12 @@ Na execução local de referência, o pipeline completo terminou em aproximadame
 - Docker Compose
 - Pytest
 - OpenPyXL
+- HTML5
+- CSS3
+- JavaScript
+- Chart.js
 - Git e GitHub
+- GitHub Pages
 
 ## Estrutura do projeto
 
@@ -101,11 +140,23 @@ pyspark-it-incident-etl/
 |   |-- bronze.py
 |   |-- silver.py
 |   |-- gold.py
+|   |-- export_dashboard.py
 |   |-- pipeline.py
 |   `-- test_spark.py
 |-- tests/
 |   |-- conftest.py
 |   `-- test_silver.py
+|-- docs/
+|   |-- index.html
+|   |-- css/
+|   |   `-- style.css
+|   |-- js/
+|   |   `-- app.js
+|   `-- data/
+|       |-- dashboard_summary.json
+|       |-- monthly_kpis.json
+|       |-- priority_summary.json
+|       `-- team_summary.json
 |-- .gitignore
 |-- Dockerfile
 |-- docker-compose.yml
@@ -160,10 +211,12 @@ docker compose run --rm spark python3 src/pipeline.py
 Esse único comando executa sequencialmente:
 
 ```text
-Extract -> Bronze -> Silver -> Gold
+Extract -> Bronze -> Silver -> Gold -> Dashboard
 ```
 
-As etapas utilizam escrita com `mode("overwrite")`, permitindo reexecuções sem simplesmente acumular os resultados da execução anterior.
+A última etapa exporta as agregações analíticas para arquivos JSON consumidos pelo dashboard.
+
+As etapas de processamento utilizam escrita com `mode("overwrite")`, permitindo reexecuções sem simplesmente acumular os resultados da execução anterior.
 
 ## Continuar a partir de uma etapa
 
@@ -181,10 +234,16 @@ Continuar da Silver:
 docker compose run --rm spark python3 src/pipeline.py --from-stage silver
 ```
 
-Executar novamente apenas a Gold:
+Executar novamente a Gold e, em seguida, atualizar os dados do dashboard:
 
 ```bash
 docker compose run --rm spark python3 src/pipeline.py --from-stage gold
+```
+
+Executar somente a exportação dos dados do dashboard:
+
+```bash
+docker compose run --rm spark python3 src/pipeline.py --from-stage dashboard
 ```
 
 Isso permite interromper o desenvolvimento e continuar posteriormente sem precisar obrigatoriamente reexecutar todas as etapas anteriores.
@@ -206,6 +265,28 @@ docker compose down
 ```
 
 Os códigos e os dados locais permanecem no diretório do projeto.
+
+## Executar o dashboard localmente
+
+Após gerar os dados, execute na raiz do projeto:
+
+```bash
+python -m http.server 8000 --directory docs
+```
+
+Acesse no navegador:
+
+```text
+http://localhost:8000
+```
+
+Para encerrar o servidor:
+
+```text
+Ctrl + C
+```
+
+O dashboard é estático e consome os arquivos JSON gerados a partir das agregações da camada Gold.
 
 ## Executar uma camada individualmente
 
@@ -284,6 +365,11 @@ O projeto foi desenvolvido para exercitar práticas de Engenharia de Dados com P
 - `groupBy` e `agg`;
 - agregações condicionais;
 - percentil aproximado (P95);
+- criação de Data Mart para consumo analítico;
+- exportação de agregações para JSON;
+- integração entre pipeline de dados e camada de visualização;
+- dashboard interativo com filtros;
+- visualização de dados com JavaScript e Chart.js;
 - testes automatizados com Pytest;
 - execução reproduzível com Docker;
 - reexecução e retomada por etapa.
@@ -299,4 +385,4 @@ O projeto foi desenvolvido para exercitar práticas de Engenharia de Dados com P
 
 ## Contexto acadêmico
 
-Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir um pipeline local de Engenharia de Dados voltado ao portfólio técnico. O dataset completo e as saídas processadas permanecem fora do versionamento do Git.
+Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir um pipeline local de Engenharia de Dados voltado ao portfólio técnico. O dataset completo e as saídas intermediárias processadas permanecem fora do versionamento do Git. O dashboard utiliza somente dados analíticos agregados gerados pelo pipeline.
