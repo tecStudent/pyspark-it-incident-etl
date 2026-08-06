@@ -1,126 +1,302 @@
 # PySpark IT Incident ETL
-Projeto de engenharia de dados desenvolvido localmente com PySpark e Docker, a partir de dados acadêmicos do Enterprise Challenge da FIAP no contexto do projeto com a Locaweb.
-O objetivo é construir um pipeline ETL reproduzível para tratamento e análise de dados de incidentes de TI, aplicando práticas comuns de Engenharia de Dados com Apache Spark.
-> Status: em desenvolvimento. Neste momento, o ambiente Docker/PySpark já está configurado e validado. As camadas do ETL serão implementadas nas próximas etapas.
-## Objetivos do projeto
-Executar Apache Spark localmente sem depender da instalação de Java ou PySpark no Windows.
-Construir as etapas de extração, transformação e carga utilizando PySpark.
-Trabalhar com schema explícito, tratamento de dados e validações de qualidade.
-Organizar os dados em uma arquitetura de processamento em camadas.
-Gerar arquivos otimizados para análise nas etapas finais do pipeline.
-Adicionar testes automatizados às principais transformações.
-## Arquitetura planejada
-```text
-Dataset acadêmico (.xlsx)
-        |
-        v
-      Raw
-        |
-        v
-     Bronze
-        |
-        v
-     Silver
-        |
-        v
-      Gold
+
+Pipeline ETL local desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento de dados de incidentes de TI.
+
+O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e foi estruturado como um projeto de portfólio de Engenharia de Dados.
+
+O pipeline processa **122.543 incidentes** desde um arquivo Excel bruto até tabelas analíticas na camada Gold.
+
+## Arquitetura
+
+```mermaid
+flowchart TD
+    A["Excel - 122.543 incidentes"] --> B["Raw CSV"]
+    B --> C["Bronze - Parquet"]
+    C --> D["Silver - tratamento e Data Quality"]
+    D --> E["Gold - métricas e agregações"]
 ```
-As responsabilidades de cada camada serão definidas durante a implementação do ETL. A arquitetura acima representa o fluxo planejado e não significa que todas as camadas já estejam implementadas.
+
+### Raw
+
+- Origem em `.xlsx`.
+- Extração em modo `read_only` para reduzir consumo de memória.
+- Conversão para CSV preservando os dados de origem.
+- Dataset completo mantido apenas localmente e excluído do Git.
+
+### Bronze
+
+- Leitura com PySpark.
+- Schema explícito com 19 campos de origem.
+- Dados preservados inicialmente como `StringType`.
+- Inclusão de metadados de ingestão.
+- Validação da quantidade de registros entre origem e destino.
+- Persistência em Apache Parquet.
+
+### Silver
+
+- Padronização dos nomes das colunas.
+- Tratamento de strings vazias e valores nulos.
+- Conversão de timestamps, números e booleanos.
+- Separação do código e descrição da prioridade.
+- Regras de Data Quality.
+- Deduplicação utilizando `Window` e `row_number()`.
+- Particionamento físico por ano e mês de abertura.
+- Persistência em Apache Parquet.
+
+### Gold
+
+São geradas três tabelas analíticas:
+
+| Tabela | Finalidade |
+| --- | --- |
+| `monthly_kpis` | Volume mensal, origem dos incidentes, KPI, média e P95 de duração |
+| `priority_summary` | Indicadores agregados por prioridade |
+| `team_summary` | Volume e indicadores de KPI por equipe |
+
+As agregações utilizam recursos como `groupBy`, `agg`, agregações condicionais, `avg` e `percentile_approx`.
+
+## Resultados da execução
+
+Uma execução completa de referência processou:
+
+| Métrica | Resultado |
+| --- | ---: |
+| Registros extraídos | 122.543 |
+| Registros Bronze | 122.543 |
+| Registros Silver | 122.543 |
+| Duplicidades encontradas | 0 |
+| Registros estruturalmente inválidos | 0 |
+| Agregações mensais | 36 |
+| Prioridades | 5 |
+| Equipes | 17 |
+| Testes automatizados | 5 passed |
+
+Na execução local de referência, o pipeline completo terminou em aproximadamente **128 segundos**. Esse tempo depende dos recursos disponíveis no computador e no Docker.
+
 ## Tecnologias
-Apache Spark 4.1.2
-PySpark
-OpenJDK 21 (dentro da imagem Docker)
-Docker
-Docker Compose
-Python
-Git e GitHub
-## Estrutura atual
+
+- Apache Spark 4.1.2
+- PySpark
+- Python
+- OpenJDK 21
+- Apache Parquet
+- Docker
+- Docker Compose
+- Pytest
+- OpenPyXL
+- Git e GitHub
+
+## Estrutura do projeto
+
 ```text
 pyspark-it-incident-etl/
 |-- data/
+|   |-- raw/              # dados locais, ignorados pelo Git
+|   |-- bronze/           # Parquet Bronze, ignorado pelo Git
+|   |-- silver/           # Parquet Silver, ignorado pelo Git
+|   |-- gold/             # Parquet Gold, ignorado pelo Git
 |   `-- sample/
 |-- src/
+|   |-- extract_xlsx.py
+|   |-- bronze.py
+|   |-- silver.py
+|   |-- gold.py
+|   |-- pipeline.py
 |   `-- test_spark.py
 |-- tests/
+|   |-- conftest.py
+|   `-- test_silver.py
 |-- .gitignore
 |-- Dockerfile
 |-- docker-compose.yml
 |-- README.md
 `-- requirements.txt
 ```
+
 ## Pré-requisitos
-Para executar o projeto localmente é necessário ter:
-Git
-Docker Desktop
-Docker Compose
-Não é necessário instalar Java, Spark ou PySpark diretamente no Windows. Essas dependências são executadas dentro do container Docker.
+
+É necessário ter apenas:
+
+- Git
+- Docker Desktop
+- Docker Compose
+
+Java, Spark e PySpark não precisam ser instalados diretamente no Windows. O ambiente de processamento é fornecido pelo container Docker.
+
+## Dataset
+
+O dataset completo não é versionado no repositório.
+
+Para executar o pipeline, coloque o arquivo:
+
+```text
+LW-DATASET.xlsx
+```
+
+em:
+
+```text
+data/raw/LW-DATASET.xlsx
+```
+
+O pipeline utiliza a aba `Dataset Geral`.
+
 ## Como executar
-### 1. Iniciar o Docker Desktop
-Antes de executar os comandos, confirme que o Docker Desktop está em execução.
-### 2. Construir a imagem
+
+### 1. Construir o ambiente
+
 Na raiz do projeto:
+
 ```bash
 docker compose build
 ```
-O build normalmente só precisa ser repetido quando o `Dockerfile` ou alguma dependência da imagem for alterada.
-### 3. Validar o ambiente PySpark
-No Git Bash do Windows:
+
+### 2. Executar o pipeline completo
+
 ```bash
-MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit src/test_spark.py
+docker compose run --rm spark python3 src/pipeline.py
 ```
-O teste cria uma `SparkSession`, executa um pequeno DataFrame e exibe a versão do Spark. A execução esperada utiliza Spark 4.1.2.
-## Como interromper uma execução
-Se um job Spark estiver rodando no terminal e você quiser interrompê-lo, pressione:
+
+Esse único comando executa sequencialmente:
+
+```text
+Extract -> Bronze -> Silver -> Gold
+```
+
+As etapas utilizam escrita com `mode("overwrite")`, permitindo reexecuções sem simplesmente acumular os resultados da execução anterior.
+
+## Continuar a partir de uma etapa
+
+O runner permite reiniciar o processamento a partir de uma camada específica.
+
+Continuar da Bronze:
+
+```bash
+docker compose run --rm spark python3 src/pipeline.py --from-stage bronze
+```
+
+Continuar da Silver:
+
+```bash
+docker compose run --rm spark python3 src/pipeline.py --from-stage silver
+```
+
+Executar novamente apenas a Gold:
+
+```bash
+docker compose run --rm spark python3 src/pipeline.py --from-stage gold
+```
+
+Isso permite interromper o desenvolvimento e continuar posteriormente sem precisar obrigatoriamente reexecutar todas as etapas anteriores.
+
+## Como interromper
+
+Durante uma execução, pressione:
+
 ```text
 Ctrl + C
 ```
-Os jobs deste projeto são executados com `docker compose run --rm`. Quando o processo termina, o container temporário é removido automaticamente.
-Se em algum momento um serviço tiver sido iniciado com `docker compose up`, ele pode ser encerrado com:
+
+O container temporário é executado com `--rm` e é removido após o encerramento.
+
+Se algum serviço tiver sido iniciado com `docker compose up`, utilize:
+
 ```bash
 docker compose down
 ```
-Esse comando encerra os containers e a rede do Compose. Ele não apaga os arquivos do código-fonte armazenados na pasta do projeto.
-## Como continuar o projeto depois
-Não é necessário deixar o Spark ou o container executando entre uma sessão de desenvolvimento e outra.
-Para continuar em outro momento:
-Abra o Docker Desktop.
-Abra o terminal na pasta `pyspark-it-incident-etl`.
-Atualize o repositório, se necessário:
+
+Os códigos e os dados locais permanecem no diretório do projeto.
+
+## Executar uma camada individualmente
+
+Bronze:
+
 ```bash
-git pull
+MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/bronze.py
 ```
-Execute novamente o job desejado com `docker compose run --rm`.
-Para repetir o teste atual:
+
+Silver:
+
 ```bash
-MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit src/test_spark.py
+MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/silver.py
 ```
-O código e os arquivos do projeto permanecem no computador porque a pasta local é montada no container em `/app`. Por isso, encerrar o container não apaga o desenvolvimento realizado.
-## Comandos úteis
-Verificar a configuração do Compose:
+
+Gold:
+
 ```bash
-docker compose config
+MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/gold.py
 ```
-Reconstruir a imagem:
+
+`MSYS_NO_PATHCONV=1` é utilizado nos comandos acima por compatibilidade com Git Bash no Windows ao passar caminhos Linux para o container.
+
+## Testes automatizados
+
+Execute:
+
 ```bash
-docker compose build
+docker compose run --rm spark python3 -m pytest -q
 ```
-Verificar containers do projeto:
-```bash
-docker compose ps
+
+Resultado esperado:
+
+```text
+..... [100%]
+5 passed
 ```
-Encerrar serviços iniciados pelo Compose:
-```bash
-docker compose down
-```
-## Próximas etapas
-Analisar e preparar o dataset de origem.
-Implementar a ingestão dos dados.
-Criar a camada Bronze.
-Implementar limpeza, tipagem, deduplicação e regras de qualidade na Silver.
-Criar agregações e indicadores na Gold.
-Persistir resultados em formato Parquet.
-Adicionar particionamento onde fizer sentido.
-Criar testes automatizados.
-Documentar as decisões técnicas e resultados do pipeline.
-## Contexto
-Este repositório é um projeto de portfólio focado na prática de Engenharia de Dados com PySpark. Ele reaproveita o contexto acadêmico do Enterprise Challenge da FIAP como fonte para a construção de um pipeline ETL executável localmente.
+
+Os testes verificam:
+
+- limpeza e tipagem;
+- conversão dos indicadores de KPI;
+- registros válidos e inválidos nas regras de Data Quality;
+- tratamento de `N/A` nos indicadores;
+- deduplicação com `Window`.
+
+## Data Quality
+
+A Silver valida aspectos estruturais como:
+
+- identificador do incidente;
+- faixa válida de prioridade;
+- presença da equipe responsável;
+- timestamps de abertura e encerramento;
+- duração nula ou negativa;
+- encerramento anterior à abertura.
+
+O dataset também contém campos de negócio `Entrou para KPI?` e `KPI Violado?`. Esses indicadores são preservados como fonte de negócio na Gold. As regras documentadas de duração podem ser utilizadas para auditorias adicionais sem sobrescrever automaticamente os flags fornecidos pela origem.
+
+## Conceitos demonstrados
+
+O projeto foi desenvolvido para exercitar práticas de Engenharia de Dados com PySpark, incluindo:
+
+- ETL em camadas Raw, Bronze, Silver e Gold;
+- schema explícito;
+- Apache Parquet;
+- `withColumn` e `when`;
+- tratamento de nulos;
+- conversão de tipos;
+- expressões regulares;
+- funções de data;
+- `Window` e `row_number`;
+- deduplicação;
+- Data Quality;
+- particionamento;
+- `groupBy` e `agg`;
+- agregações condicionais;
+- percentil aproximado (P95);
+- testes automatizados com Pytest;
+- execução reproduzível com Docker;
+- reexecução e retomada por etapa.
+
+## Possíveis evoluções
+
+- Simular ingestão incremental por lotes.
+- Adicionar testes para Bronze e Gold.
+- Criar auditoria específica das regras documentadas de KPI/SLA.
+- Adicionar CI com GitHub Actions.
+- Integrar o pipeline a um orquestrador como Apache Airflow.
+- Evoluir o armazenamento para formatos de tabela como Apache Iceberg ou Delta Lake.
+
+## Contexto acadêmico
+
+Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir um pipeline local de Engenharia de Dados voltado ao portfólio técnico. O dataset completo e as saídas processadas permanecem fora do versionamento do Git.
