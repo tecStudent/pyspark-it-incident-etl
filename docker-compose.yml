@@ -6,4 +6,4 @@ services:
     volumes:
       - .:/app
     environment:
-      PYTHONPATH: /app
+      PYTHONPATH: /app:/opt/spark/python:/opt/spark/python/lib/py4j-0.10.9.9-src.zip
