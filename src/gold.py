@@ -1,0 +1,238 @@
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import functions as F
+
+
+INPUT_PATH = "data/silver/incidents"
+
+MONTHLY_OUTPUT = "data/gold/monthly_kpis"
+PRIORITY_OUTPUT = "data/gold/priority_summary"
+TEAM_OUTPUT = "data/gold/team_summary"
+
+
+def create_spark_session() -> SparkSession:
+    return (
+        SparkSession.builder
+        .appName("IT Incident Gold Aggregations")
+        .getOrCreate()
+    )
+
+
+def conditional_count(condition):
+    return F.sum(
+        F.when(condition, 1).otherwise(0)
+    )
+
+
+def add_compliance_rate(df: DataFrame) -> DataFrame:
+    return df.withColumn(
+        "kpi_compliance_pct",
+        F.when(
+            F.col("kpi_incidents") > 0,
+            F.round(
+                (
+                    (
+                        F.col("kpi_incidents")
+                        - F.col("kpi_violations")
+                    )
+                    / F.col("kpi_incidents")
+                )
+                * 100,
+                2,
+            ),
+        ),
+    )
+
+
+def create_monthly_kpis(df: DataFrame) -> DataFrame:
+    result = (
+        df
+        .groupBy(
+            "opened_year",
+            "opened_month",
+        )
+        .agg(
+            F.count("*").alias("total_incidents"),
+
+            conditional_count(
+                F.col("opened_by") == "Monitoramento"
+            ).alias("monitoring_incidents"),
+
+            conditional_count(
+                F.col("opened_by") == "Manual"
+            ).alias("manual_incidents"),
+
+            conditional_count(
+                F.col("entered_kpi") == True
+            ).alias("kpi_incidents"),
+
+            conditional_count(
+                F.col("kpi_violated") == True
+            ).alias("kpi_violations"),
+
+            F.round(
+                F.avg("duration_seconds"),
+                2,
+            ).alias("avg_duration_seconds"),
+
+            F.percentile_approx(
+                "duration_seconds",
+                0.95,
+            ).alias("p95_duration_seconds"),
+        )
+    )
+
+    return add_compliance_rate(result)
+
+
+def create_priority_summary(df: DataFrame) -> DataFrame:
+    result = (
+        df
+        .groupBy(
+            "priority_code",
+            "priority_name",
+        )
+        .agg(
+            F.count("*").alias("total_incidents"),
+
+            conditional_count(
+                F.col("entered_kpi") == True
+            ).alias("kpi_incidents"),
+
+            conditional_count(
+                F.col("kpi_violated") == True
+            ).alias("kpi_violations"),
+
+            F.round(
+                F.avg("duration_seconds"),
+                2,
+            ).alias("avg_duration_seconds"),
+
+            F.percentile_approx(
+                "duration_seconds",
+                0.95,
+            ).alias("p95_duration_seconds"),
+        )
+    )
+
+    return add_compliance_rate(result)
+
+
+def create_team_summary(df: DataFrame) -> DataFrame:
+    result = (
+        df
+        .groupBy("assigned_group")
+        .agg(
+            F.count("*").alias("total_incidents"),
+
+            conditional_count(
+                F.col("entered_kpi") == True
+            ).alias("kpi_incidents"),
+
+            conditional_count(
+                F.col("kpi_violated") == True
+            ).alias("kpi_violations"),
+
+            F.round(
+                F.avg("duration_seconds"),
+                2,
+            ).alias("avg_duration_seconds"),
+        )
+    )
+
+    return add_compliance_rate(result)
+
+
+def write_gold(
+    spark: SparkSession,
+    df: DataFrame,
+    output_path: str,
+    table_name: str,
+) -> None:
+    df.write.mode("overwrite").parquet(output_path)
+
+    output_count = (
+        spark.read
+        .parquet(output_path)
+        .count()
+    )
+
+    print(
+        f"{table_name}: {output_count} registros gravados"
+    )
+
+
+def main() -> None:
+    spark = create_spark_session()
+    spark.sparkContext.setLogLevel("WARN")
+
+    try:
+        silver_df = (
+            spark.read
+            .parquet(INPUT_PATH)
+            .filter(F.col("dq_status") == "VALID")
+        )
+
+        print(
+            f"Registros Silver válidos: {silver_df.count()}"
+        )
+
+        monthly_df = create_monthly_kpis(silver_df)
+        priority_df = create_priority_summary(silver_df)
+        team_df = create_team_summary(silver_df)
+
+        write_gold(
+            spark,
+            monthly_df,
+            MONTHLY_OUTPUT,
+            "monthly_kpis",
+        )
+
+        write_gold(
+            spark,
+            priority_df,
+            PRIORITY_OUTPUT,
+            "priority_summary",
+        )
+
+        write_gold(
+            spark,
+            team_df,
+            TEAM_OUTPUT,
+            "team_summary",
+        )
+
+        print("\nResumo mensal:")
+
+        (
+            monthly_df
+            .orderBy(
+                F.desc("opened_year"),
+                F.desc("opened_month"),
+            )
+            .show(12, truncate=False)
+        )
+
+        print("\nResumo por prioridade:")
+
+        (
+            priority_df
+            .orderBy("priority_code")
+            .show(truncate=False)
+        )
+
+        print("\nTop 10 equipes por volume:")
+
+        (
+            team_df
+            .orderBy(
+                F.desc("total_incidents")
+            )
+            .show(10, truncate=False)
+        )
+
+    finally:
+        spark.stop()
+
+
+if __name__ == "__main__":
+    main()
