@@ -27,6 +27,12 @@ STAGES = {
         "local[4]",
         "src/gold.py",
     ],
+    "dashboard": [
+        "/opt/spark/bin/spark-submit",
+        "--master",
+        "local[2]",
+        "src/export_dashboard.py",
+    ],
 }
 
 
@@ -59,7 +65,7 @@ def run_stage(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Executa o pipeline ETL de incidentes."
+        description="Executa o pipeline de dados de incidentes."
     )
 
     parser.add_argument(

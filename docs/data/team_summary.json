@@ -1,0 +1,138 @@
+[
+  {
+    "assigned_group": "Team14",
+    "total_incidents": 92775,
+    "kpi_incidents": 8973,
+    "kpi_violations": 10,
+    "avg_duration_seconds": 67113.07,
+    "kpi_compliance_pct": 99.89
+  },
+  {
+    "assigned_group": "Team11",
+    "total_incidents": 9790,
+    "kpi_incidents": 8702,
+    "kpi_violations": 114,
+    "avg_duration_seconds": 308423.26,
+    "kpi_compliance_pct": 98.69
+  },
+  {
+    "assigned_group": "Team05",
+    "total_incidents": 9276,
+    "kpi_incidents": 3628,
+    "kpi_violations": 13,
+    "avg_duration_seconds": 1543912.98,
+    "kpi_compliance_pct": 99.64
+  },
+  {
+    "assigned_group": "Team09",
+    "total_incidents": 3425,
+    "kpi_incidents": 2058,
+    "kpi_violations": 56,
+    "avg_duration_seconds": 1128384.12,
+    "kpi_compliance_pct": 97.28
+  },
+  {
+    "assigned_group": "Team12",
+    "total_incidents": 2173,
+    "kpi_incidents": 395,
+    "kpi_violations": 8,
+    "avg_duration_seconds": 48698.22,
+    "kpi_compliance_pct": 97.97
+  },
+  {
+    "assigned_group": "Team03",
+    "total_incidents": 1306,
+    "kpi_incidents": 415,
+    "kpi_violations": 12,
+    "avg_duration_seconds": 134998.44,
+    "kpi_compliance_pct": 97.11
+  },
+  {
+    "assigned_group": "Team10",
+    "total_incidents": 1172,
+    "kpi_incidents": 159,
+    "kpi_violations": 1,
+    "avg_duration_seconds": 42185.02,
+    "kpi_compliance_pct": 99.37
+  },
+  {
+    "assigned_group": "Team17",
+    "total_incidents": 743,
+    "kpi_incidents": 484,
+    "kpi_violations": 4,
+    "avg_duration_seconds": 671638.3,
+    "kpi_compliance_pct": 99.17
+  },
+  {
+    "assigned_group": "Team02",
+    "total_incidents": 579,
+    "kpi_incidents": 251,
+    "kpi_violations": 4,
+    "avg_duration_seconds": 461490.48,
+    "kpi_compliance_pct": 98.41
+  },
+  {
+    "assigned_group": "Team01",
+    "total_incidents": 306,
+    "kpi_incidents": 41,
+    "kpi_violations": 1,
+    "avg_duration_seconds": 39126.84,
+    "kpi_compliance_pct": 97.56
+  },
+  {
+    "assigned_group": "Team16",
+    "total_incidents": 279,
+    "kpi_incidents": 152,
+    "kpi_violations": 2,
+    "avg_duration_seconds": 552720.7,
+    "kpi_compliance_pct": 98.68
+  },
+  {
+    "assigned_group": "Team15",
+    "total_incidents": 219,
+    "kpi_incidents": 50,
+    "kpi_violations": 0,
+    "avg_duration_seconds": 42121.37,
+    "kpi_compliance_pct": 100.0
+  },
+  {
+    "assigned_group": "Team07",
+    "total_incidents": 197,
+    "kpi_incidents": 179,
+    "kpi_violations": 16,
+    "avg_duration_seconds": 268014.34,
+    "kpi_compliance_pct": 91.06
+  },
+  {
+    "assigned_group": "Team08",
+    "total_incidents": 130,
+    "kpi_incidents": 58,
+    "kpi_violations": 3,
+    "avg_duration_seconds": 869283.94,
+    "kpi_compliance_pct": 94.83
+  },
+  {
+    "assigned_group": "Team04",
+    "total_incidents": 122,
+    "kpi_incidents": 16,
+    "kpi_violations": 0,
+    "avg_duration_seconds": 16244.89,
+    "kpi_compliance_pct": 100.0
+  },
+  {
+    "assigned_group": "Team06",
+    "total_incidents": 50,
+    "kpi_incidents": 39,
+    "kpi_violations": 4,
+    "avg_duration_seconds": 31695371.42,
+    "kpi_compliance_pct": 89.74
+  },
+  {
+    "assigned_group": "Team13",
+    "total_incidents": 1,
+    "kpi_incidents": 0,
+    "kpi_violations": 0,
+    "avg_duration_seconds": 1200.0,
+    "kpi_compliance_pct": null
+  }
+]

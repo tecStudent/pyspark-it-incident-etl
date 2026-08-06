@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IT Incident Analytics</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>Painel de Gestão de Incidentes</h1>
+        <p>
+            Visão operacional de incidentes, equipes responsáveis e cumprimento de KPI
+        </p>
+    </div>
+
+    <span class="badge">Governança Operacional</span>
+</header>
+
+<main>
+    <section class="filters">
+        <div class="filter-group">
+            <label for="year-filter">Ano</label>
+            <select id="year-filter" class="filter-select">
+                <option value="">Todos</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="month-filter">Mês</label>
+            <select id="month-filter" class="filter-select">
+                <option value="">Todos</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="priority-filter">Prioridade</label>
+            <select id="priority-filter" class="filter-select">
+                <option value="">Todas</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="team-filter">Equipe</label>
+            <select id="team-filter" class="filter-select">
+                <option value="">Todas</option>
+            </select>
+        </div>
+
+        <button id="clear-filters" class="clear-button">
+            Limpar filtros
+        </button>
+    </section>
+
+    <section class="kpi-grid">
+
+        <div class="card">
+            <span>Total de incidentes</span>
+            <strong id="total-incidents">-</strong>
+        </div>
+
+        <div class="card">
+            <span>Incidentes no KPI</span>
+            <strong id="kpi-incidents">-</strong>
+        </div>
+
+        <div class="card">
+            <span>Violações de KPI</span>
+            <strong id="kpi-violations">-</strong>
+        </div>
+
+        <div class="card success">
+            <span>Compliance KPI</span>
+            <strong id="kpi-compliance">-</strong>
+        </div>
+
+    </section>
+
+
+    <section class="chart-grid">
+
+        <div class="chart-card chart-wide">
+            <h2>Incidentes por mês</h2>
+            <canvas id="monthlyChart"></canvas>
+        </div>
+
+
+        <div class="chart-card">
+            <h2>Incidentes por prioridade</h2>
+            <canvas id="priorityChart"></canvas>
+        </div>
+
+
+        <div class="chart-card">
+            <h2>Top 10 equipes por volume</h2>
+            <canvas id="teamChart"></canvas>
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <p>
+        Análise consolidada de volume, prioridades, equipes responsáveis e indicadores de KPI
+    </p>
+</footer>
+
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

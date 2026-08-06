@@ -1,0 +1,52 @@
+[
+  {
+    "priority_code": 1,
+    "priority_name": "Crítica",
+    "total_incidents": 1,
+    "kpi_incidents": 0,
+    "kpi_violations": 0,
+    "avg_duration_seconds": 31742.0,
+    "p95_duration_seconds": 31742,
+    "kpi_compliance_pct": null
+  },
+  {
+    "priority_code": 2,
+    "priority_name": "Alta",
+    "total_incidents": 15649,
+    "kpi_incidents": 5159,
+    "kpi_violations": 42,
+    "avg_duration_seconds": 3278.71,
+    "p95_duration_seconds": 8852,
+    "kpi_compliance_pct": 99.19
+  },
+  {
+    "priority_code": 3,
+    "priority_name": "Média",
+    "total_incidents": 41732,
+    "kpi_incidents": 20441,
+    "kpi_violations": 206,
+    "avg_duration_seconds": 585852.92,
+    "p95_duration_seconds": 1023272,
+    "kpi_compliance_pct": 98.99
+  },
+  {
+    "priority_code": 4,
+    "priority_name": "Baixa",
+    "total_incidents": 64828,
+    "kpi_incidents": 0,
+    "kpi_violations": 0,
+    "avg_duration_seconds": 88367.57,
+    "p95_duration_seconds": 32473,
+    "kpi_compliance_pct": null
+  },
+  {
+    "priority_code": 5,
+    "priority_name": "Muito Baixa",
+    "total_incidents": 333,
+    "kpi_incidents": 0,
+    "kpi_violations": 0,
+    "avg_duration_seconds": 687230.64,
+    "p95_duration_seconds": 1020238,
+    "kpi_compliance_pct": null
+  }
+]

@@ -7,6 +7,7 @@ INPUT_PATH = "data/silver/incidents"
 MONTHLY_OUTPUT = "data/gold/monthly_kpis"
 PRIORITY_OUTPUT = "data/gold/priority_summary"
 TEAM_OUTPUT = "data/gold/team_summary"
+DASHBOARD_OUTPUT = "data/gold/dashboard_summary"
 
 
 def create_spark_session() -> SparkSession:
@@ -141,6 +142,36 @@ def create_team_summary(df: DataFrame) -> DataFrame:
 
     return add_compliance_rate(result)
 
+def create_dashboard_summary(df: DataFrame) -> DataFrame:
+    return (
+        df
+        .groupBy(
+            "opened_year",
+            "opened_month",
+            "priority_code",
+            "priority_name",
+            "assigned_group",
+        )
+        .agg(
+            F.count("*").alias("total_incidents"),
+
+            conditional_count(
+                F.col("entered_kpi") == True
+            ).alias("kpi_incidents"),
+
+            conditional_count(
+                F.col("kpi_violated") == True
+            ).alias("kpi_violations"),
+
+            conditional_count(
+                F.col("opened_by") == "Monitoramento"
+            ).alias("monitoring_incidents"),
+
+            conditional_count(
+                F.col("opened_by") == "Manual"
+            ).alias("manual_incidents"),
+        )
+    )
 
 def write_gold(
     spark: SparkSession,
@@ -179,6 +210,7 @@ def main() -> None:
         monthly_df = create_monthly_kpis(silver_df)
         priority_df = create_priority_summary(silver_df)
         team_df = create_team_summary(silver_df)
+        dashboard_df = create_dashboard_summary(silver_df)
 
         write_gold(
             spark,
@@ -199,6 +231,12 @@ def main() -> None:
             team_df,
             TEAM_OUTPUT,
             "team_summary",
+        )
+        write_gold(
+            spark,
+            dashboard_df,
+            DASHBOARD_OUTPUT,
+            "dashboard_summary",
         )
 
         print("\nResumo mensal:")
