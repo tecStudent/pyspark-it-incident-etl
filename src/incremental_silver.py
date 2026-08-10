@@ -392,6 +392,11 @@ def main() -> None:
             transformed_df
         )
 
+        existing_dfs = []
+
+        existing_silver_count = 0
+        existing_quarantine_count = 0
+
         if SILVER_OUTPUT.exists():
             existing_silver_df = (
                 spark.read
@@ -402,8 +407,42 @@ def main() -> None:
                 existing_silver_df.count()
             )
 
-            combined_df = (
+            existing_dfs.append(
                 existing_silver_df
+            )
+
+        if QUARANTINE_OUTPUT.exists():
+            existing_quarantine_df = (
+                spark.read
+                .parquet(
+                    str(QUARANTINE_OUTPUT)
+                )
+            )
+
+            existing_quarantine_count = (
+                existing_quarantine_df.count()
+            )
+
+            existing_dfs.append(
+                existing_quarantine_df
+            )
+
+        if existing_dfs:
+            existing_current_df = (
+                existing_dfs[0]
+            )
+
+            for existing_df in existing_dfs[1:]:
+                existing_current_df = (
+                    existing_current_df
+                    .unionByName(
+                        existing_df,
+                        allowMissingColumns=True,
+                    )
+                )
+
+            combined_df = (
+                existing_current_df
                 .unionByName(
                     transformed_df,
                     allowMissingColumns=True,
@@ -411,14 +450,13 @@ def main() -> None:
             )
 
         else:
-            existing_silver_count = 0
             combined_df = transformed_df
 
         combined_count = (
             existing_silver_count
+            + existing_quarantine_count
             + transformed_count
         )
-
         merged_df = (
             deduplicate(combined_df)
             .cache()
@@ -490,6 +528,11 @@ def main() -> None:
             f"Registros Silver anteriores: "
             f"{existing_silver_count}"
         )
+
+        print(
+        "Registros anteriores na quarentena: "
+        f"{existing_quarantine_count}"
+    )
 
         print(
             f"Duplicidades removidas: "
