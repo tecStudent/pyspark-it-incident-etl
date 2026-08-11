@@ -1,0 +1,33 @@
+name: PySpark Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pyspark-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Run PySpark tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Build Spark Docker image
+        run: docker compose build
+
+      - name: Run automated tests
+        run: docker compose run --rm spark python3 -m pytest -q -p no:cacheprovider

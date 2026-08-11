@@ -1,8 +1,11 @@
 # Local datasets
 data/raw/
+data/landing/
+data/control/
 data/bronze/
 data/silver/
 data/gold/
+data/quarantine/
 
 # Python
 __pycache__/

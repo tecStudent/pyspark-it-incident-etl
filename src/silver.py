@@ -225,6 +225,15 @@ def deduplicate(df: DataFrame) -> DataFrame:
         .drop("_row_number")
     )
 
+def transform_records(
+    bronze_df: DataFrame,
+) -> DataFrame:
+    silver_df = rename_columns(bronze_df)
+    silver_df = clean_strings(silver_df)
+    silver_df = transform_types(silver_df)
+    silver_df = add_data_quality(silver_df)
+
+    return silver_df
 
 def main() -> None:
     spark = create_spark_session()
@@ -235,10 +244,7 @@ def main() -> None:
 
         bronze_count = bronze_df.count()
 
-        silver_df = rename_columns(bronze_df)
-        silver_df = clean_strings(silver_df)
-        silver_df = transform_types(silver_df)
-        silver_df = add_data_quality(silver_df)
+        silver_df = transform_records(bronze_df)
         silver_df = deduplicate(silver_df)
 
         silver_count = silver_df.count()

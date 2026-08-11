@@ -1,0 +1,4 @@
+Número,Prioridade,Produto,Categoria,Subcategoria,Grupo designado,Item de configuração,Aberto,Resolvido,Encerrado,Duração,Código de fechamento,Descrição resumida,Solução,Aberto por,Incidente Pai,Status,Entrou para KPI?,KPI Violado?
+INC9999998,3 - Média,Produto Teste,Incidente,Aplicação,Team99,CI-TESTE,2026-01-01 10:00:00,2026-01-01 10:30:00,2026-01-01 11:00:00,3600,Resolvido,Versão inicial,Correção aplicada,Manual,,Encerrado,SIM,NAO
+INC9999998,3 - Média,Produto Teste,Incidente,Aplicação,Team99,CI-TESTE,2026-01-01 10:00:00,2026-01-01 11:30:00,2026-01-01 12:00:00,7200,Resolvido,Versão mais recente,Correção atualizada,Manual,,Encerrado,SIM,NAO
+BAD-ID,9 - Inválida,Produto Teste,Incidente,Aplicação,,CI-INVALIDO,2026-01-02 10:00:00,,2026-01-01 10:00:00,-100,Erro,Registro inválido,Não aplicável,Manual,,Encerrado,SIM,SIM
