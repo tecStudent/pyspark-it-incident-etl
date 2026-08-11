@@ -30,4 +30,4 @@ jobs:
         run: docker compose build
 
       - name: Run automated tests
-        run: docker compose run --rm spark python3 -m pytest -q
+        run: docker compose run --rm spark python3 -m pytest -q -p no:cacheprovider
