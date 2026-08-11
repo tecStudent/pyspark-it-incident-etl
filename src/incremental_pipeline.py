@@ -17,6 +17,12 @@ STAGES = {
         "local[2]",
         "src/incremental_silver.py",
     ],
+    "gold": [
+        "/opt/spark/bin/spark-submit",
+        "--master",
+        "local[2]",
+        "src/incremental_gold.py",
+    ],
 }
 
 
