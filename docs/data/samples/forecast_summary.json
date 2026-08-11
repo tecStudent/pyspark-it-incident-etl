@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-11T12:00:00Z",
+  "mock": true,
+  "method": "weighted_explainable_baseline",
+  "method_version": "1.0",
+  "scope": {
+    "description": "Incidentes válidos consolidados",
+    "priority_codes": [1, 2, 3],
+    "filters_applied": []
+  },
+  "forecast_d1": 798,
+  "forecast_d7": 5905,
+  "risk_range": 164,
+  "history": [
+    {"date": "2025-12-27", "actual_incidents": 742},
+    {"date": "2025-12-28", "actual_incidents": 815},
+    {"date": "2025-12-29", "actual_incidents": 776},
+    {"date": "2025-12-30", "actual_incidents": 829},
+    {"date": "2025-12-31", "actual_incidents": 761}
+  ],
+  "forecast": [
+    {"date": "2026-01-01", "predicted_incidents": 798, "lower_bound": 634, "upper_bound": 962},
+    {"date": "2026-01-02", "predicted_incidents": 824, "lower_bound": 660, "upper_bound": 988},
+    {"date": "2026-01-03", "predicted_incidents": 851, "lower_bound": 687, "upper_bound": 1015},
+    {"date": "2026-01-04", "predicted_incidents": 879, "lower_bound": 715, "upper_bound": 1043},
+    {"date": "2026-01-05", "predicted_incidents": 866, "lower_bound": 702, "upper_bound": 1030},
+    {"date": "2026-01-06", "predicted_incidents": 857, "lower_bound": 693, "upper_bound": 1021},
+    {"date": "2026-01-07", "predicted_incidents": 830, "lower_bound": 666, "upper_bound": 994}
+  ]
+}

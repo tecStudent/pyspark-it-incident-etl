@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-11T12:00:00Z",
+  "mock": true,
+  "rules_version": "1.0",
+  "items": [
+    {
+      "recommendation_id": "REC-001",
+      "dimension_type": "product",
+      "target": "Hospedagem",
+      "severity": "HIGH",
+      "title": "Investigar produto com maior criticidade",
+      "recommendation": "Revisar a causa raiz dos incidentes e preparar uma ação preventiva.",
+      "evidence": "Produto em primeiro lugar no ranking, com score de risco 82,4.",
+      "metric_name": "risk_score",
+      "metric_value": 82.4,
+      "metric_unit": "score"
+    },
+    {
+      "recommendation_id": "REC-002",
+      "dimension_type": "category",
+      "target": "Disponibilidade",
+      "severity": "HIGH",
+      "title": "Reduzir recorrência da categoria",
+      "recommendation": "Analisar os principais motivos de indisponibilidade e priorizar correções recorrentes.",
+      "evidence": "Taxa de violação de KPI de 9,4%.",
+      "metric_name": "kpi_violation_rate_pct",
+      "metric_value": 9.4,
+      "metric_unit": "percent"
+    },
+    {
+      "recommendation_id": "REC-003",
+      "dimension_type": "assigned_group",
+      "target": "Team01",
+      "severity": "MEDIUM",
+      "title": "Avaliar capacidade da equipe",
+      "recommendation": "Revisar a distribuição da fila e a capacidade operacional da equipe.",
+      "evidence": "Equipe com 2.140 incidentes no período analisado.",
+      "metric_name": "volume",
+      "metric_value": 2140,
+      "metric_unit": "incidents"
+    },
+    {
+      "recommendation_id": "REC-004",
+      "dimension_type": "configuration_item",
+      "target": "CI00014",
+      "severity": "MEDIUM",
+      "title": "Analisar item recorrente",
+      "recommendation": "Verificar falhas repetidas e a necessidade de manutenção preventiva.",
+      "evidence": "Item de configuração entre os mais incidentados.",
+      "metric_name": "volume",
+      "metric_value": 406,
+      "metric_unit": "incidents"
+    }
+  ]
+}
