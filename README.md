@@ -1,5 +1,7 @@
 # PySpark IT Incident ETL
 
+[![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=feature%2Fincremental-load)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
+
 Pipeline ETL local desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento e análise de dados de incidentes de TI.
 
 O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e foi estruturado como um projeto de portfólio de Engenharia de Dados.
@@ -322,8 +324,24 @@ Resultado esperado:
 
 ```text
 ..... [100%]
-5 passed
+10 passed
 ```
+
+## Integração contínua
+
+O projeto utiliza GitHub Actions para validar automaticamente cada Pull Request direcionado à branch `main`.
+
+O workflow:
+
+- constrói a imagem Docker do Apache Spark;
+- prepara o ambiente de execução;
+- executa os testes com Pytest;
+- impede que alterações com testes quebrados sejam incorporadas sem identificação.
+
+A mesma suíte pode ser executada localmente:
+
+```bash
+docker compose run --rm spark python3 -m pytest -q
 
 Os testes verificam:
 
