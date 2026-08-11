@@ -2,6 +2,13 @@ import argparse
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
+from uuid import uuid4
+
+from src.pipeline_audit import (
+    append_pipeline_run,
+    build_control_snapshot,
+)
 
 
 STAGES = {
@@ -26,10 +33,16 @@ STAGES = {
 }
 
 
+def utc_now() -> str:
+    return datetime.now(
+        timezone.utc
+    ).isoformat()
+
+
 def run_stage(
     stage_name: str,
     command: list[str],
-) -> None:
+) -> float:
     print(
         f"\n{'=' * 60}\n"
         f"Executando etapa incremental: "
@@ -52,6 +65,8 @@ def run_stage(
         f"concluída em {elapsed:.2f}s",
         flush=True,
     )
+
+    return elapsed
 
 
 def main() -> None:
@@ -84,33 +99,132 @@ def main() -> None:
         start_index:
     ]
 
+    run_id = uuid4().hex
+    started_at = utc_now()
     pipeline_start = time.time()
+
+    status = "RUNNING"
+    failed_stage = None
+    error_message = None
+    exit_code = 0
+    stage_results = []
 
     try:
         for stage_name in selected_stages:
-            run_stage(
-                stage_name,
-                STAGES[stage_name],
-            )
+            stage_start = time.time()
+
+            try:
+                stage_elapsed = run_stage(
+                    stage_name,
+                    STAGES[stage_name],
+                )
+
+                stage_results.append(
+                    {
+                        "stage": stage_name,
+                        "status": "SUCCESS",
+                        "duration_seconds": round(
+                            stage_elapsed,
+                            2,
+                        ),
+                    }
+                )
+
+            except subprocess.CalledProcessError:
+                stage_results.append(
+                    {
+                        "stage": stage_name,
+                        "status": "FAILED",
+                        "duration_seconds": round(
+                            time.time() - stage_start,
+                            2,
+                        ),
+                    }
+                )
+
+                raise
+
+            except KeyboardInterrupt:
+                stage_results.append(
+                    {
+                        "stage": stage_name,
+                        "status": "INTERRUPTED",
+                        "duration_seconds": round(
+                            time.time() - stage_start,
+                            2,
+                        ),
+                    }
+                )
+
+                raise
+
+        status = "SUCCESS"
 
     except subprocess.CalledProcessError as error:
+        status = "FAILED"
+        failed_stage = stage_name
+        exit_code = error.returncode
+        error_message = (
+            f"Etapa {stage_name} retornou "
+            f"exit code {error.returncode}."
+        )
+
         print(
             "\nPipeline incremental interrompido. "
             f"Exit code: {error.returncode}",
             file=sys.stderr,
         )
 
-        sys.exit(error.returncode)
-
     except KeyboardInterrupt:
+        status = "INTERRUPTED"
+        failed_stage = stage_name
+        exit_code = 130
+        error_message = (
+            "Pipeline interrompido pelo usuário."
+        )
+
         print(
             "\nPipeline incremental interrompido "
             "pelo usuário."
         )
 
-        sys.exit(130)
+    finally:
+        elapsed = time.time() - pipeline_start
+        finished_at = utc_now()
 
-    elapsed = time.time() - pipeline_start
+        run_record = {
+            "run_id": run_id,
+            "started_at": started_at,
+            "finished_at": finished_at,
+            "status": status,
+            "duration_seconds": round(
+                elapsed,
+                2,
+            ),
+            "from_stage": args.from_stage,
+            "selected_stages": selected_stages,
+            "failed_stage": failed_stage,
+            "exit_code": exit_code,
+            "error_message": error_message,
+            "stages": stage_results,
+            "control_snapshot": (
+                build_control_snapshot()
+            ),
+        }
+
+        append_pipeline_run(
+            run_record
+        )
+
+        print(
+            "\nAuditoria registrada em: "
+            "data/control/pipeline_runs.json"
+        )
+        print(f"Run ID: {run_id}")
+        print(f"Status: {status}")
+
+    if status != "SUCCESS":
+        sys.exit(exit_code)
 
     print(
         f"\n{'=' * 60}\n"
