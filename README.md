@@ -2,13 +2,18 @@
 
 [![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=feature%2Fincremental-load)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
 
-Pipeline ETL local desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento e análise de dados de incidentes de TI.
+Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento e análise de incidentes de TI.
 
-O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e foi estruturado como um projeto de portfólio de Engenharia de Dados.
+O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e demonstra dois modos de processamento:
 
-O pipeline processa **122.543 incidentes** desde um arquivo Excel bruto até tabelas analíticas na camada Gold e disponibiliza os principais indicadores em um dashboard web interativo.
+- carga completa em camadas Raw, Bronze, Silver e Gold;
+- carga incremental idempotente, com controle de batches, deduplicação, quarentena e auditoria.
 
-## Arquitetura
+A carga completa processa **122.543 incidentes** e disponibiliza os principais indicadores em um dashboard web interativo.
+
+[Acessar o dashboard publicado no GitHub Pages](https://tecstudent.github.io/pyspark-it-incident-etl/)
+
+## Arquitetura da carga completa
 
 ```mermaid
 flowchart TD
@@ -23,7 +28,7 @@ flowchart TD
 ### Raw
 
 - Origem em `.xlsx`.
-- Extração em modo `read_only` para reduzir consumo de memória.
+- Extração em modo `read_only` para reduzir o consumo de memória.
 - Conversão para CSV preservando os dados de origem.
 - Dataset completo mantido apenas localmente e excluído do Git.
 
@@ -60,9 +65,81 @@ São geradas quatro tabelas analíticas:
 
 As agregações utilizam recursos como `groupBy`, `agg`, agregações condicionais, `avg` e `percentile_approx`.
 
+## Arquitetura incremental
+
+```mermaid
+flowchart TD
+    A["Lotes CSV na Landing"] --> B["Bronze incremental"]
+    B --> C["Silver: merge e Data Quality"]
+    C --> D["Gold: snapshots analíticos"]
+    C --> E["Quarentena"]
+    B --> F["Controles e auditoria"]
+    C --> F
+    D --> F
+```
+
+O fluxo incremental simula a chegada mensal de novos arquivos e processa apenas batches ainda não aplicados.
+
+### Landing
+
+- Recebe arquivos CSV incrementais.
+- Cada arquivo representa um lote independente.
+- Os lotes podem ser adicionados sem reconstruir a carga histórica completa.
+
+### Bronze incremental
+
+- Calcula o hash SHA-256 de cada arquivo.
+- Utiliza o hash para gerar um `batch_id` determinístico.
+- Registra arquivo, hash, quantidade e status do processamento.
+- Ignora arquivos já processados com sucesso.
+- Mantém os batches em diretórios Parquet independentes.
+
+### Silver incremental
+
+- Aplica as mesmas transformações e regras da Silver completa.
+- Combina os novos dados com o estado Silver existente.
+- Deduplica registros pela identificação do incidente.
+- Mantém a versão mais recente de cada incidente.
+- Separa registros válidos e inválidos.
+- Preserva os registros anteriores da quarentena.
+- Substitui os diretórios de saída utilizando staging e backup.
+
+### Gold incremental
+
+- Processa somente quando existem batches Silver pendentes.
+- Recalcula snapshots analíticos a partir do estado Silver atual.
+- Gera resumos mensais, por prioridade, por equipe e para o dashboard.
+- Registra quais batches já foram refletidos na Gold.
+
+### Idempotência e controles
+
+Os controles locais ficam em `data/control/`:
+
+| Controle | Finalidade |
+| --- | --- |
+| `processed_batches.json` | Batches processados na Bronze |
+| `silver_batches.json` | Batches incorporados à Silver |
+| `gold_batches.json` | Batches refletidos nos snapshots Gold |
+| `pipeline_runs.json` | Histórico e resultado das execuções do runner |
+
+Uma reexecução sem novos arquivos não duplica registros nem reprocessa batches concluídos.
+
+### Auditoria
+
+Cada execução do pipeline incremental registra:
+
+- identificador único da execução;
+- horário de início e término;
+- duração total e por etapa;
+- status `SUCCESS`, `FAILED` ou `INTERRUPTED`;
+- etapa em que ocorreu uma possível falha;
+- exit code e mensagem de erro;
+- totais observados nos controles Bronze, Silver e Gold;
+- quantidade atual de registros em quarentena.
+
 ## Dashboard
 
-O projeto inclui um dashboard web estático para visualização dos indicadores gerados pelo pipeline.
+O projeto inclui um dashboard web estático para visualização dos indicadores gerados pelo pipeline completo.
 
 O dashboard consome somente dados agregados da camada Gold exportados para JSON, sem expor o dataset bruto.
 
@@ -85,11 +162,9 @@ Os indicadores e gráficos podem ser filtrados simultaneamente por:
 - prioridade;
 - equipe.
 
-O dashboard foi desenvolvido com HTML, CSS, JavaScript e Chart.js e pode ser hospedado como site estático.
+O dashboard foi desenvolvido com HTML, CSS, JavaScript e Chart.js e está publicado gratuitamente no GitHub Pages.
 
-## Resultados da execução
-
-Uma execução completa de referência processou:
+## Resultados da carga completa
 
 | Métrica | Resultado |
 | --- | ---: |
@@ -105,9 +180,23 @@ Uma execução completa de referência processou:
 | Incidentes considerados no KPI | 25.600 |
 | Violações de KPI | 248 |
 | Compliance geral | 99,03% |
-| Testes automatizados | 5 passed |
+| Testes automatizados | 10 passed |
 
-Na execução local de referência, o pipeline de processamento até a camada Gold terminou em aproximadamente **128 segundos**. Esse tempo depende dos recursos disponíveis no computador e no Docker.
+Na execução local de referência, o pipeline completo até a camada Gold terminou em aproximadamente **128 segundos**. Esse tempo depende dos recursos disponíveis no computador e no Docker.
+
+## Validação incremental de referência
+
+| Métrica | Resultado |
+| --- | ---: |
+| Batches processados | 5 |
+| Registros recebidos na Bronze | 36 |
+| Registros válidos na Silver | 34 |
+| Registros em quarentena | 1 |
+| Duplicidades removidas | 1 |
+| Registros no snapshot Gold | 34 |
+| Reexecução sem novos dados | Nenhum batch reprocessado |
+
+O conjunto de validação inclui duas versões do mesmo incidente e um registro propositalmente inválido, comprovando a deduplicação e o direcionamento para quarentena.
 
 ## Tecnologias
 
@@ -125,18 +214,25 @@ Na execução local de referência, o pipeline de processamento até a camada Go
 - JavaScript
 - Chart.js
 - Git e GitHub
+- GitHub Actions
 - GitHub Pages
 
 ## Estrutura do projeto
 
 ```text
 pyspark-it-incident-etl/
+|-- .github/
+|   `-- workflows/
+|       `-- ci.yml
 |-- data/
-|   |-- raw/              # dados locais, ignorados pelo Git
-|   |-- bronze/           # Parquet Bronze, ignorado pelo Git
-|   |-- silver/           # Parquet Silver, ignorado pelo Git
-|   |-- gold/             # Parquet Gold, ignorado pelo Git
-|   `-- sample/
+|   |-- raw/                  # origem e batches locais
+|   |-- landing/              # entrada dos lotes incrementais
+|   |-- control/              # controles e auditoria locais
+|   |-- bronze/               # Parquet Bronze
+|   |-- silver/               # Parquet Silver
+|   |-- gold/                 # Parquet Gold
+|   |-- quarantine/           # registros inválidos
+|   `-- sample/               # fixture incremental versionada
 |-- src/
 |   |-- extract_xlsx.py
 |   |-- bronze.py
@@ -144,10 +240,16 @@ pyspark-it-incident-etl/
 |   |-- gold.py
 |   |-- export_dashboard.py
 |   |-- pipeline.py
-|   `-- test_spark.py
+|   |-- create_incremental_batches.py
+|   |-- incremental_bronze.py
+|   |-- incremental_silver.py
+|   |-- incremental_gold.py
+|   |-- incremental_pipeline.py
+|   `-- pipeline_audit.py
 |-- tests/
 |   |-- conftest.py
-|   `-- test_silver.py
+|   |-- test_silver.py
+|   `-- test_pipeline_audit.py
 |-- docs/
 |   |-- index.html
 |   |-- css/
@@ -166,6 +268,8 @@ pyspark-it-incident-etl/
 `-- requirements.txt
 ```
 
+Os diretórios de dados processados e os arquivos de controle permanecem fora do versionamento.
+
 ## Pré-requisitos
 
 É necessário ter apenas:
@@ -180,13 +284,7 @@ Java, Spark e PySpark não precisam ser instalados diretamente no Windows. O amb
 
 O dataset completo não é versionado no repositório.
 
-Para executar o pipeline, coloque o arquivo:
-
-```text
-LW-DATASET.xlsx
-```
-
-em:
+Para executar a carga completa, coloque o arquivo `LW-DATASET.xlsx` em:
 
 ```text
 data/raw/LW-DATASET.xlsx
@@ -194,9 +292,7 @@ data/raw/LW-DATASET.xlsx
 
 O pipeline utiliza a aba `Dataset Geral`.
 
-## Como executar
-
-### 1. Construir o ambiente
+## Construir o ambiente
 
 Na raiz do projeto:
 
@@ -204,51 +300,82 @@ Na raiz do projeto:
 docker compose build
 ```
 
-### 2. Executar o pipeline completo
+## Executar a carga completa
 
 ```bash
 docker compose run --rm spark python3 src/pipeline.py
 ```
 
-Esse único comando executa sequencialmente:
+Esse comando executa:
 
 ```text
 Extract -> Bronze -> Silver -> Gold -> Dashboard
 ```
 
-A última etapa exporta as agregações analíticas para arquivos JSON consumidos pelo dashboard.
+A última etapa exporta as agregações analíticas para os arquivos JSON consumidos pelo dashboard.
 
-As etapas de processamento utilizam escrita com `mode("overwrite")`, permitindo reexecuções sem simplesmente acumular os resultados da execução anterior.
+As etapas utilizam escrita com `mode("overwrite")`, permitindo reexecuções sem acumular os resultados anteriores.
 
-## Continuar a partir de uma etapa
-
-O runner permite reiniciar o processamento a partir de uma camada específica.
-
-Continuar da Bronze:
+### Retomar a carga completa por etapa
 
 ```bash
+# Continuar da Bronze
 docker compose run --rm spark python3 src/pipeline.py --from-stage bronze
-```
 
-Continuar da Silver:
-
-```bash
+# Continuar da Silver
 docker compose run --rm spark python3 src/pipeline.py --from-stage silver
-```
 
-Executar novamente a Gold e, em seguida, atualizar os dados do dashboard:
-
-```bash
+# Executar Gold e atualizar os dados do dashboard
 docker compose run --rm spark python3 src/pipeline.py --from-stage gold
-```
 
-Executar somente a exportação dos dados do dashboard:
-
-```bash
+# Executar somente a exportação do dashboard
 docker compose run --rm spark python3 src/pipeline.py --from-stage dashboard
 ```
 
-Isso permite interromper o desenvolvimento e continuar posteriormente sem precisar obrigatoriamente reexecutar todas as etapas anteriores.
+## Executar o pipeline incremental
+
+### 1. Gerar os lotes de demonstração
+
+Depois de gerar `data/raw/incidents.csv` pela extração da carga completa:
+
+```bash
+docker compose run --rm spark python3 src/create_incremental_batches.py
+```
+
+Os arquivos mensais serão criados em `data/raw/batches/`.
+
+### 2. Adicionar um lote à Landing
+
+Exemplo:
+
+```bash
+cp data/raw/batches/incidents_2023_01.csv data/landing/
+```
+
+### 3. Executar Bronze, Silver e Gold incrementais
+
+```bash
+docker compose run --rm spark python3 src/incremental_pipeline.py
+```
+
+### Retomar o pipeline incremental por etapa
+
+```bash
+# Continuar da Silver
+docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage silver
+
+# Executar somente a Gold incremental
+docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage gold
+```
+
+O runner grava o resultado de todas as execuções em `data/control/pipeline_runs.json`.
+
+### Conferir a última auditoria
+
+```bash
+docker compose run --rm spark python3 -c \
+'import json; data=json.load(open("data/control/pipeline_runs.json", encoding="utf-8")); print(json.dumps(data["runs"][-1], indent=2, ensure_ascii=False))'
+```
 
 ## Como interromper
 
@@ -258,7 +385,7 @@ Durante uma execução, pressione:
 Ctrl + C
 ```
 
-O container temporário é executado com `--rm` e é removido após o encerramento.
+O container temporário é executado com `--rm` e removido após o encerramento.
 
 Se algum serviço tiver sido iniciado com `docker compose up`, utilize:
 
@@ -266,51 +393,38 @@ Se algum serviço tiver sido iniciado com `docker compose up`, utilize:
 docker compose down
 ```
 
-Os códigos e os dados locais permanecem no diretório do projeto.
+Os códigos e dados locais permanecem no diretório do projeto.
 
 ## Executar o dashboard localmente
 
-Após gerar os dados, execute na raiz do projeto:
+Após gerar os dados:
 
 ```bash
 python -m http.server 8000 --directory docs
 ```
 
-Acesse no navegador:
+Acesse:
 
 ```text
 http://localhost:8000
 ```
 
-Para encerrar o servidor:
+Para encerrar o servidor, pressione `Ctrl + C`.
 
-```text
-Ctrl + C
-```
-
-O dashboard é estático e consome os arquivos JSON gerados a partir das agregações da camada Gold.
-
-## Executar uma camada individualmente
-
-Bronze:
+## Executar uma camada completa individualmente
 
 ```bash
+# Bronze
 MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/bronze.py
-```
 
-Silver:
-
-```bash
+# Silver
 MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/silver.py
-```
 
-Gold:
-
-```bash
+# Gold
 MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/gold.py
 ```
 
-`MSYS_NO_PATHCONV=1` é utilizado nos comandos acima por compatibilidade com Git Bash no Windows ao passar caminhos Linux para o container.
+`MSYS_NO_PATHCONV=1` é utilizado por compatibilidade com Git Bash no Windows ao passar caminhos Linux para o container.
 
 ## Testes automatizados
 
@@ -320,28 +434,12 @@ Execute:
 docker compose run --rm spark python3 -m pytest -q
 ```
 
-Resultado esperado:
+Resultado atual:
 
 ```text
-..... [100%]
+.......... [100%]
 10 passed
 ```
-
-## Integração contínua
-
-O projeto utiliza GitHub Actions para validar automaticamente cada Pull Request direcionado à branch `main`.
-
-O workflow:
-
-- constrói a imagem Docker do Apache Spark;
-- prepara o ambiente de execução;
-- executa os testes com Pytest;
-- impede que alterações com testes quebrados sejam incorporadas sem identificação.
-
-A mesma suíte pode ser executada localmente:
-
-```bash
-docker compose run --rm spark python3 -m pytest -q
 
 Os testes verificam:
 
@@ -349,7 +447,24 @@ Os testes verificam:
 - conversão dos indicadores de KPI;
 - registros válidos e inválidos nas regras de Data Quality;
 - tratamento de `N/A` nos indicadores;
-- deduplicação com `Window`.
+- deduplicação com `Window`;
+- leitura e consolidação dos controles incrementais;
+- cálculo do snapshot de auditoria;
+- criação e preservação do histórico de execuções.
+
+## Integração contínua
+
+O projeto utiliza GitHub Actions para validar automaticamente cada Pull Request direcionado à branch `main`.
+
+O workflow:
+
+- utiliza `actions/checkout@v5`;
+- constrói a imagem Docker do Apache Spark;
+- executa os 10 testes com Pytest;
+- possui permissão somente de leitura no repositório;
+- cancela execuções anteriores quando uma nova versão do mesmo PR é enviada.
+
+O workflow também pode ser iniciado manualmente pela aba **Actions** do GitHub.
 
 ## Data Quality
 
@@ -362,45 +477,45 @@ A Silver valida aspectos estruturais como:
 - duração nula ou negativa;
 - encerramento anterior à abertura.
 
-O dataset também contém campos de negócio `Entrou para KPI?` e `KPI Violado?`. Esses indicadores são preservados como fonte de negócio na Gold. As regras documentadas de duração podem ser utilizadas para auditorias adicionais sem sobrescrever automaticamente os flags fornecidos pela origem.
+Registros inválidos do fluxo incremental são preservados em `data/quarantine/incidents` junto com os motivos encontrados em `dq_issues`.
+
+Os campos de negócio `Entrou para KPI?` e `KPI Violado?` são mantidos como fonte de negócio na Gold. As regras documentadas de duração podem ser utilizadas para auditorias adicionais sem sobrescrever automaticamente os indicadores fornecidos pela origem.
 
 ## Conceitos demonstrados
 
-O projeto foi desenvolvido para exercitar práticas de Engenharia de Dados com PySpark, incluindo:
-
 - ETL em camadas Raw, Bronze, Silver e Gold;
 - schema explícito;
-- Apache Parquet;
-- `withColumn` e `when`;
-- tratamento de nulos;
-- conversão de tipos;
-- expressões regulares;
-- funções de data;
+- Apache Parquet e particionamento;
+- transformações com `withColumn` e `when`;
+- tratamento de nulos e conversão de tipos;
+- expressões regulares e funções de data;
 - `Window` e `row_number`;
-- deduplicação;
-- Data Quality;
-- particionamento;
-- `groupBy` e `agg`;
-- agregações condicionais;
+- deduplicação e Data Quality;
+- `groupBy`, `agg` e agregações condicionais;
 - percentil aproximado (P95);
+- carga incremental por batches;
+- idempotência por hash SHA-256;
+- merge de estado incremental;
+- quarentena de registros inválidos;
+- controles por camada;
+- auditoria de execuções;
 - criação de Data Mart para consumo analítico;
 - exportação de agregações para JSON;
-- integração entre pipeline de dados e camada de visualização;
-- dashboard interativo com filtros;
-- visualização de dados com JavaScript e Chart.js;
+- dashboard interativo com JavaScript e Chart.js;
 - testes automatizados com Pytest;
+- integração contínua com GitHub Actions;
 - execução reproduzível com Docker;
 - reexecução e retomada por etapa.
 
 ## Possíveis evoluções
 
-- Simular ingestão incremental por lotes.
-- Adicionar testes para Bronze e Gold.
+- Adicionar testes específicos para Bronze e Gold.
+- Publicar métricas de cobertura de testes.
 - Criar auditoria específica das regras documentadas de KPI/SLA.
-- Adicionar CI com GitHub Actions.
 - Integrar o pipeline a um orquestrador como Apache Airflow.
-- Evoluir o armazenamento para formatos de tabela como Apache Iceberg ou Delta Lake.
+- Evoluir o armazenamento para Apache Iceberg ou Delta Lake.
+- Publicar imagens Docker versionadas no GitHub Container Registry.
 
 ## Contexto acadêmico
 
-Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir um pipeline local de Engenharia de Dados voltado ao portfólio técnico. O dataset completo e as saídas intermediárias processadas permanecem fora do versionamento do Git. O dashboard utiliza somente dados analíticos agregados gerados pelo pipeline.
+Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir um pipeline local de Engenharia de Dados voltado ao portfólio técnico. O dataset completo, os arquivos de controle e as saídas intermediárias permanecem fora do versionamento. O dashboard utiliza somente dados analíticos agregados gerados pelo pipeline.
