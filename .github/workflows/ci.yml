@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - "feature/**"
   pull_request:
     branches:
       - main
@@ -25,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build Spark Docker image
         run: docker compose build
