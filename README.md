@@ -1,6 +1,6 @@
 # PySpark IT Incident ETL
 
-[![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=feature%2Fincremental-load)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
+[![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
 
 Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento e análise de incidentes de TI.
 
