@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-11T12:00:00Z",
+  "mock": true,
+  "methodology": {
+    "name": "weighted_operational_risk",
+    "version": "1.0",
+    "score_scale": "0-100",
+    "weights": {
+      "volume": 0.45,
+      "kpi_violation_rate": 0.35,
+      "avg_duration": 0.20
+    }
+  },
+  "items": [
+    {
+      "dimension_type": "product",
+      "dimension_value": "Hospedagem",
+      "is_unknown": false,
+      "volume": 1860,
+      "kpi_violation_rate_pct": 7.1,
+      "avg_duration_seconds": 15200.0,
+      "risk_score": 82.4,
+      "rank": 1
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "Disponibilidade",
+      "is_unknown": false,
+      "volume": 930,
+      "kpi_violation_rate_pct": 9.4,
+      "avg_duration_seconds": 12800.0,
+      "risk_score": 76.2,
+      "rank": 1
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team01",
+      "is_unknown": false,
+      "volume": 2140,
+      "kpi_violation_rate_pct": 5.8,
+      "avg_duration_seconds": 14100.0,
+      "risk_score": 71.7,
+      "rank": 1
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": null,
+      "is_unknown": true,
+      "volume": 320,
+      "kpi_violation_rate_pct": 1.2,
+      "avg_duration_seconds": 9300.0,
+      "risk_score": 18.3,
+      "rank": null
+    }
+  ]
+}

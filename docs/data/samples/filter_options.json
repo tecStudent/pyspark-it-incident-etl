@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-11T12:00:00Z",
+  "mock": true,
+  "years": [2024, 2025],
+  "months": [
+    {"number": 1, "name": "Janeiro"},
+    {"number": 2, "name": "Fevereiro"}
+  ],
+  "priorities": [
+    {"code": 1, "name": "Crítica"},
+    {"code": 2, "name": "Alta"},
+    {"code": 3, "name": "Média"}
+  ],
+  "products": ["Hospedagem", "E-mail"],
+  "categories": ["Disponibilidade", "Configuração"],
+  "teams": ["Team01", "Team02"]
+}

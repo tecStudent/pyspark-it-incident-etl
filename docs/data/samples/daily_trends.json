@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-11T12:00:00Z",
+  "mock": true,
+  "records": [
+    {
+      "date": "2025-01-01",
+      "priority_code": 2,
+      "priority_name": "Alta",
+      "product": "Hospedagem",
+      "category": "Disponibilidade",
+      "assigned_group": "Team01",
+      "total_incidents": 18,
+      "kpi_incidents": 14,
+      "kpi_violations": 1,
+      "avg_duration_seconds": 7200.0,
+      "p95_duration_seconds": 14400.0
+    },
+    {
+      "date": "2025-01-01",
+      "priority_code": 3,
+      "priority_name": "Média",
+      "product": "E-mail",
+      "category": "Configuração",
+      "assigned_group": "Team02",
+      "total_incidents": 26,
+      "kpi_incidents": 10,
+      "kpi_violations": 0,
+      "avg_duration_seconds": 10800.0,
+      "p95_duration_seconds": 21600.0
+    },
+    {
+      "date": "2025-01-02",
+      "priority_code": 2,
+      "priority_name": "Alta",
+      "product": "Hospedagem",
+      "category": "Disponibilidade",
+      "assigned_group": "Team01",
+      "total_incidents": 21,
+      "kpi_incidents": 16,
+      "kpi_violations": 2,
+      "avg_duration_seconds": 8100.0,
+      "p95_duration_seconds": 16200.0
+    }
+  ]
+}
