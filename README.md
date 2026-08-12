@@ -2,42 +2,65 @@
 
 [![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
 
-Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para processamento e análise de incidentes de TI.
+Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para transformar dados de incidentes de TI em indicadores operacionais auditáveis.
 
-O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e demonstra dois modos de processamento:
+O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no contexto do desafio com a Locaweb, e foi evoluído como projeto de portfólio. A solução demonstra:
 
 - carga completa em camadas Raw, Bronze, Silver e Gold;
-- carga incremental idempotente, com controle de batches, deduplicação, quarentena e auditoria.
+- carga incremental idempotente por lotes;
+- schema explícito, deduplicação, particionamento e Parquet;
+- Data Quality com quarentena;
+- controle e auditoria das execuções;
+- regras de KPI e OLA calculadas separadamente dos indicadores da origem;
+- agregações operacionais e tendências diárias;
+- ranking de risco explicável;
+- previsão de volume por baseline estatístico;
+- recomendações determinísticas com evidências;
+- contrato JSON para integração com o dashboard;
+- testes automatizados e CI com GitHub Actions.
 
-A carga completa processa **122.543 incidentes** e disponibiliza os principais indicadores em um dashboard web interativo.
+A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
 
 [Acessar o dashboard publicado no GitHub Pages](https://tecstudent.github.io/pyspark-it-incident-etl/)
 
-## Arquitetura da carga completa
+## Visão geral da arquitetura
 
-```mermaid
+~~~mermaid
 flowchart TD
-    A["Excel - 122.543 incidentes"] --> B["Raw - CSV"]
-    B --> C["Bronze - Parquet"]
-    C --> D["Silver - tratamento e Data Quality"]
-    D --> E["Gold - métricas e agregações"]
-    E --> F["JSON - dados agregados"]
-    F --> G["Dashboard Web"]
-```
+    A["Excel ou lotes CSV"] --> B["Raw e Landing"]
+    B --> C["Bronze: schema e metadados"]
+    C --> D["Silver: limpeza, regras e qualidade"]
+    D --> E["Gold: KPIs, risco e previsão"]
+    D --> Q["Quarentena"]
+    E --> J["Contratos JSON"]
+    J --> W["Dashboard Web"]
+    C --> O["Controles e auditoria"]
+    D --> O
+    E --> O
+~~~
+
+Existem dois modos de execução que reutilizam as mesmas transformações e regras de negócio:
+
+| Modo | Entrada | Comportamento |
+| --- | --- | --- |
+| Carga completa | Excel convertido para CSV | Reconstrói as camadas usando escrita overwrite |
+| Carga incremental | Arquivos CSV na Landing | Processa apenas lotes ainda não aplicados |
+
+## Camadas de dados
 
 ### Raw
 
-- Origem em `.xlsx`.
-- Extração em modo `read_only` para reduzir o consumo de memória.
+- Origem em arquivo XLSX.
+- Leitura em modo read-only para reduzir o consumo de memória.
 - Conversão para CSV preservando os dados de origem.
-- Dataset completo mantido apenas localmente e excluído do Git.
+- Dataset completo mantido apenas localmente e ignorado pelo Git.
 
 ### Bronze
 
-- Leitura com PySpark.
-- Schema explícito com 19 campos de origem.
-- Dados preservados inicialmente como `StringType`.
-- Inclusão de metadados de ingestão.
+- Leitura distribuída com PySpark.
+- Schema explícito com os 19 campos de origem.
+- Preservação inicial dos valores como StringType.
+- Metadados de arquivo e horário de ingestão.
 - Validação da quantidade de registros entre origem e destino.
 - Persistência em Apache Parquet.
 
@@ -46,198 +69,289 @@ flowchart TD
 - Padronização dos nomes das colunas.
 - Tratamento de strings vazias e valores nulos.
 - Conversão de timestamps, números e booleanos.
-- Separação do código e descrição da prioridade.
-- Regras de Data Quality.
-- Deduplicação utilizando `Window` e `row_number()`.
+- Separação do código e da descrição da prioridade.
+- Regras estruturais de Data Quality.
+- Deduplicação utilizando Window e row_number.
 - Particionamento físico por ano e mês de abertura.
+- Colunas calculadas para auditoria de KPI e OLA.
 - Persistência em Apache Parquet.
 
 ### Gold
 
-São geradas quatro tabelas analíticas:
+A Gold mantém as agregações históricas do dashboard e acrescenta produtos analíticos operacionais.
 
 | Tabela | Finalidade |
 | --- | --- |
-| `monthly_kpis` | Volume mensal, origem dos incidentes, KPI, média e P95 de duração |
-| `priority_summary` | Indicadores agregados por prioridade |
-| `team_summary` | Volume e indicadores de KPI por equipe |
-| `dashboard_summary` | Agregação multidimensional por período, prioridade e equipe para consumo do dashboard |
+| monthly_kpis | Volume mensal, origem, KPI, duração média e P95 |
+| priority_summary | Indicadores agregados por prioridade |
+| team_summary | Volume e KPI por equipe |
+| dashboard_summary | Visão multidimensional por período, prioridade e equipe |
+| daily_trends | Tendências diárias por prioridade, produto, categoria e equipe |
+| operational_kpi_summary | Comparação entre os indicadores da origem e as regras calculadas |
+| annual_ola_summary | Compliance e atingimento anual por prioridade |
+| risk_summary | Ranking de risco por prioridade, produto, categoria e equipe |
+| forecast_history | Janela histórica utilizada pela previsão |
+| forecast_summary | Previsão explicável para D+1 até D+7 |
+| recommendations | Recomendações determinísticas com severidade e evidências |
 
-As agregações utilizam recursos como `groupBy`, `agg`, agregações condicionais, `avg` e `percentile_approx`.
+As agregações utilizam groupBy, agg, agregações condicionais, avg, percentile_approx e funções Window.
+
+## Regras auditáveis de KPI e OLA
+
+Os campos fornecidos pela origem são preservados:
+
+- Entrou para KPI?;
+- KPI Violado?.
+
+O pipeline também calcula indicadores independentes a partir das regras documentadas. Isso permite comparar a classificação recebida com a classificação reproduzida pelo processamento, sem sobrescrever a fonte.
+
+A Silver registra, entre outras colunas:
+
+- elegibilidade calculada;
+- violação calculada;
+- justificativa da regra aplicada;
+- correspondência entre origem e cálculo;
+- versão das regras.
+
+As regras e suas premissas estão documentadas em [docs/kpi-business-rules.md](docs/kpi-business-rules.md).
+
+## Indicadores operacionais
+
+A camada operacional mede:
+
+- volume tratado;
+- incidentes elegíveis para KPI;
+- incidentes efetivamente avaliáveis;
+- violações e incidentes conformes;
+- compliance calculado;
+- divergências entre origem e regra;
+- duração média e P95;
+- atingimento anual das metas de volume e violações.
+
+Os indicadores recebidos e calculados permanecem separados para manter a rastreabilidade.
+
+## Ranking de risco operacional
+
+O ranking consolida quatro dimensões: prioridade, produto, categoria e equipe responsável.
+
+O score varia de 0 a 100 e utiliza pesos versionados:
+
+| Componente | Peso |
+| --- | ---: |
+| Volume normalizado | 45% |
+| Taxa de violação normalizada | 35% |
+| Duração média normalizada | 20% |
+
+Cada resultado contém metodologia, versão, componentes normalizados, score e posição no ranking. Valores não informados são identificados por is_unknown e não recebem posição operacional.
+
+O score é uma priorização explicável baseada nas métricas do projeto. Ele não representa probabilidade estatística de ocorrência.
+
+## Previsão explicável de volume
+
+A previsão considera os incidentes válidos de prioridade P1, P2 e P3.
+
+A metodologia utiliza uma baseline ponderada:
+
+- 60% da média histórica do mesmo dia da semana;
+- 40% da média dos sete dias recentes;
+- janela histórica de 28 dias;
+- horizonte de sete dias;
+- intervalo inferior e superior baseado na variabilidade histórica.
+
+São gerados previsão D+1, total previsto para D+7, projeção diária, intervalo de risco e o histórico usado no cálculo.
+
+Essa previsão é deliberadamente simples e auditável. Ela não deve ser apresentada como um modelo de inteligência artificial ou machine learning validado.
+
+## Recomendações operacionais
+
+As recomendações são derivadas de regras determinísticas e versionadas. Cada item possui identificador estável, regra, versão, dimensão, alvo, severidade, ação sugerida, evidência e métrica de origem.
+
+| Regra | Gatilho |
+| --- | --- |
+| Risco elevado | Score de risco a partir de 50 |
+| Violação elevada | Taxa a partir de 20%, com amostra mínima |
+| Concentração de volume | Maior volume por dimensão acima do limite |
+| Compliance anual baixo | Compliance calculado abaixo de 90% |
+| Crescimento previsto | D+7 pelo menos 10% acima dos sete dias recentes |
+
+As recomendações apoiam a priorização e não executam ações automáticas.
 
 ## Arquitetura incremental
 
-```mermaid
+~~~mermaid
 flowchart TD
-    A["Lotes CSV na Landing"] --> B["Bronze incremental"]
+    A["CSV na Landing"] --> B["Bronze incremental"]
     B --> C["Silver: merge e Data Quality"]
-    C --> D["Gold: snapshots analíticos"]
-    C --> E["Quarentena"]
-    B --> F["Controles e auditoria"]
-    C --> F
-    D --> F
-```
-
-O fluxo incremental simula a chegada mensal de novos arquivos e processa apenas batches ainda não aplicados.
-
-### Landing
-
-- Recebe arquivos CSV incrementais.
-- Cada arquivo representa um lote independente.
-- Os lotes podem ser adicionados sem reconstruir a carga histórica completa.
+    C --> D["Gold: snapshot completo"]
+    C --> Q["Quarentena"]
+    B --> R["Controles por lote"]
+    C --> R
+    D --> R
+    R --> U["Auditoria da execução"]
+~~~
 
 ### Bronze incremental
 
 - Calcula o hash SHA-256 de cada arquivo.
-- Utiliza o hash para gerar um `batch_id` determinístico.
-- Registra arquivo, hash, quantidade e status do processamento.
+- Gera um batch_id determinístico.
+- Registra arquivo, hash, quantidade e status.
 - Ignora arquivos já processados com sucesso.
-- Mantém os batches em diretórios Parquet independentes.
+- Mantém os lotes Bronze em diretórios Parquet independentes.
 
 ### Silver incremental
 
-- Aplica as mesmas transformações e regras da Silver completa.
-- Combina os novos dados com o estado Silver existente.
-- Deduplica registros pela identificação do incidente.
-- Mantém a versão mais recente de cada incidente.
+- Reutiliza as transformações da Silver completa.
+- Combina novos lotes com o estado existente.
+- Deduplica pelo identificador do incidente e mantém a versão mais recente.
 - Separa registros válidos e inválidos.
-- Preserva os registros anteriores da quarentena.
-- Substitui os diretórios de saída utilizando staging e backup.
+- Preserva a quarentena existente.
+- Substitui as saídas com staging e backup.
 
 ### Gold incremental
 
-- Processa somente quando existem batches Silver pendentes.
-- Recalcula snapshots analíticos a partir do estado Silver atual.
-- Gera resumos mensais, por prioridade, por equipe e para o dashboard.
-- Registra quais batches já foram refletidos na Gold.
+- Executa apenas quando existem lotes Silver pendentes.
+- Recalcula os snapshots a partir do estado Silver atual.
+- Produz as mesmas famílias de indicadores operacionais da Gold completa.
+- Registra os batches já refletidos na camada.
 
-### Idempotência e controles
+### Controles e idempotência
 
-Os controles locais ficam em `data/control/`:
+Os controles locais ficam em data/control:
 
 | Controle | Finalidade |
 | --- | --- |
-| `processed_batches.json` | Batches processados na Bronze |
-| `silver_batches.json` | Batches incorporados à Silver |
-| `gold_batches.json` | Batches refletidos nos snapshots Gold |
-| `pipeline_runs.json` | Histórico e resultado das execuções do runner |
+| processed_batches.json | Lotes processados na Bronze |
+| silver_batches.json | Lotes incorporados à Silver |
+| gold_batches.json | Lotes refletidos nos snapshots Gold |
+| pipeline_runs.json | Histórico das execuções do runner |
 
-Uma reexecução sem novos arquivos não duplica registros nem reprocessa batches concluídos.
+Uma reexecução sem novos arquivos não duplica registros nem reaplica lotes concluídos.
 
 ### Auditoria
 
-Cada execução do pipeline incremental registra:
+Cada execução incremental registra identificador, início, término, duração, status, resultado por etapa, possível falha e snapshot dos controles Bronze, Silver, Gold e quarentena.
 
-- identificador único da execução;
-- horário de início e término;
-- duração total e por etapa;
-- status `SUCCESS`, `FAILED` ou `INTERRUPTED`;
-- etapa em que ocorreu uma possível falha;
-- exit code e mensagem de erro;
-- totais observados nos controles Bronze, Silver e Gold;
-- quantidade atual de registros em quarentena.
+## Data Quality e quarentena
+
+A Silver verifica:
+
+- presença do identificador do incidente;
+- faixa válida de prioridade;
+- presença da equipe responsável;
+- timestamps de abertura e encerramento;
+- duração nula ou negativa;
+- encerramento anterior à abertura.
+
+Registros inválidos do fluxo incremental são preservados em data/quarantine/incidents com os motivos encontrados em dq_issues.
+
+## Contrato de dados do dashboard
+
+O dashboard não lê Parquet, o Excel bruto ou regras PySpark. A integração ocorre por JSONs gerados automaticamente em docs/data.
+
+### Arquivos preservados para compatibilidade
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| dashboard_summary.json | Visão geral usada pelo dashboard atual |
+| monthly_kpis.json | Série mensal |
+| priority_summary.json | Resumo por prioridade |
+| team_summary.json | Resumo por equipe |
+
+### Contratos operacionais versão 1.0
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| filter_options.json | Anos, meses, prioridades, produtos, categorias e equipes |
+| daily_trends.json | Indicadores diários multidimensionais |
+| risk_summary.json | Metodologia e ranking de risco |
+| forecast_summary.json | Histórico, escopo e previsão D+1/D+7 |
+| recommendations.json | Recomendações com evidências |
+
+Os novos contratos contêm schema_version, generated_at em UTC, mock: false, datas ISO 8601 e valores JSON válidos sem NaN ou Infinity.
+
+A especificação completa está em [docs/dashboard-data-contract.md](docs/dashboard-data-contract.md). Os exemplos para o front-end permanecem em docs/data/samples com mock: true.
+
+A exportação operacional está pronta para consumo. A evolução visual pode ocorrer em paralelo, sem reproduzir regras de negócio em JavaScript.
 
 ## Dashboard
 
-O projeto inclui um dashboard web estático para visualização dos indicadores gerados pelo pipeline completo.
+O dashboard estático foi desenvolvido com HTML, CSS, JavaScript e Chart.js e está publicado gratuitamente no GitHub Pages.
 
-O dashboard consome somente dados agregados da camada Gold exportados para JSON, sem expor o dataset bruto.
+A versão atual apresenta total de incidentes, KPI, violações, compliance, evolução mensal, prioridades, volume por equipe e filtros. Os novos JSONs permitem acrescentar tendências, risco, previsão e recomendações sem alterar a camada de processamento.
 
-### Indicadores
+### Executar localmente
 
-- Total de incidentes.
-- Incidentes considerados no KPI.
-- Violações de KPI.
-- Percentual de compliance.
-- Evolução mensal de incidentes.
-- Distribuição por prioridade.
-- Volume por equipe.
+~~~bash
+python -m http.server 8000 --directory docs
+~~~
 
-### Filtros interativos
+Acesse http://localhost:8000 e encerre com Ctrl + C.
 
-Os indicadores e gráficos podem ser filtrados simultaneamente por:
+## Resultados de referência
 
-- ano;
-- mês;
-- prioridade;
-- equipe.
-
-O dashboard foi desenvolvido com HTML, CSS, JavaScript e Chart.js e está publicado gratuitamente no GitHub Pages.
-
-## Resultados da carga completa
+### Carga completa
 
 | Métrica | Resultado |
 | --- | ---: |
-| Registros extraídos | 122.543 |
-| Registros Bronze | 122.543 |
-| Registros Silver | 122.543 |
-| Duplicidades encontradas | 0 |
-| Registros estruturalmente inválidos | 0 |
+| Registros processados | 122.543 |
 | Agregações mensais | 36 |
 | Prioridades | 5 |
 | Equipes | 17 |
-| Registros agregados para o dashboard | 683 |
-| Incidentes considerados no KPI | 25.600 |
-| Violações de KPI | 248 |
-| Compliance geral | 99,03% |
-| Testes automatizados | 10 passed |
+| Agregações do dashboard | 683 |
+| Tendências diárias | 21.064 |
+| Itens no ranking de risco | 216 |
+| Dias previstos | 7 |
+| Recomendações operacionais | 18 |
+| Testes automatizados | 42 passed |
 
-Na execução local de referência, o pipeline completo até a camada Gold terminou em aproximadamente **128 segundos**. Esse tempo depende dos recursos disponíveis no computador e no Docker.
+Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
-## Validação incremental de referência
+### Validação incremental
+
+No snapshot mais recente utilizado durante o desenvolvimento:
 
 | Métrica | Resultado |
 | --- | ---: |
-| Batches processados | 5 |
-| Registros recebidos na Bronze | 36 |
-| Registros válidos na Silver | 34 |
+| Registros válidos na Silver incremental | 55 |
 | Registros em quarentena | 1 |
-| Duplicidades removidas | 1 |
-| Registros no snapshot Gold | 34 |
-| Reexecução sem novos dados | Nenhum batch reprocessado |
-
-O conjunto de validação inclui duas versões do mesmo incidente e um registro propositalmente inválido, comprovando a deduplicação e o direcionamento para quarentena.
+| Recomendações no snapshot incremental | 21 |
+| Reexecução sem novos lotes | Nenhum batch reprocessado |
 
 ## Tecnologias
 
-- Apache Spark 4.1.2
-- PySpark
-- Python
-- OpenJDK 21
+- Apache Spark 4.1.2 e PySpark
+- Python e OpenJDK 21
 - Apache Parquet
-- Docker
-- Docker Compose
-- Pytest
-- OpenPyXL
-- HTML5
-- CSS3
-- JavaScript
-- Chart.js
-- Git e GitHub
-- GitHub Actions
-- GitHub Pages
+- Docker e Docker Compose
+- Pytest e OpenPyXL
+- HTML5, CSS3, JavaScript e Chart.js
+- Git, GitHub, GitHub Actions e GitHub Pages
 
-## Estrutura do projeto
+## Estrutura principal
 
-```text
+~~~text
 pyspark-it-incident-etl/
-|-- .github/
-|   `-- workflows/
-|       `-- ci.yml
+|-- .github/workflows/
+|   `-- ci.yml
 |-- data/
-|   |-- raw/                  # origem e batches locais
-|   |-- landing/              # entrada dos lotes incrementais
-|   |-- control/              # controles e auditoria locais
-|   |-- bronze/               # Parquet Bronze
-|   |-- silver/               # Parquet Silver
-|   |-- gold/                 # Parquet Gold
-|   |-- quarantine/           # registros inválidos
-|   `-- sample/               # fixture incremental versionada
+|   |-- raw/
+|   |-- landing/
+|   |-- control/
+|   |-- bronze/
+|   |-- silver/
+|   |-- gold/
+|   |-- quarantine/
+|   `-- sample/
 |-- src/
 |   |-- extract_xlsx.py
 |   |-- bronze.py
 |   |-- silver.py
+|   |-- kpi_rules.py
 |   |-- gold.py
+|   |-- operational_gold.py
+|   |-- risk_gold.py
+|   |-- forecast_gold.py
+|   |-- recommendation_gold.py
 |   |-- export_dashboard.py
 |   |-- pipeline.py
 |   |-- create_incremental_batches.py
@@ -249,273 +363,206 @@ pyspark-it-incident-etl/
 |-- tests/
 |   |-- conftest.py
 |   |-- test_silver.py
+|   |-- test_kpi_rules.py
+|   |-- test_operational_gold.py
+|   |-- test_risk_gold.py
+|   |-- test_forecast_gold.py
+|   |-- test_recommendation_gold.py
+|   |-- test_dashboard_export.py
 |   `-- test_pipeline_audit.py
 |-- docs/
+|   |-- dashboard-data-contract.md
+|   |-- kpi-business-rules.md
 |   |-- index.html
 |   |-- css/
-|   |   `-- style.css
 |   |-- js/
-|   |   `-- app.js
 |   `-- data/
-|       |-- dashboard_summary.json
-|       |-- monthly_kpis.json
-|       |-- priority_summary.json
-|       `-- team_summary.json
-|-- .gitignore
 |-- Dockerfile
 |-- docker-compose.yml
-|-- README.md
-`-- requirements.txt
-```
+|-- requirements.txt
+`-- README.md
+~~~
 
-Os diretórios de dados processados e os arquivos de controle permanecem fora do versionamento.
+Os dados brutos, controles e saídas Parquet permanecem fora do versionamento. Apenas amostras e JSONs agregados destinados ao GitHub Pages são publicados.
 
 ## Pré-requisitos
 
-É necessário ter apenas:
+- Git;
+- Docker Desktop;
+- Docker Compose.
 
-- Git
-- Docker Desktop
-- Docker Compose
+Java, Spark e PySpark não precisam ser instalados no Windows. O container fornece o ambiente completo.
 
-Java, Spark e PySpark não precisam ser instalados diretamente no Windows. O ambiente de processamento é fornecido pelo container Docker.
+## Preparar o dataset
 
-## Dataset
+Coloque LW-DATASET.xlsx em:
 
-O dataset completo não é versionado no repositório.
-
-Para executar a carga completa, coloque o arquivo `LW-DATASET.xlsx` em:
-
-```text
+~~~text
 data/raw/LW-DATASET.xlsx
-```
+~~~
 
-O pipeline utiliza a aba `Dataset Geral`.
+O pipeline utiliza a aba Dataset Geral.
 
 ## Construir o ambiente
 
-Na raiz do projeto:
-
-```bash
+~~~bash
 docker compose build
-```
+~~~
 
 ## Executar a carga completa
 
-```bash
+~~~bash
 docker compose run --rm spark python3 src/pipeline.py
-```
+~~~
 
-Esse comando executa:
-
-```text
+~~~text
 Extract -> Bronze -> Silver -> Gold -> Dashboard
-```
+~~~
 
-A última etapa exporta as agregações analíticas para os arquivos JSON consumidos pelo dashboard.
+### Retomar por etapa
 
-As etapas utilizam escrita com `mode("overwrite")`, permitindo reexecuções sem acumular os resultados anteriores.
-
-### Retomar a carga completa por etapa
-
-```bash
-# Continuar da Bronze
+~~~bash
+# Bronze até Dashboard
 docker compose run --rm spark python3 src/pipeline.py --from-stage bronze
 
-# Continuar da Silver
+# Silver até Dashboard
 docker compose run --rm spark python3 src/pipeline.py --from-stage silver
 
-# Executar Gold e atualizar os dados do dashboard
+# Gold e exportação JSON
 docker compose run --rm spark python3 src/pipeline.py --from-stage gold
 
-# Executar somente a exportação do dashboard
+# Somente exportação JSON
 docker compose run --rm spark python3 src/pipeline.py --from-stage dashboard
-```
+~~~
 
 ## Executar o pipeline incremental
 
-### 1. Gerar os lotes de demonstração
-
-Depois de gerar `data/raw/incidents.csv` pela extração da carga completa:
-
-```bash
+~~~bash
+# Gerar lotes mensais após a extração
 docker compose run --rm spark python3 src/create_incremental_batches.py
-```
 
-Os arquivos mensais serão criados em `data/raw/batches/`.
-
-### 2. Adicionar um lote à Landing
-
-Exemplo:
-
-```bash
+# Adicionar um lote
 cp data/raw/batches/incidents_2023_01.csv data/landing/
-```
 
-### 3. Executar Bronze, Silver e Gold incrementais
-
-```bash
+# Executar Bronze, Silver e Gold incrementais
 docker compose run --rm spark python3 src/incremental_pipeline.py
-```
+~~~
 
-### Retomar o pipeline incremental por etapa
+### Retomar por etapa
 
-```bash
-# Continuar da Silver
+~~~bash
 docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage silver
-
-# Executar somente a Gold incremental
 docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage gold
-```
-
-O runner grava o resultado de todas as execuções em `data/control/pipeline_runs.json`.
+~~~
 
 ### Conferir a última auditoria
 
-```bash
+~~~bash
 docker compose run --rm spark python3 -c \
 'import json; data=json.load(open("data/control/pipeline_runs.json", encoding="utf-8")); print(json.dumps(data["runs"][-1], indent=2, ensure_ascii=False))'
-```
+~~~
 
-## Como interromper
+## Executar camadas no Git Bash
 
-Durante uma execução, pressione:
-
-```text
-Ctrl + C
-```
-
-O container temporário é executado com `--rm` e removido após o encerramento.
-
-Se algum serviço tiver sido iniciado com `docker compose up`, utilize:
-
-```bash
-docker compose down
-```
-
-Os códigos e dados locais permanecem no diretório do projeto.
-
-## Executar o dashboard localmente
-
-Após gerar os dados:
-
-```bash
-python -m http.server 8000 --directory docs
-```
-
-Acesse:
-
-```text
-http://localhost:8000
-```
-
-Para encerrar o servidor, pressione `Ctrl + C`.
-
-## Executar uma camada completa individualmente
-
-```bash
-# Bronze
+~~~bash
 MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/bronze.py
-
-# Silver
 MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/silver.py
-
-# Gold
 MSYS_NO_PATHCONV=1 docker compose run --rm spark /opt/spark/bin/spark-submit --master "local[4]" src/gold.py
-```
+~~~
 
-`MSYS_NO_PATHCONV=1` é utilizado por compatibilidade com Git Bash no Windows ao passar caminhos Linux para o container.
+MSYS_NO_PATHCONV=1 evita a conversão automática de caminhos Linux pelo Git Bash.
 
 ## Testes automatizados
 
-Execute:
-
-```bash
+~~~bash
 docker compose run --rm spark python3 -m pytest -q
-```
+~~~
 
 Resultado atual:
 
-```text
-.......... [100%]
-10 passed
-```
+~~~text
+.......................................... [100%]
+42 passed
+~~~
 
-Os testes verificam:
-
-- limpeza e tipagem;
-- conversão dos indicadores de KPI;
-- registros válidos e inválidos nas regras de Data Quality;
-- tratamento de `N/A` nos indicadores;
-- deduplicação com `Window`;
-- leitura e consolidação dos controles incrementais;
-- cálculo do snapshot de auditoria;
-- criação e preservação do histórico de execuções.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, controles incrementais e auditoria.
 
 ## Integração contínua
 
-O projeto utiliza GitHub Actions para validar automaticamente cada Pull Request direcionado à branch `main`.
+O GitHub Actions executa em pushes para main, Pull Requests direcionados à main e acionamentos manuais.
 
-O workflow:
+O CI:
 
-- utiliza `actions/checkout@v5`;
-- constrói a imagem Docker do Apache Spark;
-- executa os 10 testes com Pytest;
-- possui permissão somente de leitura no repositório;
-- cancela execuções anteriores quando uma nova versão do mesmo PR é enviada.
+- utiliza actions/checkout@v5;
+- constrói a imagem Docker;
+- executa os 42 testes;
+- desabilita o cache do Pytest;
+- possui permissão somente de leitura;
+- cancela execuções anteriores do mesmo contexto;
+- aplica timeout de 20 minutos.
 
-O workflow também pode ser iniciado manualmente pela aba **Actions** do GitHub.
+## Como interromper
 
-## Data Quality
+Durante uma execução, pressione Ctrl + C. Containers iniciados com docker compose run --rm são removidos após o encerramento.
 
-A Silver valida aspectos estruturais como:
+Para serviços iniciados com docker compose up:
 
-- identificador do incidente;
-- faixa válida de prioridade;
-- presença da equipe responsável;
-- timestamps de abertura e encerramento;
-- duração nula ou negativa;
-- encerramento anterior à abertura.
+~~~bash
+docker compose down
+~~~
 
-Registros inválidos do fluxo incremental são preservados em `data/quarantine/incidents` junto com os motivos encontrados em `dq_issues`.
+## Decisões técnicas
 
-Os campos de negócio `Entrou para KPI?` e `KPI Violado?` são mantidos como fonte de negócio na Gold. As regras documentadas de duração podem ser utilizadas para auditorias adicionais sem sobrescrever automaticamente os indicadores fornecidos pela origem.
+| Decisão | Motivo |
+| --- | --- |
+| Docker para Spark e Java | Execução reproduzível sem instalar Java no Windows |
+| Parquet entre as camadas | Tipagem, compressão e leitura eficiente |
+| Schema explícito | Evitar inferência inconsistente |
+| Regras calculadas separadas da origem | Preservar auditabilidade |
+| Hash SHA-256 por lote | Garantir idempotência |
+| JSON agregado no GitHub Pages | Publicação gratuita sem expor dados brutos |
+| Baseline explicável | Manter a previsão transparente |
+| Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
+
+## Limitações conhecidas
+
+- O dataset é acadêmico e não representa um ambiente produtivo em tempo real.
+- Os controles JSON não implementam locking distribuído.
+- A carga incremental usa snapshots Parquet, não um formato transacional.
+- A previsão é uma baseline, não um modelo treinado e validado.
+- As recomendações são regras de apoio à decisão.
+- daily_trends.json pode ser particionado ou reduzido em uma evolução.
+- A interface visual ainda precisa incorporar todos os novos contratos.
 
 ## Conceitos demonstrados
 
-- ETL em camadas Raw, Bronze, Silver e Gold;
-- schema explícito;
-- Apache Parquet e particionamento;
-- transformações com `withColumn` e `when`;
-- tratamento de nulos e conversão de tipos;
-- expressões regulares e funções de data;
-- `Window` e `row_number`;
-- deduplicação e Data Quality;
-- `groupBy`, `agg` e agregações condicionais;
-- percentil aproximado (P95);
-- carga incremental por batches;
-- idempotência por hash SHA-256;
-- merge de estado incremental;
-- quarentena de registros inválidos;
-- controles por camada;
-- auditoria de execuções;
-- criação de Data Mart para consumo analítico;
-- exportação de agregações para JSON;
-- dashboard interativo com JavaScript e Chart.js;
-- testes automatizados com Pytest;
-- integração contínua com GitHub Actions;
-- execução reproduzível com Docker;
-- reexecução e retomada por etapa.
+- ETL em arquitetura medalhão;
+- schema explícito e PySpark DataFrame API;
+- Parquet, particionamento e funções Window;
+- Data Quality, quarentena e deduplicação;
+- agregações condicionais e percentil P95;
+- carga incremental, idempotência e merge de estado;
+- controles por camada e auditoria;
+- regras de negócio versionadas;
+- data marts operacionais;
+- ranking e previsão explicáveis;
+- recomendações baseadas em regras;
+- contrato de dados e serialização JSON;
+- testes automatizados, CI/CD e GitHub Pages.
 
 ## Possíveis evoluções
 
-- Adicionar testes específicos para Bronze e Gold.
-- Publicar métricas de cobertura de testes.
-- Criar auditoria específica das regras documentadas de KPI/SLA.
-- Integrar o pipeline a um orquestrador como Apache Airflow.
-- Evoluir o armazenamento para Apache Iceberg ou Delta Lake.
-- Publicar imagens Docker versionadas no GitHub Container Registry.
+- Integrar os novos contratos à interface do dashboard.
+- Reduzir o tamanho de daily_trends.json com recortes ou partições.
+- Adicionar relatório de cobertura de testes.
+- Validar os contratos com JSON Schema.
+- Orquestrar o pipeline com Apache Airflow.
+- Evoluir o armazenamento para Iceberg ou Delta Lake.
+- Publicar a imagem no GitHub Container Registry.
+- Substituir controles locais por uma camada transacional.
 
 ## Contexto acadêmico
 
-Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir um pipeline local de Engenharia de Dados voltado ao portfólio técnico. O dataset completo, os arquivos de controle e as saídas intermediárias permanecem fora do versionamento. O dashboard utiliza somente dados analíticos agregados gerados pelo pipeline.
+Este projeto reutiliza o contexto acadêmico do Enterprise Challenge da FIAP para construir uma solução local de Engenharia de Dados voltada ao portfólio técnico.
+
+O dataset completo, os controles e as saídas intermediárias permanecem fora do versionamento. O GitHub Pages publica somente dados analíticos agregados.
