@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-12T11:27:12Z",
+  "mock": false,
+  "method": "weighted_explainable_baseline",
+  "method_version": "1.0",
+  "scope": {
+    "description": "Incidentes válidos P1, P2 e P3 consolidados",
+    "priority_codes": [
+      1,
+      2,
+      3
+    ],
+    "filters_applied": []
+  },
+  "forecast_d1": 368,
+  "forecast_d7": 2911,
+  "risk_range": 156,
+  "history": [
+    {
+      "date": "2025-12-04",
+      "actual_incidents": 233
+    },
+    {
+      "date": "2025-12-05",
+      "actual_incidents": 299
+    },
+    {
+      "date": "2025-12-06",
+      "actual_incidents": 152
+    },
+    {
+      "date": "2025-12-07",
+      "actual_incidents": 165
+    },
+    {
+      "date": "2025-12-08",
+      "actual_incidents": 244
+    },
+    {
+      "date": "2025-12-09",
+      "actual_incidents": 301
+    },
+    {
+      "date": "2025-12-10",
+      "actual_incidents": 251
+    },
+    {
+      "date": "2025-12-11",
+      "actual_incidents": 162
+    },
+    {
+      "date": "2025-12-12",
+      "actual_incidents": 186
+    },
+    {
+      "date": "2025-12-13",
+      "actual_incidents": 265
+    },
+    {
+      "date": "2025-12-14",
+      "actual_incidents": 227
+    },
+    {
+      "date": "2025-12-15",
+      "actual_incidents": 453
+    },
+    {
+      "date": "2025-12-16",
+      "actual_incidents": 410
+    },
+    {
+      "date": "2025-12-17",
+      "actual_incidents": 289
+    },
+    {
+      "date": "2025-12-18",
+      "actual_incidents": 401
+    },
+    {
+      "date": "2025-12-19",
+      "actual_incidents": 392
+    },
+    {
+      "date": "2025-12-20",
+      "actual_incidents": 403
+    },
+    {
+      "date": "2025-12-21",
+      "actual_incidents": 466
+    },
+    {
+      "date": "2025-12-22",
+      "actual_incidents": 805
+    },
+    {
+      "date": "2025-12-23",
+      "actual_incidents": 648
+    },
+    {
+      "date": "2025-12-24",
+      "actual_incidents": 551
+    },
+    {
+      "date": "2025-12-25",
+      "actual_incidents": 399
+    },
+    {
+      "date": "2025-12-26",
+      "actual_incidents": 454
+    },
+    {
+      "date": "2025-12-27",
+      "actual_incidents": 555
+    },
+    {
+      "date": "2025-12-28",
+      "actual_incidents": 437
+    },
+    {
+      "date": "2025-12-29",
+      "actual_incidents": 572
+    },
+    {
+      "date": "2025-12-30",
+      "actual_incidents": 497
+    },
+    {
+      "date": "2025-12-31",
+      "actual_incidents": 387
+    }
+  ],
+  "forecast": [
+    {
+      "date": "2026-01-01",
+      "predicted_incidents": 368,
+      "lower_bound": 212,
+      "upper_bound": 524
+    },
+    {
+      "date": "2026-01-02",
+      "predicted_incidents": 388,
+      "lower_bound": 232,
+      "upper_bound": 544
+    },
+    {
+      "date": "2026-01-03",
+      "predicted_incidents": 395,
+      "lower_bound": 239,
+      "upper_bound": 551
+    },
+    {
+      "date": "2026-01-04",
+      "predicted_incidents": 383,
+      "lower_bound": 227,
+      "upper_bound": 539
+    },
+    {
+      "date": "2026-01-05",
+      "predicted_incidents": 500,
+      "lower_bound": 344,
+      "upper_bound": 656
+    },
+    {
+      "date": "2026-01-06",
+      "predicted_incidents": 467,
+      "lower_bound": 311,
+      "upper_bound": 623
+    },
+    {
+      "date": "2026-01-07",
+      "predicted_incidents": 410,
+      "lower_bound": 254,
+      "upper_bound": 566
+    }
+  ]
+}

@@ -16,7 +16,7 @@
     "kpi_incidents": 5159,
     "kpi_violations": 42,
     "avg_duration_seconds": 3278.71,
-    "p95_duration_seconds": 8852,
+    "p95_duration_seconds": 8841,
     "kpi_compliance_pct": 99.19
   },
   {

@@ -1,0 +1,2177 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-12T11:27:12Z",
+  "mock": false,
+  "methodology": {
+    "name": "weighted_operational_risk",
+    "version": "1.0",
+    "score_scale": "0-100",
+    "weights": {
+      "volume": 0.45,
+      "kpi_violation_rate": 0.35,
+      "avg_duration": 0.2
+    }
+  },
+  "items": [
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team06",
+      "is_unknown": false,
+      "volume": 50,
+      "kpi_violation_rate_pct": 87.5,
+      "avg_duration_seconds": 31695371.42,
+      "risk_score": 55.02,
+      "rank": 1
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team14",
+      "is_unknown": false,
+      "volume": 92775,
+      "kpi_violation_rate_pct": 9.22,
+      "avg_duration_seconds": 67113.07,
+      "risk_score": 48.73,
+      "rank": 2
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team16",
+      "is_unknown": false,
+      "volume": 279,
+      "kpi_violation_rate_pct": 42.11,
+      "avg_duration_seconds": 552720.7,
+      "risk_score": 17.33,
+      "rank": 3
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team05",
+      "is_unknown": false,
+      "volume": 9276,
+      "kpi_violation_rate_pct": 27.39,
+      "avg_duration_seconds": 1543912.98,
+      "risk_score": 16.43,
+      "rank": 4
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team11",
+      "is_unknown": false,
+      "volume": 9790,
+      "kpi_violation_rate_pct": 12.81,
+      "avg_duration_seconds": 308423.26,
+      "risk_score": 10.07,
+      "rank": 5
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team09",
+      "is_unknown": false,
+      "volume": 3425,
+      "kpi_violation_rate_pct": 17.48,
+      "avg_duration_seconds": 1128384.12,
+      "risk_score": 9.37,
+      "rank": 6
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team01",
+      "is_unknown": false,
+      "volume": 306,
+      "kpi_violation_rate_pct": 20.0,
+      "avg_duration_seconds": 39126.84,
+      "risk_score": 8.17,
+      "rank": 7
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team07",
+      "is_unknown": false,
+      "volume": 197,
+      "kpi_violation_rate_pct": 18.89,
+      "avg_duration_seconds": 268014.34,
+      "risk_score": 7.82,
+      "rank": 8
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team12",
+      "is_unknown": false,
+      "volume": 2173,
+      "kpi_violation_rate_pct": 16.75,
+      "avg_duration_seconds": 48698.22,
+      "risk_score": 7.78,
+      "rank": 9
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team08",
+      "is_unknown": false,
+      "volume": 130,
+      "kpi_violation_rate_pct": 15.87,
+      "avg_duration_seconds": 869283.94,
+      "risk_score": 6.96,
+      "rank": 10
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team17",
+      "is_unknown": false,
+      "volume": 743,
+      "kpi_violation_rate_pct": 14.89,
+      "avg_duration_seconds": 671638.3,
+      "risk_score": 6.74,
+      "rank": 11
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team03",
+      "is_unknown": false,
+      "volume": 1306,
+      "kpi_violation_rate_pct": 12.65,
+      "avg_duration_seconds": 134998.44,
+      "risk_score": 5.78,
+      "rank": 12
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team02",
+      "is_unknown": false,
+      "volume": 579,
+      "kpi_violation_rate_pct": 3.59,
+      "avg_duration_seconds": 461490.48,
+      "risk_score": 2.01,
+      "rank": 13
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team10",
+      "is_unknown": false,
+      "volume": 1172,
+      "kpi_violation_rate_pct": 1.89,
+      "avg_duration_seconds": 42185.02,
+      "risk_score": 1.35,
+      "rank": 14
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team15",
+      "is_unknown": false,
+      "volume": 219,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 42121.37,
+      "risk_score": 0.13,
+      "rank": 15
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team04",
+      "is_unknown": false,
+      "volume": 122,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 16244.89,
+      "risk_score": 0.07,
+      "rank": 16
+    },
+    {
+      "dimension_type": "assigned_group",
+      "dimension_value": "Team13",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 1200.0,
+      "risk_score": 0.0,
+      "rank": 17
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat59",
+      "is_unknown": false,
+      "volume": 11,
+      "kpi_violation_rate_pct": 100.0,
+      "avg_duration_seconds": 47933937.64,
+      "risk_score": 55.07,
+      "rank": 1
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat71",
+      "is_unknown": false,
+      "volume": 7335,
+      "kpi_violation_rate_pct": 6.78,
+      "avg_duration_seconds": 260943.67,
+      "risk_score": 47.48,
+      "rank": 2
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat41",
+      "is_unknown": false,
+      "volume": 535,
+      "kpi_violation_rate_pct": 95.29,
+      "avg_duration_seconds": 5233588.33,
+      "risk_score": 38.82,
+      "rank": 3
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat12",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 100.0,
+      "avg_duration_seconds": 591362.0,
+      "risk_score": 35.25,
+      "rank": 4
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat44",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 100.0,
+      "avg_duration_seconds": 80854.5,
+      "risk_score": 35.05,
+      "rank": 5
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat76",
+      "is_unknown": false,
+      "volume": 4304,
+      "kpi_violation_rate_pct": 16.67,
+      "avg_duration_seconds": 1404371.26,
+      "risk_score": 32.83,
+      "rank": 6
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat85",
+      "is_unknown": false,
+      "volume": 4319,
+      "kpi_violation_rate_pct": 15.63,
+      "avg_duration_seconds": 695287.51,
+      "risk_score": 32.26,
+      "rank": 7
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat45",
+      "is_unknown": false,
+      "volume": 533,
+      "kpi_violation_rate_pct": 69.77,
+      "avg_duration_seconds": 8190977.93,
+      "risk_score": 31.11,
+      "rank": 8
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat38",
+      "is_unknown": false,
+      "volume": 98,
+      "kpi_violation_rate_pct": 75.79,
+      "avg_duration_seconds": 4296546.88,
+      "risk_score": 28.92,
+      "rank": 9
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat104",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 26822003.0,
+      "risk_score": 28.71,
+      "rank": 10
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat77",
+      "is_unknown": false,
+      "volume": 4425,
+      "kpi_violation_rate_pct": 3.55,
+      "avg_duration_seconds": 218904.5,
+      "risk_score": 28.48,
+      "rank": 11
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat64",
+      "is_unknown": false,
+      "volume": 24,
+      "kpi_violation_rate_pct": 75.0,
+      "avg_duration_seconds": 1841359.54,
+      "risk_score": 27.17,
+      "rank": 12
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat22",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 66.67,
+      "avg_duration_seconds": 2050672.33,
+      "risk_score": 24.21,
+      "rank": 13
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat3",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 66.67,
+      "avg_duration_seconds": 983981.67,
+      "risk_score": 23.76,
+      "rank": 14
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat5",
+      "is_unknown": false,
+      "volume": 19,
+      "kpi_violation_rate_pct": 66.67,
+      "avg_duration_seconds": 247602.37,
+      "risk_score": 23.56,
+      "rank": 15
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat68",
+      "is_unknown": false,
+      "volume": 5,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 13091172.0,
+      "risk_score": 22.99,
+      "rank": 16
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat73",
+      "is_unknown": false,
+      "volume": 3388,
+      "kpi_violation_rate_pct": 4.05,
+      "avg_duration_seconds": 113593.73,
+      "risk_score": 22.25,
+      "rank": 17
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat24",
+      "is_unknown": false,
+      "volume": 433,
+      "kpi_violation_rate_pct": 50.27,
+      "avg_duration_seconds": 2557551.97,
+      "risk_score": 21.32,
+      "rank": 18
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat39",
+      "is_unknown": false,
+      "volume": 11,
+      "kpi_violation_rate_pct": 54.55,
+      "avg_duration_seconds": 2830802.55,
+      "risk_score": 20.34,
+      "rank": 19
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat83",
+      "is_unknown": false,
+      "volume": 231,
+      "kpi_violation_rate_pct": 52.14,
+      "avg_duration_seconds": 758884.88,
+      "risk_score": 19.98,
+      "rank": 20
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat114",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 3764417.0,
+      "risk_score": 19.08,
+      "rank": 21
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat101",
+      "is_unknown": false,
+      "volume": 17,
+      "kpi_violation_rate_pct": 52.94,
+      "avg_duration_seconds": 513987.24,
+      "risk_score": 18.85,
+      "rank": 22
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat89",
+      "is_unknown": false,
+      "volume": 14,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 1475355.71,
+      "risk_score": 18.2,
+      "rank": 23
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat124",
+      "is_unknown": false,
+      "volume": 31,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 583343.13,
+      "risk_score": 17.93,
+      "rank": 24
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat27",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 565336.67,
+      "risk_score": 17.75,
+      "rank": 25
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat31",
+      "is_unknown": false,
+      "volume": 2483,
+      "kpi_violation_rate_pct": 6.96,
+      "avg_duration_seconds": 123929.96,
+      "risk_score": 17.72,
+      "rank": 26
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat49",
+      "is_unknown": false,
+      "volume": 20,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 35588.85,
+      "risk_score": 17.64,
+      "rank": 27
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat118",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 50.0,
+      "avg_duration_seconds": 30255.33,
+      "risk_score": 17.53,
+      "rank": 28
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat86",
+      "is_unknown": false,
+      "volume": 11,
+      "kpi_violation_rate_pct": 42.86,
+      "avg_duration_seconds": 3287988.18,
+      "risk_score": 16.44,
+      "rank": 29
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat91",
+      "is_unknown": false,
+      "volume": 1246,
+      "kpi_violation_rate_pct": 20.12,
+      "avg_duration_seconds": 1687732.07,
+      "risk_score": 15.39,
+      "rank": 30
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat92",
+      "is_unknown": false,
+      "volume": 62,
+      "kpi_violation_rate_pct": 41.07,
+      "avg_duration_seconds": 1024242.4,
+      "risk_score": 15.18,
+      "rank": 31
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat43",
+      "is_unknown": false,
+      "volume": 156,
+      "kpi_violation_rate_pct": 35.29,
+      "avg_duration_seconds": 1840460.02,
+      "risk_score": 14.08,
+      "rank": 32
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat29",
+      "is_unknown": false,
+      "volume": 650,
+      "kpi_violation_rate_pct": 26.64,
+      "avg_duration_seconds": 624781.42,
+      "risk_score": 13.57,
+      "rank": 33
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat135",
+      "is_unknown": false,
+      "volume": 254,
+      "kpi_violation_rate_pct": 32.52,
+      "avg_duration_seconds": 304176.16,
+      "risk_score": 13.07,
+      "rank": 34
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat137",
+      "is_unknown": false,
+      "volume": 1716,
+      "kpi_violation_rate_pct": 6.98,
+      "avg_duration_seconds": 120018.82,
+      "risk_score": 13.02,
+      "rank": 35
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat42",
+      "is_unknown": false,
+      "volume": 142,
+      "kpi_violation_rate_pct": 31.3,
+      "avg_duration_seconds": 2761548.11,
+      "risk_score": 12.98,
+      "rank": 36
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat127",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 33.33,
+      "avg_duration_seconds": 1887104.75,
+      "risk_score": 12.48,
+      "rank": 37
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat50",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 33.33,
+      "avg_duration_seconds": 355774.0,
+      "risk_score": 11.83,
+      "rank": 38
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat100",
+      "is_unknown": false,
+      "volume": 6,
+      "kpi_violation_rate_pct": 33.33,
+      "avg_duration_seconds": 229688.33,
+      "risk_score": 11.8,
+      "rank": 39
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat112",
+      "is_unknown": false,
+      "volume": 320,
+      "kpi_violation_rate_pct": 25.29,
+      "avg_duration_seconds": 1937124.27,
+      "risk_score": 11.62,
+      "rank": 40
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat115",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 25883243.0,
+      "risk_score": 10.8,
+      "rank": 41
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat111",
+      "is_unknown": false,
+      "volume": 123,
+      "kpi_violation_rate_pct": 25.83,
+      "avg_duration_seconds": 1250711.95,
+      "risk_score": 10.32,
+      "rank": 42
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat48",
+      "is_unknown": false,
+      "volume": 144,
+      "kpi_violation_rate_pct": 25.86,
+      "avg_duration_seconds": 606563.94,
+      "risk_score": 10.19,
+      "rank": 43
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat103",
+      "is_unknown": false,
+      "volume": 699,
+      "kpi_violation_rate_pct": 15.92,
+      "avg_duration_seconds": 251789.8,
+      "risk_score": 9.97,
+      "rank": 44
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat117",
+      "is_unknown": false,
+      "volume": 65,
+      "kpi_violation_rate_pct": 25.0,
+      "avg_duration_seconds": 1249452.77,
+      "risk_score": 9.67,
+      "rank": 45
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat6",
+      "is_unknown": false,
+      "volume": 32,
+      "kpi_violation_rate_pct": 26.32,
+      "avg_duration_seconds": 108285.09,
+      "risk_score": 9.46,
+      "rank": 46
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat46",
+      "is_unknown": false,
+      "volume": 255,
+      "kpi_violation_rate_pct": 20.55,
+      "avg_duration_seconds": 356273.13,
+      "risk_score": 8.91,
+      "rank": 47
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat105",
+      "is_unknown": false,
+      "volume": 13,
+      "kpi_violation_rate_pct": 25.0,
+      "avg_duration_seconds": 148229.31,
+      "risk_score": 8.89,
+      "rank": 48
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat126",
+      "is_unknown": false,
+      "volume": 144,
+      "kpi_violation_rate_pct": 21.82,
+      "avg_duration_seconds": 793042.18,
+      "risk_score": 8.85,
+      "rank": 49
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat93",
+      "is_unknown": false,
+      "volume": 133,
+      "kpi_violation_rate_pct": 20.95,
+      "avg_duration_seconds": 374281.53,
+      "risk_score": 8.3,
+      "rank": 50
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat36",
+      "is_unknown": false,
+      "volume": 1086,
+      "kpi_violation_rate_pct": 2.88,
+      "avg_duration_seconds": 43890.5,
+      "risk_score": 7.69,
+      "rank": 51
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat138",
+      "is_unknown": false,
+      "volume": 543,
+      "kpi_violation_rate_pct": 12.0,
+      "avg_duration_seconds": 150913.96,
+      "risk_score": 7.59,
+      "rank": 52
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat34",
+      "is_unknown": false,
+      "volume": 5,
+      "kpi_violation_rate_pct": 20.0,
+      "avg_duration_seconds": 122194.0,
+      "risk_score": 7.08,
+      "rank": 53
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat113",
+      "is_unknown": false,
+      "volume": 6,
+      "kpi_violation_rate_pct": 16.67,
+      "avg_duration_seconds": 2265569.17,
+      "risk_score": 6.82,
+      "rank": 54
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat18",
+      "is_unknown": false,
+      "volume": 932,
+      "kpi_violation_rate_pct": 2.86,
+      "avg_duration_seconds": 70957.7,
+      "risk_score": 6.75,
+      "rank": 55
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat102",
+      "is_unknown": false,
+      "volume": 436,
+      "kpi_violation_rate_pct": 10.76,
+      "avg_duration_seconds": 76825.39,
+      "risk_score": 6.47,
+      "rank": 56
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat107",
+      "is_unknown": false,
+      "volume": 62,
+      "kpi_violation_rate_pct": 16.36,
+      "avg_duration_seconds": 49520.66,
+      "risk_score": 6.13,
+      "rank": 57
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat141",
+      "is_unknown": false,
+      "volume": 933,
+      "kpi_violation_rate_pct": 0.97,
+      "avg_duration_seconds": 13162.56,
+      "risk_score": 6.07,
+      "rank": 58
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat128",
+      "is_unknown": false,
+      "volume": 15,
+      "kpi_violation_rate_pct": 16.67,
+      "avg_duration_seconds": 328352.33,
+      "risk_score": 6.06,
+      "rank": 59
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat139",
+      "is_unknown": false,
+      "volume": 76,
+      "kpi_violation_rate_pct": 14.58,
+      "avg_duration_seconds": 991790.33,
+      "risk_score": 5.98,
+      "rank": 60
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat47",
+      "is_unknown": false,
+      "volume": 8,
+      "kpi_violation_rate_pct": 16.67,
+      "avg_duration_seconds": 37098.63,
+      "risk_score": 5.9,
+      "rank": 61
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat74",
+      "is_unknown": false,
+      "volume": 403,
+      "kpi_violation_rate_pct": 9.5,
+      "avg_duration_seconds": 172954.23,
+      "risk_score": 5.87,
+      "rank": 62
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat63",
+      "is_unknown": false,
+      "volume": 278,
+      "kpi_violation_rate_pct": 11.68,
+      "avg_duration_seconds": 146069.31,
+      "risk_score": 5.85,
+      "rank": 63
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat108",
+      "is_unknown": false,
+      "volume": 17,
+      "kpi_violation_rate_pct": 15.38,
+      "avg_duration_seconds": 762028.0,
+      "risk_score": 5.8,
+      "rank": 64
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat88",
+      "is_unknown": false,
+      "volume": 77,
+      "kpi_violation_rate_pct": 14.47,
+      "avg_duration_seconds": 563642.68,
+      "risk_score": 5.77,
+      "rank": 65
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat84",
+      "is_unknown": false,
+      "volume": 24,
+      "kpi_violation_rate_pct": 15.79,
+      "avg_duration_seconds": 92659.54,
+      "risk_score": 5.71,
+      "rank": 66
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat87",
+      "is_unknown": false,
+      "volume": 314,
+      "kpi_violation_rate_pct": 10.37,
+      "avg_duration_seconds": 173827.18,
+      "risk_score": 5.63,
+      "rank": 67
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat97",
+      "is_unknown": false,
+      "volume": 556,
+      "kpi_violation_rate_pct": 5.41,
+      "avg_duration_seconds": 319340.8,
+      "risk_score": 5.44,
+      "rank": 68
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat94",
+      "is_unknown": false,
+      "volume": 347,
+      "kpi_violation_rate_pct": 8.33,
+      "avg_duration_seconds": 439110.35,
+      "risk_score": 5.23,
+      "rank": 69
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat35",
+      "is_unknown": false,
+      "volume": 364,
+      "kpi_violation_rate_pct": 8.07,
+      "avg_duration_seconds": 147681.23,
+      "risk_score": 5.12,
+      "rank": 70
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat125",
+      "is_unknown": false,
+      "volume": 15,
+      "kpi_violation_rate_pct": 14.29,
+      "avg_duration_seconds": 49163.73,
+      "risk_score": 5.11,
+      "rank": 71
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat28",
+      "is_unknown": false,
+      "volume": 15,
+      "kpi_violation_rate_pct": 12.5,
+      "avg_duration_seconds": 1211459.4,
+      "risk_score": 4.97,
+      "rank": 72
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat129",
+      "is_unknown": false,
+      "volume": 16,
+      "kpi_violation_rate_pct": 13.33,
+      "avg_duration_seconds": 95986.63,
+      "risk_score": 4.8,
+      "rank": 73
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat123",
+      "is_unknown": false,
+      "volume": 476,
+      "kpi_violation_rate_pct": 5.24,
+      "avg_duration_seconds": 67381.83,
+      "risk_score": 4.78,
+      "rank": 74
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat96",
+      "is_unknown": false,
+      "volume": 575,
+      "kpi_violation_rate_pct": 3.29,
+      "avg_duration_seconds": 50380.57,
+      "risk_score": 4.7,
+      "rank": 75
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat57",
+      "is_unknown": false,
+      "volume": 187,
+      "kpi_violation_rate_pct": 9.68,
+      "avg_duration_seconds": 41703.37,
+      "risk_score": 4.55,
+      "rank": 76
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat58",
+      "is_unknown": false,
+      "volume": 9,
+      "kpi_violation_rate_pct": 12.5,
+      "avg_duration_seconds": 20983.67,
+      "risk_score": 4.44,
+      "rank": 77
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat95",
+      "is_unknown": false,
+      "volume": 304,
+      "kpi_violation_rate_pct": 6.87,
+      "avg_duration_seconds": 43186.81,
+      "risk_score": 4.29,
+      "rank": 78
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat62",
+      "is_unknown": false,
+      "volume": 10,
+      "kpi_violation_rate_pct": 10.0,
+      "avg_duration_seconds": 95545.3,
+      "risk_score": 3.6,
+      "rank": 79
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat19",
+      "is_unknown": false,
+      "volume": 159,
+      "kpi_violation_rate_pct": 7.38,
+      "avg_duration_seconds": 71228.09,
+      "risk_score": 3.59,
+      "rank": 80
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat110",
+      "is_unknown": false,
+      "volume": 47,
+      "kpi_violation_rate_pct": 8.89,
+      "avg_duration_seconds": 298026.57,
+      "risk_score": 3.52,
+      "rank": 81
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat20",
+      "is_unknown": false,
+      "volume": 150,
+      "kpi_violation_rate_pct": 3.57,
+      "avg_duration_seconds": 2831172.32,
+      "risk_score": 3.35,
+      "rank": 82
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat98",
+      "is_unknown": false,
+      "volume": 144,
+      "kpi_violation_rate_pct": 6.25,
+      "avg_duration_seconds": 463051.32,
+      "risk_score": 3.26,
+      "rank": 83
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat15",
+      "is_unknown": false,
+      "volume": 261,
+      "kpi_violation_rate_pct": 3.95,
+      "avg_duration_seconds": 395357.51,
+      "risk_score": 3.15,
+      "rank": 84
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat40",
+      "is_unknown": false,
+      "volume": 348,
+      "kpi_violation_rate_pct": 2.32,
+      "avg_duration_seconds": 30515.27,
+      "risk_score": 2.96,
+      "rank": 85
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat131",
+      "is_unknown": false,
+      "volume": 61,
+      "kpi_violation_rate_pct": 4.35,
+      "avg_duration_seconds": 2195656.57,
+      "risk_score": 2.81,
+      "rank": 86
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat11",
+      "is_unknown": false,
+      "volume": 17,
+      "kpi_violation_rate_pct": 7.69,
+      "avg_duration_seconds": 38028.06,
+      "risk_score": 2.81,
+      "rank": 87
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat21",
+      "is_unknown": false,
+      "volume": 54,
+      "kpi_violation_rate_pct": 6.45,
+      "avg_duration_seconds": 166347.37,
+      "risk_score": 2.66,
+      "rank": 88
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat121",
+      "is_unknown": false,
+      "volume": 40,
+      "kpi_violation_rate_pct": 5.0,
+      "avg_duration_seconds": 1467301.13,
+      "risk_score": 2.61,
+      "rank": 89
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat72",
+      "is_unknown": false,
+      "volume": 101,
+      "kpi_violation_rate_pct": 5.13,
+      "avg_duration_seconds": 8908.15,
+      "risk_score": 2.42,
+      "rank": 90
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat99",
+      "is_unknown": false,
+      "volume": 190,
+      "kpi_violation_rate_pct": 1.48,
+      "avg_duration_seconds": 13437.54,
+      "risk_score": 1.69,
+      "rank": 91
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat32",
+      "is_unknown": false,
+      "volume": 41,
+      "kpi_violation_rate_pct": 2.86,
+      "avg_duration_seconds": 20152.24,
+      "risk_score": 1.26,
+      "rank": 92
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat17",
+      "is_unknown": false,
+      "volume": 144,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 16884.85,
+      "risk_score": 0.89,
+      "rank": 93
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat75",
+      "is_unknown": false,
+      "volume": 142,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 19890.7,
+      "risk_score": 0.88,
+      "rank": 94
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat60",
+      "is_unknown": false,
+      "volume": 110,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 87944.75,
+      "risk_score": 0.71,
+      "rank": 95
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat37",
+      "is_unknown": false,
+      "volume": 76,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 21019.53,
+      "risk_score": 0.48,
+      "rank": 96
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat9",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 848809.0,
+      "risk_score": 0.38,
+      "rank": 97
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat106",
+      "is_unknown": false,
+      "volume": 29,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 316147.52,
+      "risk_score": 0.31,
+      "rank": 98
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat25",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 506048.5,
+      "risk_score": 0.23,
+      "rank": 99
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat7",
+      "is_unknown": false,
+      "volume": 20,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 4880.15,
+      "risk_score": 0.12,
+      "rank": 100
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat10",
+      "is_unknown": false,
+      "volume": 16,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 4351.25,
+      "risk_score": 0.1,
+      "rank": 101
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat116",
+      "is_unknown": false,
+      "volume": 15,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 20621.8,
+      "risk_score": 0.1,
+      "rank": 102
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat2",
+      "is_unknown": false,
+      "volume": 14,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 4447.71,
+      "risk_score": 0.09,
+      "rank": 103
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat65",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 173289.25,
+      "risk_score": 0.09,
+      "rank": 104
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat56",
+      "is_unknown": false,
+      "volume": 13,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 3406.08,
+      "risk_score": 0.08,
+      "rank": 105
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat51",
+      "is_unknown": false,
+      "volume": 9,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 31288.56,
+      "risk_score": 0.07,
+      "rank": 106
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat54",
+      "is_unknown": false,
+      "volume": 7,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 39947.29,
+      "risk_score": 0.06,
+      "rank": 107
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat133",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 76117.0,
+      "risk_score": 0.05,
+      "rank": 108
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat14",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 105832.0,
+      "risk_score": 0.05,
+      "rank": 109
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat30",
+      "is_unknown": false,
+      "volume": 6,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 5767.33,
+      "risk_score": 0.04,
+      "rank": 110
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat79",
+      "is_unknown": false,
+      "volume": 6,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 9319.17,
+      "risk_score": 0.04,
+      "rank": 111
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat109",
+      "is_unknown": false,
+      "volume": 5,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 21965.8,
+      "risk_score": 0.04,
+      "rank": 112
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat67",
+      "is_unknown": false,
+      "volume": 5,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 10798.6,
+      "risk_score": 0.04,
+      "rank": 113
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat136",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 62026.5,
+      "risk_score": 0.04,
+      "rank": 114
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat69",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 64391.5,
+      "risk_score": 0.04,
+      "rank": 115
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat82",
+      "is_unknown": false,
+      "volume": 5,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 4810.0,
+      "risk_score": 0.03,
+      "rank": 116
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat119",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 15477.75,
+      "risk_score": 0.03,
+      "rank": 117
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat8",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 13368.75,
+      "risk_score": 0.03,
+      "rank": 118
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat140",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 37318.67,
+      "risk_score": 0.03,
+      "rank": 119
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat16",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 20608.0,
+      "risk_score": 0.03,
+      "rank": 120
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat78",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 46387.0,
+      "risk_score": 0.03,
+      "rank": 121
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat66",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 3414.25,
+      "risk_score": 0.02,
+      "rank": 122
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat4",
+      "is_unknown": false,
+      "volume": 3,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 6109.0,
+      "risk_score": 0.02,
+      "rank": 123
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat122",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 7796.5,
+      "risk_score": 0.02,
+      "rank": 124
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat134",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 5531.0,
+      "risk_score": 0.02,
+      "rank": 125
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat23",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 3415.5,
+      "risk_score": 0.02,
+      "rank": 126
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat26",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 18529.5,
+      "risk_score": 0.02,
+      "rank": 127
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat33",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 9021.0,
+      "risk_score": 0.02,
+      "rank": 128
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat55",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 1013.5,
+      "risk_score": 0.01,
+      "rank": 129
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat1",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 7356.0,
+      "risk_score": 0.01,
+      "rank": 130
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat120",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 2867.0,
+      "risk_score": 0.01,
+      "rank": 131
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat13",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 3204.0,
+      "risk_score": 0.01,
+      "rank": 132
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat130",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 7654.0,
+      "risk_score": 0.01,
+      "rank": 133
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat132",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 8824.0,
+      "risk_score": 0.01,
+      "rank": 134
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat52",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 6864.0,
+      "risk_score": 0.01,
+      "rank": 135
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat53",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 6040.0,
+      "risk_score": 0.01,
+      "rank": 136
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat61",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 2481.0,
+      "risk_score": 0.01,
+      "rank": 137
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat70",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 3182.0,
+      "risk_score": 0.01,
+      "rank": 138
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat80",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 19100.0,
+      "risk_score": 0.01,
+      "rank": 139
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat81",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 6087.0,
+      "risk_score": 0.01,
+      "rank": 140
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": "cat90",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 9842.0,
+      "risk_score": 0.01,
+      "rank": 141
+    },
+    {
+      "dimension_type": "category",
+      "dimension_value": null,
+      "is_unknown": true,
+      "volume": 77721,
+      "kpi_violation_rate_pct": 5.0,
+      "avg_duration_seconds": 16286.32,
+      "risk_score": 46.76,
+      "rank": null
+    },
+    {
+      "dimension_type": "priority",
+      "dimension_value": "Média",
+      "is_unknown": false,
+      "volume": 41732,
+      "kpi_violation_rate_pct": 17.63,
+      "avg_duration_seconds": 585852.92,
+      "risk_score": 52.19,
+      "rank": 1
+    },
+    {
+      "dimension_type": "priority",
+      "dimension_value": "Baixa",
+      "is_unknown": false,
+      "volume": 64828,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 88367.57,
+      "risk_score": 47.57,
+      "rank": 2
+    },
+    {
+      "dimension_type": "priority",
+      "dimension_value": "Crítica",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 100.0,
+      "avg_duration_seconds": 31742.0,
+      "risk_score": 35.92,
+      "rank": 3
+    },
+    {
+      "dimension_type": "priority",
+      "dimension_value": "Muito Baixa",
+      "is_unknown": false,
+      "volume": 333,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 687230.64,
+      "risk_score": 20.23,
+      "rank": 4
+    },
+    {
+      "dimension_type": "priority",
+      "dimension_value": "Alta",
+      "is_unknown": false,
+      "volume": 15649,
+      "kpi_violation_rate_pct": 1.15,
+      "avg_duration_seconds": 3278.71,
+      "risk_score": 11.36,
+      "rank": 5
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lhco",
+      "is_unknown": false,
+      "volume": 12835,
+      "kpi_violation_rate_pct": 6.54,
+      "avg_duration_seconds": 165501.39,
+      "risk_score": 48.52,
+      "rank": 1
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lemn",
+      "is_unknown": false,
+      "volume": 639,
+      "kpi_violation_rate_pct": 54.3,
+      "avg_duration_seconds": 7092322.06,
+      "risk_score": 47.58,
+      "rank": 2
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lcsi",
+      "is_unknown": false,
+      "volume": 1085,
+      "kpi_violation_rate_pct": 55.92,
+      "avg_duration_seconds": 3011041.89,
+      "risk_score": 38.39,
+      "rank": 3
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lbho",
+      "is_unknown": false,
+      "volume": 16,
+      "kpi_violation_rate_pct": 44.44,
+      "avg_duration_seconds": 5617106.25,
+      "risk_score": 36.63,
+      "rank": 4
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lemg",
+      "is_unknown": false,
+      "volume": 643,
+      "kpi_violation_rate_pct": 54.0,
+      "avg_duration_seconds": 3238174.97,
+      "risk_score": 36.59,
+      "rank": 5
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khst",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 75.0,
+      "avg_duration_seconds": 451042.0,
+      "risk_score": 36.29,
+      "rank": 6
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lsin",
+      "is_unknown": false,
+      "volume": 7342,
+      "kpi_violation_rate_pct": 14.45,
+      "avg_duration_seconds": 487984.63,
+      "risk_score": 33.86,
+      "rank": 7
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lcem",
+      "is_unknown": false,
+      "volume": 5878,
+      "kpi_violation_rate_pct": 17.75,
+      "avg_duration_seconds": 1462225.67,
+      "risk_score": 33.02,
+      "rank": 8
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lema",
+      "is_unknown": false,
+      "volume": 21,
+      "kpi_violation_rate_pct": 40.0,
+      "avg_duration_seconds": 361031.43,
+      "risk_score": 19.76,
+      "rank": 9
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lhvp",
+      "is_unknown": false,
+      "volume": 4454,
+      "kpi_violation_rate_pct": 6.03,
+      "avg_duration_seconds": 120352.47,
+      "risk_score": 18.77,
+      "rank": 10
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lrdo",
+      "is_unknown": false,
+      "volume": 573,
+      "kpi_violation_rate_pct": 24.29,
+      "avg_duration_seconds": 1484316.36,
+      "risk_score": 17.53,
+      "rank": 11
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lsaa",
+      "is_unknown": false,
+      "volume": 919,
+      "kpi_violation_rate_pct": 26.4,
+      "avg_duration_seconds": 685811.19,
+      "risk_score": 17.48,
+      "rank": 12
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "ninf",
+      "is_unknown": false,
+      "volume": 19,
+      "kpi_violation_rate_pct": 33.33,
+      "avg_duration_seconds": 198753.05,
+      "risk_score": 16.18,
+      "rank": 13
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lrev",
+      "is_unknown": false,
+      "volume": 3784,
+      "kpi_violation_rate_pct": 4.75,
+      "avg_duration_seconds": 144143.69,
+      "risk_score": 15.89,
+      "rank": 14
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lwpl",
+      "is_unknown": false,
+      "volume": 204,
+      "kpi_violation_rate_pct": 26.63,
+      "avg_duration_seconds": 555553.85,
+      "risk_score": 14.71,
+      "rank": 15
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khga",
+      "is_unknown": false,
+      "volume": 7,
+      "kpi_violation_rate_pct": 28.57,
+      "avg_duration_seconds": 362379.14,
+      "risk_score": 14.38,
+      "rank": 16
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lrel",
+      "is_unknown": false,
+      "volume": 905,
+      "kpi_violation_rate_pct": 19.69,
+      "avg_duration_seconds": 581404.58,
+      "risk_score": 14.0,
+      "rank": 17
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lgoa",
+      "is_unknown": false,
+      "volume": 404,
+      "kpi_violation_rate_pct": 21.95,
+      "avg_duration_seconds": 203132.7,
+      "risk_score": 12.23,
+      "rank": 18
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "ets",
+      "is_unknown": false,
+      "volume": 13,
+      "kpi_violation_rate_pct": 25.0,
+      "avg_duration_seconds": 148229.31,
+      "risk_score": 12.13,
+      "rank": 19
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lsmt",
+      "is_unknown": false,
+      "volume": 335,
+      "kpi_violation_rate_pct": 19.42,
+      "avg_duration_seconds": 330571.52,
+      "risk_score": 11.17,
+      "rank": 20
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khvp",
+      "is_unknown": false,
+      "volume": 126,
+      "kpi_violation_rate_pct": 22.32,
+      "avg_duration_seconds": 81326.94,
+      "risk_score": 11.09,
+      "rank": 21
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lexc",
+      "is_unknown": false,
+      "volume": 196,
+      "kpi_violation_rate_pct": 17.54,
+      "avg_duration_seconds": 537100.7,
+      "risk_score": 10.39,
+      "rank": 22
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lcsp",
+      "is_unknown": false,
+      "volume": 326,
+      "kpi_violation_rate_pct": 10.32,
+      "avg_duration_seconds": 1185849.32,
+      "risk_score": 9.3,
+      "rank": 23
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lvps",
+      "is_unknown": false,
+      "volume": 703,
+      "kpi_violation_rate_pct": 12.29,
+      "avg_duration_seconds": 387318.7,
+      "risk_score": 9.29,
+      "rank": 24
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lclo",
+      "is_unknown": false,
+      "volume": 272,
+      "kpi_violation_rate_pct": 13.67,
+      "avg_duration_seconds": 208794.54,
+      "risk_score": 7.92,
+      "rank": 25
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lcho",
+      "is_unknown": false,
+      "volume": 1368,
+      "kpi_violation_rate_pct": 5.27,
+      "avg_duration_seconds": 158296.81,
+      "risk_score": 7.7,
+      "rank": 26
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lssl",
+      "is_unknown": false,
+      "volume": 512,
+      "kpi_violation_rate_pct": 10.11,
+      "avg_duration_seconds": 75794.5,
+      "risk_score": 6.73,
+      "rank": 27
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lsd0",
+      "is_unknown": false,
+      "volume": 166,
+      "kpi_violation_rate_pct": 6.54,
+      "avg_duration_seconds": 715090.35,
+      "risk_score": 5.65,
+      "rank": 28
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lvmr",
+      "is_unknown": false,
+      "volume": 12,
+      "kpi_violation_rate_pct": 11.11,
+      "avg_duration_seconds": 26097.58,
+      "risk_score": 5.3,
+      "rank": 29
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "minf",
+      "is_unknown": false,
+      "volume": 14,
+      "kpi_violation_rate_pct": 7.69,
+      "avg_duration_seconds": 249858.36,
+      "risk_score": 4.34,
+      "rank": 30
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lsto",
+      "is_unknown": false,
+      "volume": 125,
+      "kpi_violation_rate_pct": 5.26,
+      "avg_duration_seconds": 116793.66,
+      "risk_score": 3.22,
+      "rank": 31
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lsg2",
+      "is_unknown": false,
+      "volume": 282,
+      "kpi_violation_rate_pct": 1.96,
+      "avg_duration_seconds": 317143.11,
+      "risk_score": 2.8,
+      "rank": 32
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "larq",
+      "is_unknown": false,
+      "volume": 101,
+      "kpi_violation_rate_pct": 5.13,
+      "avg_duration_seconds": 8908.15,
+      "risk_score": 2.78,
+      "rank": 33
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lcle",
+      "is_unknown": false,
+      "volume": 72,
+      "kpi_violation_rate_pct": 4.23,
+      "avg_duration_seconds": 56879.58,
+      "risk_score": 2.39,
+      "rank": 34
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lmse",
+      "is_unknown": false,
+      "volume": 29,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 316147.52,
+      "risk_score": 1.0,
+      "rank": 35
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lvpk",
+      "is_unknown": false,
+      "volume": 165,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 18388.12,
+      "risk_score": 0.63,
+      "rank": 36
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khch",
+      "is_unknown": false,
+      "volume": 9,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 80097.33,
+      "risk_score": 0.26,
+      "rank": 37
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khhn",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 48893.0,
+      "risk_score": 0.14,
+      "rank": 38
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khep",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 43165.0,
+      "risk_score": 0.13,
+      "rank": 39
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khhc",
+      "is_unknown": false,
+      "volume": 19,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 11673.63,
+      "risk_score": 0.1,
+      "rank": 40
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khem",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 18529.5,
+      "risk_score": 0.06,
+      "rank": 41
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lcos",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 20653.0,
+      "risk_score": 0.06,
+      "rank": 42
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lost",
+      "is_unknown": false,
+      "volume": 6,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 9319.17,
+      "risk_score": 0.05,
+      "rank": 43
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khkm",
+      "is_unknown": false,
+      "volume": 6,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 5767.33,
+      "risk_score": 0.04,
+      "rank": 44
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khhj",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 11274.0,
+      "risk_score": 0.04,
+      "rank": 45
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "llwm",
+      "is_unknown": false,
+      "volume": 4,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 4726.0,
+      "risk_score": 0.03,
+      "rank": 46
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khsi",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 9021.0,
+      "risk_score": 0.03,
+      "rank": 47
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "ljel",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 6354.5,
+      "risk_score": 0.03,
+      "rank": 48
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "khafl",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": null,
+      "avg_duration_seconds": 3415.5,
+      "risk_score": 0.02,
+      "rank": 49
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "ncpu",
+      "is_unknown": false,
+      "volume": 2,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 5044.5,
+      "risk_score": 0.02,
+      "rank": 50
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": "lofc",
+      "is_unknown": false,
+      "volume": 1,
+      "kpi_violation_rate_pct": 0.0,
+      "avg_duration_seconds": 6087.0,
+      "risk_score": 0.02,
+      "rank": 51
+    },
+    {
+      "dimension_type": "product",
+      "dimension_value": null,
+      "is_unknown": true,
+      "volume": 77935,
+      "kpi_violation_rate_pct": 25.45,
+      "avg_duration_seconds": 18489.64,
+      "risk_score": 56.93,
+      "rank": null
+    }
+  ]
+}
