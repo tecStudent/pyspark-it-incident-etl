@@ -13,6 +13,11 @@ from src.gold import (
     create_team_summary,
     write_gold,
 )
+from src.operational_gold import (
+    create_annual_ola_summary,
+    create_daily_trends,
+    create_operational_kpi_summary,
+)
 
 
 SILVER_INPUT = Path(
@@ -41,6 +46,18 @@ TEAM_OUTPUT = (
 
 DASHBOARD_OUTPUT = (
     "data/gold/incremental/dashboard_summary"
+)
+
+DAILY_TRENDS_OUTPUT = (
+    "data/gold/incremental/daily_trends"
+)
+
+OPERATIONAL_KPI_OUTPUT = (
+    "data/gold/incremental/operational_kpi_summary"
+)
+
+ANNUAL_OLA_OUTPUT = (
+    "data/gold/incremental/annual_ola_summary"
 )
 
 
@@ -257,6 +274,20 @@ def main() -> None:
             )
         )
 
+        daily_trends_df = create_daily_trends(
+            silver_df
+        )
+
+        operational_kpi_df = (
+            create_operational_kpi_summary(
+                silver_df
+            )
+        )
+
+        annual_ola_df = create_annual_ola_summary(
+            silver_df
+        )
+
         write_gold(
             spark,
             monthly_df,
@@ -283,6 +314,27 @@ def main() -> None:
             dashboard_df,
             DASHBOARD_OUTPUT,
             "incremental_dashboard_summary",
+        )
+
+        write_gold(
+            spark,
+            daily_trends_df,
+            DAILY_TRENDS_OUTPUT,
+            "incremental_daily_trends",
+        )
+
+        write_gold(
+            spark,
+            operational_kpi_df,
+            OPERATIONAL_KPI_OUTPUT,
+            "incremental_operational_kpi_summary",
+        )
+
+        write_gold(
+            spark,
+            annual_ola_df,
+            ANNUAL_OLA_OUTPUT,
+            "incremental_annual_ola_summary",
         )
 
         register_gold_batches(

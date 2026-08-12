@@ -1,6 +1,12 @@
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 
+from src.operational_gold import (
+    create_annual_ola_summary,
+    create_daily_trends,
+    create_operational_kpi_summary,
+)
+
 
 INPUT_PATH = "data/silver/incidents"
 
@@ -8,6 +14,9 @@ MONTHLY_OUTPUT = "data/gold/monthly_kpis"
 PRIORITY_OUTPUT = "data/gold/priority_summary"
 TEAM_OUTPUT = "data/gold/team_summary"
 DASHBOARD_OUTPUT = "data/gold/dashboard_summary"
+DAILY_TRENDS_OUTPUT = "data/gold/daily_trends"
+OPERATIONAL_KPI_OUTPUT = "data/gold/operational_kpi_summary"
+ANNUAL_OLA_OUTPUT = "data/gold/annual_ola_summary"
 
 
 def create_spark_session() -> SparkSession:
@@ -211,6 +220,15 @@ def main() -> None:
         priority_df = create_priority_summary(silver_df)
         team_df = create_team_summary(silver_df)
         dashboard_df = create_dashboard_summary(silver_df)
+        daily_trends_df = create_daily_trends(silver_df)
+        operational_kpi_df = (
+            create_operational_kpi_summary(
+                silver_df
+            )
+        )
+        annual_ola_df = create_annual_ola_summary(
+            silver_df
+        )
 
         write_gold(
             spark,
@@ -237,6 +255,27 @@ def main() -> None:
             dashboard_df,
             DASHBOARD_OUTPUT,
             "dashboard_summary",
+        )
+
+        write_gold(
+            spark,
+            daily_trends_df,
+            DAILY_TRENDS_OUTPUT,
+            "daily_trends",
+        )
+
+        write_gold(
+            spark,
+            operational_kpi_df,
+            OPERATIONAL_KPI_OUTPUT,
+            "operational_kpi_summary",
+        )
+
+        write_gold(
+            spark,
+            annual_ola_df,
+            ANNUAL_OLA_OUTPUT,
+            "annual_ola_summary",
         )
 
         print("\nResumo mensal:")
@@ -266,6 +305,17 @@ def main() -> None:
                 F.desc("total_incidents")
             )
             .show(10, truncate=False)
+        )
+
+        print("\nResumo anual de OLA:")
+
+        (
+            annual_ola_df
+            .orderBy(
+                "opened_year",
+                "priority_code",
+            )
+            .show(truncate=False)
         )
 
     finally:
