@@ -6,6 +6,10 @@ from typing import Any
 
 from pyspark.sql import SparkSession
 
+from src.forecast_gold import (
+    create_forecast_history,
+    create_forecast_summary,
+)
 from src.gold import (
     create_dashboard_summary,
     create_monthly_kpis,
@@ -63,6 +67,14 @@ ANNUAL_OLA_OUTPUT = (
 
 RISK_OUTPUT = (
     "data/gold/incremental/risk_summary"
+)
+
+FORECAST_HISTORY_OUTPUT = (
+    "data/gold/incremental/forecast_history"
+)
+
+FORECAST_SUMMARY_OUTPUT = (
+    "data/gold/incremental/forecast_summary"
 )
 
 
@@ -295,6 +307,14 @@ def main() -> None:
 
         risk_df = create_risk_summary(silver_df)
 
+        forecast_history_df = create_forecast_history(
+            silver_df
+        )
+
+        forecast_summary_df = create_forecast_summary(
+            silver_df
+        )
+
         write_gold(
             spark,
             monthly_df,
@@ -349,6 +369,20 @@ def main() -> None:
             risk_df,
             RISK_OUTPUT,
             "incremental_risk_summary",
+        )
+
+        write_gold(
+            spark,
+            forecast_history_df,
+            FORECAST_HISTORY_OUTPUT,
+            "incremental_forecast_history",
+        )
+
+        write_gold(
+            spark,
+            forecast_summary_df,
+            FORECAST_SUMMARY_OUTPUT,
+            "incremental_forecast_summary",
         )
 
         register_gold_batches(
