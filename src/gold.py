@@ -1,6 +1,10 @@
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 
+from src.forecast_gold import (
+    create_forecast_history,
+    create_forecast_summary,
+)
 from src.operational_gold import (
     create_annual_ola_summary,
     create_daily_trends,
@@ -19,6 +23,8 @@ DAILY_TRENDS_OUTPUT = "data/gold/daily_trends"
 OPERATIONAL_KPI_OUTPUT = "data/gold/operational_kpi_summary"
 ANNUAL_OLA_OUTPUT = "data/gold/annual_ola_summary"
 RISK_OUTPUT = "data/gold/risk_summary"
+FORECAST_HISTORY_OUTPUT = "data/gold/forecast_history"
+FORECAST_SUMMARY_OUTPUT = "data/gold/forecast_summary"
 
 
 def create_spark_session() -> SparkSession:
@@ -232,6 +238,12 @@ def main() -> None:
             silver_df
         )
         risk_df = create_risk_summary(silver_df)
+        forecast_history_df = create_forecast_history(
+            silver_df
+        )
+        forecast_summary_df = create_forecast_summary(
+            silver_df
+        )
 
         write_gold(
             spark,
@@ -286,6 +298,20 @@ def main() -> None:
             risk_df,
             RISK_OUTPUT,
             "risk_summary",
+        )
+
+        write_gold(
+            spark,
+            forecast_history_df,
+            FORECAST_HISTORY_OUTPUT,
+            "forecast_history",
+        )
+
+        write_gold(
+            spark,
+            forecast_summary_df,
+            FORECAST_SUMMARY_OUTPUT,
+            "forecast_summary",
         )
 
         print("\nResumo mensal:")
@@ -347,6 +373,23 @@ def main() -> None:
                 "rank",
             )
             .show(12, truncate=False)
+        )
+
+        print("\nPrevisão explicável de volume:")
+
+        (
+            forecast_summary_df
+            .select(
+                "forecast_date",
+                "horizon_day",
+                "predicted_incidents",
+                "lower_bound",
+                "upper_bound",
+                "forecast_d1",
+                "forecast_d7",
+                "risk_range",
+            )
+            .show(7, truncate=False)
         )
 
     finally:
