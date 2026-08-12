@@ -8,6 +8,7 @@ from typing import Any
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 
+from src.kpi_rules import add_kpi_audit_columns
 from src.silver import (
     deduplicate,
     transform_records,
@@ -451,6 +452,10 @@ def main() -> None:
 
         else:
             combined_df = transformed_df
+
+        combined_df = add_kpi_audit_columns(
+            combined_df
+        )
 
         combined_count = (
             existing_silver_count

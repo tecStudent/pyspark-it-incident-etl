@@ -2,6 +2,8 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
 
+from src.kpi_rules import add_kpi_audit_columns
+
 
 INPUT_PATH = "data/bronze/incidents"
 OUTPUT_PATH = "data/silver/incidents"
@@ -231,6 +233,7 @@ def transform_records(
     silver_df = rename_columns(bronze_df)
     silver_df = clean_strings(silver_df)
     silver_df = transform_types(silver_df)
+    silver_df = add_kpi_audit_columns(silver_df)
     silver_df = add_data_quality(silver_df)
 
     return silver_df
@@ -289,6 +292,9 @@ def main() -> None:
             "duration_seconds",
             "entered_kpi",
             "kpi_violated",
+            "kpi_eligible_by_rule",
+            "kpi_violated_by_rule",
+            "kpi_rule_reason",
             "dq_status",
         ).show(10, truncate=False)
 
