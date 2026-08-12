@@ -10,6 +10,7 @@ from src.operational_gold import (
     create_daily_trends,
     create_operational_kpi_summary,
 )
+from src.recommendation_gold import create_recommendations
 from src.risk_gold import create_risk_summary
 
 
@@ -25,6 +26,7 @@ ANNUAL_OLA_OUTPUT = "data/gold/annual_ola_summary"
 RISK_OUTPUT = "data/gold/risk_summary"
 FORECAST_HISTORY_OUTPUT = "data/gold/forecast_history"
 FORECAST_SUMMARY_OUTPUT = "data/gold/forecast_summary"
+RECOMMENDATIONS_OUTPUT = "data/gold/recommendations"
 
 
 def create_spark_session() -> SparkSession:
@@ -244,6 +246,12 @@ def main() -> None:
         forecast_summary_df = create_forecast_summary(
             silver_df
         )
+        recommendations_df = create_recommendations(
+            risk_df,
+            annual_ola_df,
+            forecast_summary_df,
+            forecast_history_df,
+        )
 
         write_gold(
             spark,
@@ -312,6 +320,13 @@ def main() -> None:
             forecast_summary_df,
             FORECAST_SUMMARY_OUTPUT,
             "forecast_summary",
+        )
+
+        write_gold(
+            spark,
+            recommendations_df,
+            RECOMMENDATIONS_OUTPUT,
+            "recommendations",
         )
 
         print("\nResumo mensal:")
@@ -390,6 +405,23 @@ def main() -> None:
                 "risk_range",
             )
             .show(7, truncate=False)
+        )
+
+        print("\nRecomendações operacionais:")
+
+        (
+            recommendations_df
+            .select(
+                "recommendation_id",
+                "severity",
+                "rule_id",
+                "dimension_type",
+                "target",
+                "title",
+                "metric_value",
+                "metric_unit",
+            )
+            .show(20, truncate=False)
         )
 
     finally:

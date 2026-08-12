@@ -22,6 +22,7 @@ from src.operational_gold import (
     create_daily_trends,
     create_operational_kpi_summary,
 )
+from src.recommendation_gold import create_recommendations
 from src.risk_gold import create_risk_summary
 
 
@@ -75,6 +76,10 @@ FORECAST_HISTORY_OUTPUT = (
 
 FORECAST_SUMMARY_OUTPUT = (
     "data/gold/incremental/forecast_summary"
+)
+
+RECOMMENDATIONS_OUTPUT = (
+    "data/gold/incremental/recommendations"
 )
 
 
@@ -315,6 +320,13 @@ def main() -> None:
             silver_df
         )
 
+        recommendations_df = create_recommendations(
+            risk_df,
+            annual_ola_df,
+            forecast_summary_df,
+            forecast_history_df,
+        )
+
         write_gold(
             spark,
             monthly_df,
@@ -383,6 +395,13 @@ def main() -> None:
             forecast_summary_df,
             FORECAST_SUMMARY_OUTPUT,
             "incremental_forecast_summary",
+        )
+
+        write_gold(
+            spark,
+            recommendations_df,
+            RECOMMENDATIONS_OUTPUT,
+            "incremental_recommendations",
         )
 
         register_gold_batches(
