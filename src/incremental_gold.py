@@ -18,6 +18,7 @@ from src.operational_gold import (
     create_daily_trends,
     create_operational_kpi_summary,
 )
+from src.risk_gold import create_risk_summary
 
 
 SILVER_INPUT = Path(
@@ -58,6 +59,10 @@ OPERATIONAL_KPI_OUTPUT = (
 
 ANNUAL_OLA_OUTPUT = (
     "data/gold/incremental/annual_ola_summary"
+)
+
+RISK_OUTPUT = (
+    "data/gold/incremental/risk_summary"
 )
 
 
@@ -288,6 +293,8 @@ def main() -> None:
             silver_df
         )
 
+        risk_df = create_risk_summary(silver_df)
+
         write_gold(
             spark,
             monthly_df,
@@ -335,6 +342,13 @@ def main() -> None:
             annual_ola_df,
             ANNUAL_OLA_OUTPUT,
             "incremental_annual_ola_summary",
+        )
+
+        write_gold(
+            spark,
+            risk_df,
+            RISK_OUTPUT,
+            "incremental_risk_summary",
         )
 
         register_gold_batches(

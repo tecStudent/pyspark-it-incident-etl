@@ -6,6 +6,7 @@ from src.operational_gold import (
     create_daily_trends,
     create_operational_kpi_summary,
 )
+from src.risk_gold import create_risk_summary
 
 
 INPUT_PATH = "data/silver/incidents"
@@ -17,6 +18,7 @@ DASHBOARD_OUTPUT = "data/gold/dashboard_summary"
 DAILY_TRENDS_OUTPUT = "data/gold/daily_trends"
 OPERATIONAL_KPI_OUTPUT = "data/gold/operational_kpi_summary"
 ANNUAL_OLA_OUTPUT = "data/gold/annual_ola_summary"
+RISK_OUTPUT = "data/gold/risk_summary"
 
 
 def create_spark_session() -> SparkSession:
@@ -229,6 +231,7 @@ def main() -> None:
         annual_ola_df = create_annual_ola_summary(
             silver_df
         )
+        risk_df = create_risk_summary(silver_df)
 
         write_gold(
             spark,
@@ -278,6 +281,13 @@ def main() -> None:
             "annual_ola_summary",
         )
 
+        write_gold(
+            spark,
+            risk_df,
+            RISK_OUTPUT,
+            "risk_summary",
+        )
+
         print("\nResumo mensal:")
 
         (
@@ -316,6 +326,27 @@ def main() -> None:
                 "priority_code",
             )
             .show(truncate=False)
+        )
+
+        print("\nTop riscos operacionais:")
+
+        (
+            risk_df
+            .filter(F.col("rank") <= 3)
+            .select(
+                "dimension_type",
+                "dimension_value",
+                "volume",
+                "kpi_violation_rate_pct",
+                "avg_duration_seconds",
+                "risk_score",
+                "rank",
+            )
+            .orderBy(
+                "dimension_type",
+                "rank",
+            )
+            .show(12, truncate=False)
         )
 
     finally:
