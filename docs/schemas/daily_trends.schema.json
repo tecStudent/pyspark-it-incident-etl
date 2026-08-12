@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tecstudent.github.io/pyspark-it-incident-etl/schemas/daily_trends.schema.json",
+  "title": "Tendências diárias de incidentes",
+  "description": "Contrato das agregações diárias usadas em tendências e filtros operacionais.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "mock", "records"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "mock": {"type": "boolean"},
+    "records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/dailyRecord"}
+    }
+  },
+  "$defs": {
+    "nullableString": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "null"}
+      ]
+    },
+    "nullableNonNegativeNumber": {
+      "oneOf": [
+        {"type": "number", "minimum": 0},
+        {"type": "null"}
+      ]
+    },
+    "dailyRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "priority_code",
+        "priority_name",
+        "product",
+        "category",
+        "assigned_group",
+        "total_incidents",
+        "kpi_incidents",
+        "kpi_violations",
+        "avg_duration_seconds",
+        "p95_duration_seconds"
+      ],
+      "properties": {
+        "date": {"type": "string", "format": "date"},
+        "priority_code": {"type": "integer", "minimum": 1},
+        "priority_name": {"type": "string", "minLength": 1},
+        "product": {"$ref": "#/$defs/nullableString"},
+        "category": {"$ref": "#/$defs/nullableString"},
+        "assigned_group": {"$ref": "#/$defs/nullableString"},
+        "total_incidents": {"type": "integer", "minimum": 0},
+        "kpi_incidents": {"type": "integer", "minimum": 0},
+        "kpi_violations": {"type": "integer", "minimum": 0},
+        "avg_duration_seconds": {"$ref": "#/$defs/nullableNonNegativeNumber"},
+        "p95_duration_seconds": {"$ref": "#/$defs/nullableNonNegativeNumber"}
+      }
+    }
+  }
+}

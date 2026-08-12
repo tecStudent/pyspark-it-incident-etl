@@ -129,6 +129,35 @@ Cada recomendação precisa ser rastreável e conter:
 - evidência textual;
 - métrica, valor e unidade que originaram a recomendação.
 
+## JSON Schemas e validação automática
+
+Os cinco contratos da versão 1 possuem definições formais em JSON Schema Draft 2020-12:
+
+| Payload | Schema |
+| --- | --- |
+| `filter_options.json` | `docs/schemas/filter_options.schema.json` |
+| `daily_trends.json` | `docs/schemas/daily_trends.schema.json` |
+| `risk_summary.json` | `docs/schemas/risk_summary.schema.json` |
+| `forecast_summary.json` | `docs/schemas/forecast_summary.schema.json` |
+| `recommendations.json` | `docs/schemas/recommendations.schema.json` |
+
+Os schemas validam campos obrigatórios, tipos, datas e timestamps ISO 8601, valores nulos permitidos e a ausência de propriedades não documentadas.
+
+Para validar os arquivos reais:
+
+```bash
+docker compose run --rm spark python3 src/validate_dashboard_contracts.py
+```
+
+Para validar os exemplos usados pelo front-end:
+
+```bash
+docker compose run --rm spark python3 src/validate_dashboard_contracts.py \\
+  --data-dir docs/data/samples
+```
+
+A etapa `src/export_dashboard.py` executa essa validação depois de gerar os cinco arquivos. Uma quebra de contrato encerra a execução com erro antes da publicação. Os mesmos contratos também são verificados pelos testes automatizados no GitHub Actions.
+
 ## Critérios de aceite da integração
 
 1. Os cinco arquivos são gerados pelo pipeline sem edição manual.

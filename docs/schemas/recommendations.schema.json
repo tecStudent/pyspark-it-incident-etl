@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tecstudent.github.io/pyspark-it-incident-etl/schemas/recommendations.schema.json",
+  "title": "Recomendações operacionais",
+  "description": "Contrato das recomendações determinísticas e de suas evidências.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "mock", "rules_version", "items"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "mock": {"type": "boolean"},
+    "rules_version": {"type": "string", "minLength": 1},
+    "items": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/recommendationItem"}
+    }
+  },
+  "$defs": {
+    "recommendationItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recommendation_id",
+        "dimension_type",
+        "target",
+        "severity",
+        "title",
+        "recommendation",
+        "evidence",
+        "metric_name",
+        "metric_value",
+        "metric_unit"
+      ],
+      "properties": {
+        "recommendation_id": {"type": "string", "minLength": 1},
+        "dimension_type": {"type": "string", "minLength": 1},
+        "target": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "null"}
+          ]
+        },
+        "severity": {"enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"]},
+        "title": {"type": "string", "minLength": 1},
+        "recommendation": {"type": "string", "minLength": 1},
+        "evidence": {"type": "string", "minLength": 1},
+        "metric_name": {"type": "string", "minLength": 1},
+        "metric_value": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "null"}
+          ]
+        },
+        "metric_unit": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

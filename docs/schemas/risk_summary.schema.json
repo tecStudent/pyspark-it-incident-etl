@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tecstudent.github.io/pyspark-it-incident-etl/schemas/risk_summary.schema.json",
+  "title": "Ranking de risco operacional",
+  "description": "Contrato da metodologia e dos itens do ranking de risco operacional.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "mock", "methodology", "items"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "mock": {"type": "boolean"},
+    "methodology": {"$ref": "#/$defs/methodology"},
+    "items": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/riskItem"}
+    }
+  },
+  "$defs": {
+    "nullableNonNegativeNumber": {
+      "oneOf": [
+        {"type": "number", "minimum": 0},
+        {"type": "null"}
+      ]
+    },
+    "methodology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "score_scale", "weights"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "score_scale": {"const": "0-100"},
+        "weights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["volume", "kpi_violation_rate", "avg_duration"],
+          "properties": {
+            "volume": {"type": "number", "minimum": 0, "maximum": 1},
+            "kpi_violation_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "avg_duration": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        }
+      }
+    },
+    "riskItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimension_type",
+        "dimension_value",
+        "is_unknown",
+        "volume",
+        "kpi_violation_rate_pct",
+        "avg_duration_seconds",
+        "risk_score",
+        "rank"
+      ],
+      "properties": {
+        "dimension_type": {"type": "string", "minLength": 1},
+        "dimension_value": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "null"}
+          ]
+        },
+        "is_unknown": {"type": "boolean"},
+        "volume": {"type": "integer", "minimum": 0},
+        "kpi_violation_rate_pct": {"$ref": "#/$defs/nullableNonNegativeNumber"},
+        "avg_duration_seconds": {"$ref": "#/$defs/nullableNonNegativeNumber"},
+        "risk_score": {"type": "number", "minimum": 0, "maximum": 100},
+        "rank": {
+          "oneOf": [
+            {"type": "integer", "minimum": 1},
+            {"type": "null"}
+          ]
+        }
+      }
+    }
+  }
+}

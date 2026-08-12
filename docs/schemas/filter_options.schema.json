@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tecstudent.github.io/pyspark-it-incident-etl/schemas/filter_options.schema.json",
+  "title": "Opções de filtro do dashboard",
+  "description": "Contrato das dimensões disponíveis para os filtros do dashboard operacional.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "mock",
+    "years",
+    "months",
+    "priorities",
+    "products",
+    "categories",
+    "teams"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "mock": {"type": "boolean"},
+    "years": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 2000, "maximum": 2100}
+    },
+    "months": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["number", "name"],
+        "properties": {
+          "number": {"type": "integer", "minimum": 1, "maximum": 12},
+          "name": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "priorities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "name"],
+        "properties": {
+          "code": {"type": "integer", "minimum": 1},
+          "name": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "products": {"$ref": "#/$defs/stringOptions"},
+    "categories": {"$ref": "#/$defs/stringOptions"},
+    "teams": {"$ref": "#/$defs/stringOptions"}
+  },
+  "$defs": {
+    "stringOptions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}
