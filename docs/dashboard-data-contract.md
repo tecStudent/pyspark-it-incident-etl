@@ -28,6 +28,7 @@ O dashboard não deve ler arquivos Parquet, CSV bruto ou reproduzir regras de KP
 | `docs/data/forecast_summary.json` | Histórico e baseline de previsão D+1/D+7 |
 | `docs/data/risk_summary.json` | Rankings de risco operacional |
 | `docs/data/recommendations.json` | Recomendações determinísticas com evidências |
+| `docs/data/manifest.json` | Integridade, atualização e volume dos payloads publicados |
 
 Durante o desenvolvimento, os exemplos ficam em `docs/data/samples/`. Todo exemplo possui `"mock": true` e não deve ser apresentado como resultado real.
 
@@ -131,7 +132,7 @@ Cada recomendação precisa ser rastreável e conter:
 
 ## JSON Schemas e validação automática
 
-Os cinco contratos da versão 1 possuem definições formais em JSON Schema Draft 2020-12:
+Os cinco payloads operacionais e o manifesto de publicação possuem definições formais em JSON Schema Draft 2020-12:
 
 | Payload | Schema |
 | --- | --- |
@@ -140,6 +141,7 @@ Os cinco contratos da versão 1 possuem definições formais em JSON Schema Draf
 | `risk_summary.json` | `docs/schemas/risk_summary.schema.json` |
 | `forecast_summary.json` | `docs/schemas/forecast_summary.schema.json` |
 | `recommendations.json` | `docs/schemas/recommendations.schema.json` |
+| `manifest.json` | `docs/schemas/manifest.schema.json` |
 
 Os schemas validam campos obrigatórios, tipos, datas e timestamps ISO 8601, valores nulos permitidos e a ausência de propriedades não documentadas.
 
@@ -158,9 +160,37 @@ docker compose run --rm spark python3 src/validate_dashboard_contracts.py \\
 
 A etapa `src/export_dashboard.py` executa essa validação depois de gerar os cinco arquivos. Uma quebra de contrato encerra a execução com erro antes da publicação. Os mesmos contratos também são verificados pelos testes automatizados no GitHub Actions.
 
+## Manifesto de publicação
+
+O arquivo `docs/data/manifest.json` é gerado somente depois que os cinco payloads passam pelos seus contratos. Ele permite que o dashboard e processos de publicação verifiquem:
+
+- horário de geração do manifesto e de cada payload;
+- versão do contrato e origem real ou simulada;
+- status de validação;
+- quantidade de itens publicada;
+- tamanho do arquivo em bytes;
+- hash SHA-256 para verificação de integridade;
+- quantidade total de arquivos válidos.
+
+O manifesto recebe `status: HEALTHY` somente quando todos os arquivos existem e são válidos. Um arquivo ausente, JSON inválido ou quebra de schema interrompe a geração.
+
+Para regenerar apenas o manifesto, sem executar o Spark:
+
+```bash
+docker compose run --rm spark python3 src/dashboard_manifest.py
+```
+
+Para gerar um manifesto dos exemplos:
+
+```bash
+docker compose run --rm spark python3 src/dashboard_manifest.py \\
+  --data-dir docs/data/samples \\
+  --output /tmp/sample-manifest.json
+```
+
 ## Critérios de aceite da integração
 
-1. Os cinco arquivos são gerados pelo pipeline sem edição manual.
+1. Os cinco payloads e o manifesto são gerados sem edição manual.
 2. Todos os arquivos são JSON válidos e seguem `schema_version: 1.0`.
 3. O dashboard funciona com os arquivos simulados e com os arquivos reais.
 4. Nenhuma regra de negócio é duplicada em JavaScript.
