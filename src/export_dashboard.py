@@ -7,9 +7,9 @@ from typing import Any
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 
+from src.dashboard_manifest import generate_dashboard_manifest
 from src.forecast_gold import FORECAST_METHOD, FORECAST_METHOD_VERSION
 from src.recommendation_gold import RECOMMENDATION_RULES_VERSION
-from src.validate_dashboard_contracts import validate_all_contracts
 from src.risk_gold import (
     AVG_DURATION_WEIGHT,
     KPI_VIOLATION_RATE_WEIGHT,
@@ -596,10 +596,21 @@ def main() -> None:
             "items",
         )
 
-        validated_contracts = validate_all_contracts()
+        manifest_payload = generate_dashboard_manifest(
+            generated_at=generated_at,
+        )
+        validated_contracts = [
+            file_entry["name"]
+            for file_entry in manifest_payload["files"]
+        ]
         print(
             "\nContratos JSON validados: "
             + ", ".join(validated_contracts)
+        )
+        print(
+            "Manifesto publicado: "
+            f"{OUTPUT_DIR / 'manifest.json'} "
+            f"({manifest_payload['status']})"
         )
 
     finally:

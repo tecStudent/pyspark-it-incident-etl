@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tecstudent.github.io/pyspark-it-incident-etl/schemas/manifest.schema.json",
+  "title": "Manifesto de publicação do dashboard",
+  "description": "Metadados de integridade, atualização e volume dos payloads publicados para o dashboard.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "status",
+    "files_total",
+    "files_valid",
+    "contains_mock_data",
+    "files"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["HEALTHY"]},
+    "files_total": {"type": "integer", "minimum": 0},
+    "files_valid": {"type": "integer", "minimum": 0},
+    "contains_mock_data": {"type": "boolean"},
+    "files": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/fileEntry"}
+    }
+  },
+  "$defs": {
+    "fileEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "path",
+        "schema_path",
+        "contract_status",
+        "schema_version",
+        "data_generated_at",
+        "mock",
+        "item_count",
+        "item_count_source",
+        "size_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "pattern": "^[a-z0-9_]+\\.json$"},
+        "schema_path": {
+          "type": "string",
+          "pattern": "^\\.\\./schemas/[a-z0-9_]+\\.schema\\.json$"
+        },
+        "contract_status": {"const": "VALID"},
+        "schema_version": {"type": "string", "minLength": 1},
+        "data_generated_at": {"type": "string", "format": "date-time"},
+        "mock": {"type": "boolean"},
+        "item_count": {"type": "integer", "minimum": 0},
+        "item_count_source": {"type": "string", "minLength": 1},
+        "size_bytes": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-12T23:27:38Z",
+  "status": "HEALTHY",
+  "files_total": 5,
+  "files_valid": 5,
+  "contains_mock_data": false,
+  "files": [
+    {
+      "name": "filter_options",
+      "path": "filter_options.json",
+      "schema_path": "../schemas/filter_options.schema.json",
+      "contract_status": "VALID",
+      "schema_version": "1.0",
+      "data_generated_at": "2026-08-12T11:27:12Z",
+      "mock": false,
+      "item_count": 229,
+      "item_count_source": "years+months+priorities+products+categories+teams",
+      "size_bytes": 4184,
+      "sha256": "bfa1c58278967062afd56d8acf3334f6106c6b9adbd9b9958b47e0cd5420ce66"
+    },
+    {
+      "name": "daily_trends",
+      "path": "daily_trends.json",
+      "schema_path": "../schemas/daily_trends.schema.json",
+      "contract_status": "VALID",
+      "schema_version": "1.0",
+      "data_generated_at": "2026-08-12T11:27:12Z",
+      "mock": false,
+      "item_count": 21064,
+      "item_count_source": "records",
+      "size_bytes": 7451015,
+      "sha256": "63b32757acc0c3e9efa38271448b91b35b3fbb3ba927393407db1751ddc5743c"
+    },
+    {
+      "name": "risk_summary",
+      "path": "risk_summary.json",
+      "schema_path": "../schemas/risk_summary.schema.json",
+      "contract_status": "VALID",
+      "schema_version": "1.0",
+      "data_generated_at": "2026-08-12T11:27:12Z",
+      "mock": false,
+      "item_count": 216,
+      "item_count_source": "items",
+      "size_bytes": 56966,
+      "sha256": "16ef5b67cc02f4af888d05c6d21d616e84ff9fd54d6652305e6eb9bc6b9126dd"
+    },
+    {
+      "name": "forecast_summary",
+      "path": "forecast_summary.json",
+      "schema_path": "../schemas/forecast_summary.schema.json",
+      "contract_status": "VALID",
+      "schema_version": "1.0",
+      "data_generated_at": "2026-08-12T11:27:12Z",
+      "mock": false,
+      "item_count": 7,
+      "item_count_source": "forecast",
+      "size_bytes": 3479,
+      "sha256": "5922fccc6c2c6d63c6bd587dc8d55b3d2d39ca27d12b9bf69d21f1fcd89736a1"
+    },
+    {
+      "name": "recommendations",
+      "path": "recommendations.json",
+      "schema_path": "../schemas/recommendations.schema.json",
+      "contract_status": "VALID",
+      "schema_version": "1.0",
+      "data_generated_at": "2026-08-12T11:27:12Z",
+      "mock": false,
+      "item_count": 18,
+      "item_count_source": "items",
+      "size_bytes": 9449,
+      "sha256": "3348762ffb8a9fbbe87380012f15e774f2234dec7f72a96994ee0c1fd82391b6"
+    }
+  ]
+}
