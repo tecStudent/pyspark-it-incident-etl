@@ -9,6 +9,7 @@ from pyspark.sql import functions as F
 
 from src.forecast_gold import FORECAST_METHOD, FORECAST_METHOD_VERSION
 from src.recommendation_gold import RECOMMENDATION_RULES_VERSION
+from src.validate_dashboard_contracts import validate_all_contracts
 from src.risk_gold import (
     AVG_DURATION_WEIGHT,
     KPI_VIOLATION_RATE_WEIGHT,
@@ -593,6 +594,12 @@ def main() -> None:
                 generated_at,
             ),
             "items",
+        )
+
+        validated_contracts = validate_all_contracts()
+        print(
+            "\nContratos JSON validados: "
+            + ", ".join(validated_contracts)
         )
 
     finally:

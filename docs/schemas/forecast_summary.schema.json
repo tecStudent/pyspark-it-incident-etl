@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tecstudent.github.io/pyspark-it-incident-etl/schemas/forecast_summary.schema.json",
+  "title": "Previsão explicável de volume",
+  "description": "Contrato do histórico e do baseline de previsão operacional D+1/D+7.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "mock",
+    "method",
+    "method_version",
+    "scope",
+    "forecast_d1",
+    "forecast_d7",
+    "risk_range",
+    "history",
+    "forecast"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "mock": {"type": "boolean"},
+    "method": {"type": "string", "minLength": 1},
+    "method_version": {"type": "string", "minLength": 1},
+    "scope": {"$ref": "#/$defs/scope"},
+    "forecast_d1": {"$ref": "#/$defs/nullableNonNegativeInteger"},
+    "forecast_d7": {"$ref": "#/$defs/nullableNonNegativeInteger"},
+    "risk_range": {"$ref": "#/$defs/nullableNonNegativeInteger"},
+    "history": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/historyItem"}
+    },
+    "forecast": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/forecastItem"}
+    }
+  },
+  "$defs": {
+    "nullableNonNegativeInteger": {
+      "oneOf": [
+        {"type": "integer", "minimum": 0},
+        {"type": "null"}
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "priority_codes", "filters_applied"],
+      "properties": {
+        "description": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "null"}
+          ]
+        },
+        "priority_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 1}
+        },
+        "filters_applied": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "historyItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "actual_incidents"],
+      "properties": {
+        "date": {"type": "string", "format": "date"},
+        "actual_incidents": {"type": "integer", "minimum": 0}
+      }
+    },
+    "forecastItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "predicted_incidents", "lower_bound", "upper_bound"],
+      "properties": {
+        "date": {"type": "string", "format": "date"},
+        "predicted_incidents": {"type": "integer", "minimum": 0},
+        "lower_bound": {"type": "integer", "minimum": 0},
+        "upper_bound": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}
