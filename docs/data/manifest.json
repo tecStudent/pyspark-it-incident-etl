@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-12T23:27:38Z",
+  "generated_at": "2026-08-13T10:32:29Z",
   "status": "HEALTHY",
   "files_total": 5,
   "files_valid": 5,
@@ -16,8 +16,8 @@
       "mock": false,
       "item_count": 229,
       "item_count_source": "years+months+priorities+products+categories+teams",
-      "size_bytes": 4184,
-      "sha256": "bfa1c58278967062afd56d8acf3334f6106c6b9adbd9b9958b47e0cd5420ce66"
+      "size_bytes": 3888,
+      "sha256": "e0a216d2f3750f9bf2b3742d5317d714c2daf92b6b4cc00f184e0255a72897e6"
     },
     {
       "name": "daily_trends",
@@ -29,8 +29,8 @@
       "mock": false,
       "item_count": 21064,
       "item_count_source": "records",
-      "size_bytes": 7451015,
-      "sha256": "63b32757acc0c3e9efa38271448b91b35b3fbb3ba927393407db1751ddc5743c"
+      "size_bytes": 7177177,
+      "sha256": "9c5a5ea072c883e7d4cac176ad310095765cef26c0a9d6ae7200e8e13d00026a"
     },
     {
       "name": "risk_summary",
@@ -42,8 +42,8 @@
       "mock": false,
       "item_count": 216,
       "item_count_source": "items",
-      "size_bytes": 56966,
-      "sha256": "16ef5b67cc02f4af888d05c6d21d616e84ff9fd54d6652305e6eb9bc6b9126dd"
+      "size_bytes": 54790,
+      "sha256": "2441f31dbb36833aacfa22d4d190ff1c8b87c7a306eda5bf2e0854fb43b5a603"
     },
     {
       "name": "forecast_summary",
@@ -55,8 +55,8 @@
       "mock": false,
       "item_count": 7,
       "item_count_source": "forecast",
-      "size_bytes": 3479,
-      "sha256": "5922fccc6c2c6d63c6bd587dc8d55b3d2d39ca27d12b9bf69d21f1fcd89736a1"
+      "size_bytes": 3303,
+      "sha256": "c5c8ba609232cbe988db316e131627746afb6111f549eca1d6bab117e0e59fec"
     },
     {
       "name": "recommendations",
@@ -68,8 +68,8 @@
       "mock": false,
       "item_count": 18,
       "item_count_source": "items",
-      "size_bytes": 9449,
-      "sha256": "3348762ffb8a9fbbe87380012f15e774f2234dec7f72a96994ee0c1fd82391b6"
+      "size_bytes": 9226,
+      "sha256": "660a752400ced5a8ff52054080c1e347623b66e4ca890ec90230d34158a57154"
     }
   ]
 }

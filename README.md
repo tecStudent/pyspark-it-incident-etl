@@ -266,8 +266,9 @@ O dashboard não lê Parquet, o Excel bruto ou regras PySpark. A integração oc
 | risk_summary.json | Metodologia e ranking de risco |
 | forecast_summary.json | Histórico, escopo e previsão D+1/D+7 |
 | recommendations.json | Recomendações com evidências |
+| manifest.json | Integridade, atualização, volume e hash dos payloads |
 
-Os novos contratos contêm schema_version, generated_at em UTC, mock: false, datas ISO 8601 e valores JSON válidos sem NaN ou Infinity.
+Os contratos contêm schema_version, generated_at em UTC, mock: false, datas ISO 8601 e valores JSON válidos sem NaN ou Infinity. JSON Schemas Draft 2020-12 e o manifesto versionado protegem os campos, tipos e a integridade dos payloads.
 
 A especificação completa está em [docs/dashboard-data-contract.md](docs/dashboard-data-contract.md). Os exemplos para o front-end permanecem em docs/data/samples com mock: true.
 
@@ -302,7 +303,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 42 passed |
+| Testes automatizados | 81 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -353,6 +354,8 @@ pyspark-it-incident-etl/
 |   |-- forecast_gold.py
 |   |-- recommendation_gold.py
 |   |-- export_dashboard.py
+   |-- validate_dashboard_contracts.py
+   |-- dashboard_manifest.py
 |   |-- pipeline.py
 |   |-- create_incremental_batches.py
 |   |-- incremental_bronze.py
@@ -369,6 +372,9 @@ pyspark-it-incident-etl/
 |   |-- test_forecast_gold.py
 |   |-- test_recommendation_gold.py
 |   |-- test_dashboard_export.py
+   |-- test_dashboard_json_schemas.py
+   |-- test_dashboard_manifest.py
+   |-- test_dashboard_manifest_quality_gate.py
 |   `-- test_pipeline_audit.py
 |-- docs/
 |   |-- dashboard-data-contract.md
@@ -481,11 +487,11 @@ docker compose run --rm spark python3 -m pytest -q
 Resultado atual:
 
 ~~~text
-.......................................... [100%]
-42 passed
+................................................................................. [100%]
+81 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, controles incrementais e auditoria.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais e auditoria.
 
 ## Integração contínua
 
@@ -495,11 +501,12 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 42 testes;
+- executa os 81 testes;
 - desabilita o cache do Pytest;
 - possui permissão somente de leitura;
 - cancela execuções anteriores do mesmo contexto;
-- aplica timeout de 20 minutos.
+- aplica timeout de 20 minutos;
+- verifica se hashes, tamanhos, contagens e metadados do manifesto correspondem aos payloads versionados.
 
 ## Como interromper
 
@@ -521,6 +528,7 @@ docker compose down
 | Regras calculadas separadas da origem | Preservar auditabilidade |
 | Hash SHA-256 por lote | Garantir idempotência |
 | JSON agregado no GitHub Pages | Publicação gratuita sem expor dados brutos |
+| Manifesto com hash normalizado | Verificação reproduzível no Windows e no Linux |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
 
@@ -547,7 +555,7 @@ docker compose down
 - data marts operacionais;
 - ranking e previsão explicáveis;
 - recomendações baseadas em regras;
-- contrato de dados e serialização JSON;
+- contrato de dados, JSON Schema e manifesto de integridade;
 - testes automatizados, CI/CD e GitHub Pages.
 
 ## Possíveis evoluções
@@ -555,7 +563,7 @@ docker compose down
 - Integrar os novos contratos à interface do dashboard.
 - Reduzir o tamanho de daily_trends.json com recortes ou partições.
 - Adicionar relatório de cobertura de testes.
-- Validar os contratos com JSON Schema.
+- Automatizar uma execução end-to-end com dataset reduzido no CI.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.
 - Publicar a imagem no GitHub Container Registry.
