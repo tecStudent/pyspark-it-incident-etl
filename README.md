@@ -18,6 +18,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 - previsão de volume por baseline estatístico;
 - recomendações determinísticas com evidências;
 - contrato JSON para integração com o dashboard;
+- dashboard operacional com cinco áreas analíticas e carregamento sob demanda;
 - testes automatizados, smoke test end-to-end e CI com GitHub Actions.
 
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
@@ -273,13 +274,25 @@ Os contratos contêm schema_version, generated_at em UTC, mock: false, datas ISO
 
 A especificação completa está em [docs/dashboard-data-contract.md](docs/dashboard-data-contract.md). Os exemplos para o front-end permanecem em docs/data/samples com mock: true.
 
-A exportação operacional está pronta para consumo. A evolução visual pode ocorrer em paralelo, sem reproduzir regras de negócio em JavaScript.
+A exportação operacional é consumida pela interface sem reproduzir regras de negócio em JavaScript.
 
 ## Dashboard
 
 O dashboard estático foi desenvolvido com HTML, CSS, JavaScript e Chart.js e está publicado gratuitamente no GitHub Pages.
 
-A versão atual apresenta total de incidentes, KPI, violações, compliance, evolução mensal, prioridades, volume por equipe e filtros. Os novos JSONs permitem acrescentar tendências, risco, previsão e recomendações sem alterar a camada de processamento.
+A interface preserva o estilo visual do projeto e organiza a análise em cinco áreas:
+
+| Área | Conteúdo |
+| --- | --- |
+| Visão geral | Volume, KPI, violações, compliance, evolução mensal, prioridades e equipes |
+| Tendências | Evolução diária e semanal, duração média e ranking por dimensão |
+| Previsão | Baseline explicável D+1/D+7, faixa de risco e projeção diária |
+| Risco operacional | Ranking por prioridade, produto, categoria ou equipe, com metodologia e evidências |
+| Recomendações | Ações determinísticas filtráveis por severidade e acompanhadas da evidência de origem |
+
+Os filtros usam as opções publicadas pelo pipeline. Ano, mês, prioridade e equipe afetam a Visão geral; os seis filtros afetam as Tendências. Previsão, risco e recomendações são snapshots com escopo declarado nos respectivos contratos e não são recalculados no navegador.
+
+Antes de renderizar os indicadores, a página verifica se o manifesto está `HEALTHY`, se todos os contratos estão válidos e se a publicação não contém dados simulados. O arquivo `daily_trends.json`, atualmente o maior payload, é carregado somente quando a aba Tendências é aberta.
 
 ### Executar localmente
 
@@ -304,7 +317,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 102 passed |
+| Testes automatizados | 113 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -380,7 +393,8 @@ pyspark-it-incident-etl/
    |-- test_dashboard_manifest_quality_gate.py
    |-- test_e2e_smoke_test.py
 |   |-- test_pipeline_audit.py
-|   `-- test_pipeline_reconciliation.py
+|   |-- test_pipeline_reconciliation.py
+|   `-- test_dashboard_ui.py
 |-- docs/
 |   |-- dashboard-data-contract.md
 |   |-- kpi-business-rules.md
@@ -509,10 +523,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-102 passed
+113 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais, auditoria, reconciliação e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais, auditoria, reconciliação, integração estática da interface e as validações auxiliares do smoke test.
 
 ### Smoke test end-to-end
 
@@ -575,8 +589,7 @@ docker compose down
 - A carga incremental usa snapshots Parquet, não um formato transacional.
 - A previsão é uma baseline, não um modelo treinado e validado.
 - As recomendações são regras de apoio à decisão.
-- daily_trends.json pode ser particionado ou reduzido em uma evolução.
-- A interface visual ainda precisa incorporar todos os novos contratos.
+- O payload de tendências ainda pode ser reduzido ou particionado para melhorar o tempo de carregamento.
 
 ## Conceitos demonstrados
 
@@ -596,7 +609,6 @@ docker compose down
 
 ## Possíveis evoluções
 
-- Integrar os novos contratos à interface do dashboard.
 - Reduzir o tamanho de daily_trends.json com recortes ou partições.
 - Adicionar relatório de cobertura de testes ao CI.
 - Orquestrar o pipeline com Apache Airflow.
