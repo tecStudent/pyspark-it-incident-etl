@@ -206,6 +206,25 @@ docker compose run --rm spark python3 src/dashboard_manifest.py \\
   --output /tmp/sample-manifest.json
 ```
 
+## Integração da interface
+
+O dashboard publicado em `docs/` consome os contratos sem
+reimplementar as regras de KPI, OLA, risco, previsão ou recomendação.
+A navegação está organizada em Visão geral, Tendências, Previsão,
+Risco operacional e Recomendações.
+
+Na inicialização, a interface lê primeiro o manifesto e interrompe a
+renderização quando o status não é `HEALTHY`, quando existe contrato
+inválido ou quando a publicação contém dados simulados. Os payloads de
+visão geral, filtros, risco, previsão e recomendações são carregados em
+seguida. Por ser o maior arquivo, `daily_trends.json` é carregado sob
+demanda quando a aba Tendências é aberta.
+
+Ano, mês, prioridade e equipe filtram a Visão geral. Tendências utiliza
+também produto e categoria. Os demais módulos respeitam o escopo fixo
+documentado nos próprios snapshots, evitando apresentar um filtro como
+aplicado quando não existe agregação correspondente no pipeline.
+
 ## Critérios de aceite da integração
 
 1. Os cinco payloads e o manifesto são gerados sem edição manual.

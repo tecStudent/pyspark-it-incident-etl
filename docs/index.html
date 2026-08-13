@@ -3,119 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>IT Incident Analytics</title>
-
+    <meta name="description" content="Painel operacional de incidentes de TI com indicadores, risco, previsão e recomendações.">
+    <title>Painel de Gestão de Incidentes</title>
     <link rel="stylesheet" href="css/style.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
 </head>
-
 <body>
-
-<header>
-    <div>
-        <h1>Painel de Gestão de Incidentes</h1>
-        <p>
-            Visão operacional de incidentes, equipes responsáveis e cumprimento de KPI
-        </p>
+    <div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <p>Carregando indicadores operacionais...</p>
     </div>
 
-    <span class="badge">Governança Operacional</span>
-</header>
+    <header class="site-header">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true">IO</span>
+            <div>
+                <h1>Painel de Gestão de Incidentes</h1>
+                <p>Visão operacional, riscos e capacidade de atendimento</p>
+            </div>
+        </div>
+        <div class="header-status">
+            <span id="manifest-status" class="status-pill status-loading">Verificando dados</span>
+            <span class="badge">Governança Operacional</span>
+        </div>
+    </header>
 
-<main>
-    <section class="filters">
-        <div class="filter-group">
-            <label for="year-filter">Ano</label>
-            <select id="year-filter" class="filter-select">
-                <option value="">Todos</option>
-            </select>
+    <main>
+        <div id="error-banner" class="error-banner" role="alert" hidden>
+            <strong>Não foi possível carregar o painel.</strong>
+            <span id="error-message"></span>
         </div>
 
-        <div class="filter-group">
-            <label for="month-filter">Mês</label>
-            <select id="month-filter" class="filter-select">
-                <option value="">Todos</option>
-            </select>
-        </div>
+        <section class="hero" aria-labelledby="hero-title">
+            <div>
+                <span class="eyebrow">Incident Operations Center</span>
+                <h2 id="hero-title">Decisões operacionais com contexto e rastreabilidade</h2>
+                <p>Acompanhe volume, cumprimento de KPI, pressão operacional, previsão de demanda e ações recomendadas em uma única visão.</p>
+            </div>
+            <dl class="data-freshness">
+                <div>
+                    <dt>Dados atualizados</dt>
+                    <dd id="data-updated-at">-</dd>
+                </div>
+                <div>
+                    <dt>Contratos válidos</dt>
+                    <dd id="contracts-valid">-</dd>
+                </div>
+            </dl>
+        </section>
 
-        <div class="filter-group">
-            <label for="priority-filter">Prioridade</label>
-            <select id="priority-filter" class="filter-select">
-                <option value="">Todas</option>
-            </select>
-        </div>
+        <section class="filters" aria-labelledby="filters-title">
+            <div class="filter-heading">
+                <div>
+                    <span class="eyebrow">Filtros analíticos</span>
+                    <h2 id="filters-title">Refine a análise</h2>
+                </div>
+                <p id="filter-scope-note">Aplicados à Visão geral e às Tendências.</p>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label for="year-filter">Ano</label>
+                    <select id="year-filter" class="filter-select"><option value="">Todos</option></select>
+                </div>
+                <div class="filter-group">
+                    <label for="month-filter">Mês</label>
+                    <select id="month-filter" class="filter-select"><option value="">Todos</option></select>
+                </div>
+                <div class="filter-group">
+                    <label for="priority-filter">Prioridade</label>
+                    <select id="priority-filter" class="filter-select"><option value="">Todas</option></select>
+                </div>
+                <div class="filter-group">
+                    <label for="product-filter">Produto</label>
+                    <select id="product-filter" class="filter-select"><option value="">Todos</option></select>
+                </div>
+                <div class="filter-group">
+                    <label for="category-filter">Categoria</label>
+                    <select id="category-filter" class="filter-select"><option value="">Todas</option></select>
+                </div>
+                <div class="filter-group">
+                    <label for="team-filter">Equipe</label>
+                    <select id="team-filter" class="filter-select"><option value="">Todas</option></select>
+                </div>
+                <button id="clear-filters" class="clear-button" type="button">Limpar filtros</button>
+            </div>
+        </section>
 
-        <div class="filter-group">
-            <label for="team-filter">Equipe</label>
-            <select id="team-filter" class="filter-select">
-                <option value="">Todas</option>
-            </select>
-        </div>
+        <nav class="dashboard-tabs" aria-label="Áreas do painel" role="tablist">
+            <button class="tab-button active" id="overview-tab" data-view="overview" role="tab" aria-selected="true" aria-controls="overview-panel">Visão geral</button>
+            <button class="tab-button" id="trends-tab" data-view="trends" role="tab" aria-selected="false" aria-controls="trends-panel">Tendências</button>
+            <button class="tab-button" id="forecast-tab" data-view="forecast" role="tab" aria-selected="false" aria-controls="forecast-panel">Previsão</button>
+            <button class="tab-button" id="risk-tab" data-view="risk" role="tab" aria-selected="false" aria-controls="risk-panel">Risco operacional</button>
+            <button class="tab-button" id="recommendations-tab" data-view="recommendations" role="tab" aria-selected="false" aria-controls="recommendations-panel">Recomendações</button>
+        </nav>
 
-        <button id="clear-filters" class="clear-button">
-            Limpar filtros
-        </button>
-    </section>
+        <section id="overview-panel" class="view-panel" role="tabpanel" aria-labelledby="overview-tab">
+            <div class="section-heading">
+                <div><span class="eyebrow">Visão geral</span><h2>Saúde da operação</h2></div>
+                <p>Consolidação histórica por período, prioridade e equipe.</p>
+            </div>
+            <div class="kpi-grid">
+                <article class="metric-card accent-yellow"><span>Total de incidentes</span><strong id="total-incidents">-</strong><small>Volume no recorte selecionado</small></article>
+                <article class="metric-card accent-blue"><span>Incidentes no KPI</span><strong id="kpi-incidents">-</strong><small>Classificação informada pela origem</small></article>
+                <article class="metric-card accent-pink"><span>Violações de KPI</span><strong id="kpi-violations">-</strong><small>Ocorrências fora do compromisso</small></article>
+                <article class="metric-card accent-green"><span>Compliance KPI</span><strong id="kpi-compliance">-</strong><small>Percentual de incidentes conformes</small></article>
+            </div>
+            <div class="chart-grid">
+                <article class="chart-card chart-wide">
+                    <div class="card-heading"><div><span class="eyebrow">Evolução histórica</span><h3>Incidentes por mês</h3></div></div>
+                    <div class="chart-container chart-large"><canvas id="monthly-chart">Evolução mensal dos incidentes.</canvas></div>
+                </article>
+                <article class="chart-card">
+                    <div class="card-heading"><div><span class="eyebrow">Distribuição</span><h3>Incidentes por prioridade</h3></div></div>
+                    <div class="chart-container"><canvas id="priority-chart">Distribuição por prioridade.</canvas></div>
+                </article>
+                <article class="chart-card">
+                    <div class="card-heading"><div><span class="eyebrow">Capacidade</span><h3>Top 10 equipes por volume</h3></div></div>
+                    <div class="chart-container"><canvas id="team-chart">Equipes com maior volume.</canvas></div>
+                </article>
+            </div>
+        </section>
 
-    <section class="kpi-grid">
+        <section id="trends-panel" class="view-panel" role="tabpanel" aria-labelledby="trends-tab" hidden>
+            <div class="section-heading">
+                <div><span class="eyebrow">Tendências operacionais</span><h2>Comportamento diário da demanda</h2></div>
+                <p>O payload detalhado é carregado somente ao abrir esta área.</p>
+            </div>
+            <div id="trends-loading" class="inline-loading" hidden><div class="loading-spinner" aria-hidden="true"></div><span>Carregando tendências diárias...</span></div>
+            <div class="kpi-grid compact-kpis">
+                <article class="metric-card accent-yellow"><span>Incidentes no período</span><strong id="trend-total">-</strong><small>Volume diário consolidado</small></article>
+                <article class="metric-card accent-pink"><span>Violações no período</span><strong id="trend-violations">-</strong><small>Ocorrências com KPI violado</small></article>
+                <article class="metric-card accent-green"><span>Compliance no período</span><strong id="trend-compliance">-</strong><small>Calculado sobre incidentes no KPI</small></article>
+                <article class="metric-card accent-blue"><span>Duração média</span><strong id="trend-duration">-</strong><small>Média ponderada em horas</small></article>
+            </div>
+            <div class="chart-grid">
+                <article class="chart-card chart-wide">
+                    <div class="card-heading"><div><span class="eyebrow">Série diária</span><h3>Volume e violações de KPI</h3></div></div>
+                    <div class="chart-container chart-large"><canvas id="daily-trend-chart">Tendência diária de incidentes.</canvas></div>
+                </article>
+                <article class="chart-card">
+                    <div class="card-heading"><div><span class="eyebrow">Consolidação</span><h3>Evolução semanal</h3></div></div>
+                    <div class="chart-container"><canvas id="weekly-trend-chart">Tendência semanal de incidentes.</canvas></div>
+                </article>
+                <article class="chart-card">
+                    <div class="card-heading split-heading">
+                        <div><span class="eyebrow">Comparativo</span><h3>Top dimensões</h3></div>
+                        <label class="inline-select-label" for="trend-dimension">Dimensão
+                            <select id="trend-dimension" class="filter-select compact-select">
+                                <option value="priority">Prioridade</option><option value="product">Produto</option><option value="category">Categoria</option><option value="team">Equipe</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="chart-container"><canvas id="dimension-trend-chart">Dimensões com maior volume.</canvas></div>
+                </article>
+            </div>
+        </section>
 
-        <div class="card">
-            <span>Total de incidentes</span>
-            <strong id="total-incidents">-</strong>
-        </div>
+        <section id="forecast-panel" class="view-panel" role="tabpanel" aria-labelledby="forecast-tab" hidden>
+            <div class="section-heading">
+                <div><span class="eyebrow">Previsão explicável</span><h2>Demanda esperada para D+1 e D+7</h2></div>
+                <p id="forecast-scope">Escopo fixo definido pelo pipeline.</p>
+            </div>
+            <div class="context-banner"><strong>Baseline operacional</strong><span>A projeção é estatística e explicável; não representa um modelo de IA validado.</span></div>
+            <div class="kpi-grid forecast-kpis">
+                <article class="metric-card accent-blue"><span>Previsão D+1</span><strong id="forecast-d1">-</strong><small>Incidentes previstos para o próximo dia</small></article>
+                <article class="metric-card accent-yellow"><span>Previsão D+7</span><strong id="forecast-d7">-</strong><small>Soma prevista para sete dias</small></article>
+                <article class="metric-card accent-pink"><span>Faixa de risco</span><strong id="forecast-risk-range">-</strong><small>Margem aplicada aos limites</small></article>
+            </div>
+            <div class="chart-grid">
+                <article class="chart-card chart-wide">
+                    <div class="card-heading"><div><span class="eyebrow">Histórico e projeção</span><h3>Volume recente e próximos sete dias</h3></div></div>
+                    <div class="chart-container chart-large"><canvas id="forecast-chart">Histórico e previsão de incidentes.</canvas></div>
+                </article>
+                <article class="table-card chart-wide">
+                    <div class="card-heading"><div><span class="eyebrow">Detalhamento</span><h3>Projeção diária</h3></div></div>
+                    <div class="table-scroll"><table><thead><tr><th>Data</th><th>Previsão</th><th>Limite inferior</th><th>Limite superior</th></tr></thead><tbody id="forecast-table-body"></tbody></table></div>
+                </article>
+            </div>
+        </section>
 
-        <div class="card">
-            <span>Incidentes no KPI</span>
-            <strong id="kpi-incidents">-</strong>
-        </div>
+        <section id="risk-panel" class="view-panel" role="tabpanel" aria-labelledby="risk-tab" hidden>
+            <div class="section-heading">
+                <div><span class="eyebrow">Risco de KPI e OLA</span><h2>Pressão operacional por dimensão</h2></div>
+                <label class="inline-select-label" for="risk-dimension">Analisar por<select id="risk-dimension" class="filter-select compact-select"></select></label>
+            </div>
+            <div class="context-banner"><strong>Score de 0 a 100</strong><span id="risk-methodology">Calculado com volume, violações e duração média.</span></div>
+            <div class="kpi-grid risk-kpis">
+                <article class="metric-card accent-pink"><span>Maior score de risco</span><strong id="top-risk-score">-</strong><small id="top-risk-name">-</small></article>
+                <article class="metric-card accent-yellow"><span>Volume do primeiro colocado</span><strong id="top-risk-volume">-</strong><small>Incidentes associados</small></article>
+                <article class="metric-card accent-blue"><span>Itens avaliados</span><strong id="risk-items-count">-</strong><small>Valores conhecidos na dimensão</small></article>
+            </div>
+            <div class="chart-grid">
+                <article class="chart-card">
+                    <div class="card-heading"><div><span class="eyebrow">Ranking</span><h3>Top 10 por risco</h3></div></div>
+                    <div class="chart-container chart-tall"><canvas id="risk-chart">Ranking de risco operacional.</canvas></div>
+                </article>
+                <article class="table-card">
+                    <div class="card-heading"><div><span class="eyebrow">Evidências</span><h3>Detalhes do ranking</h3></div></div>
+                    <div class="table-scroll"><table><thead><tr><th>#</th><th>Dimensão</th><th>Score</th><th>Volume</th><th>Violação KPI</th><th>Duração média</th></tr></thead><tbody id="risk-table-body"></tbody></table></div>
+                </article>
+            </div>
+        </section>
 
-        <div class="card">
-            <span>Violações de KPI</span>
-            <strong id="kpi-violations">-</strong>
-        </div>
+        <section id="recommendations-panel" class="view-panel" role="tabpanel" aria-labelledby="recommendations-tab" hidden>
+            <div class="section-heading">
+                <div><span class="eyebrow">Ações recomendadas</span><h2>Prioridades operacionais baseadas em evidências</h2></div>
+                <label class="inline-select-label" for="recommendation-severity">Severidade
+                    <select id="recommendation-severity" class="filter-select compact-select"><option value="">Todas</option><option value="CRITICAL">Crítica</option><option value="HIGH">Alta</option><option value="MEDIUM">Média</option><option value="LOW">Baixa</option></select>
+                </label>
+            </div>
+            <div class="kpi-grid recommendation-kpis">
+                <article class="metric-card accent-pink"><span>Recomendações críticas</span><strong id="critical-recommendations">-</strong><small>Ações de maior urgência</small></article>
+                <article class="metric-card accent-yellow"><span>Alta prioridade</span><strong id="high-recommendations">-</strong><small>Ações relevantes para o plano operacional</small></article>
+                <article class="metric-card accent-blue"><span>Total de recomendações</span><strong id="total-recommendations">-</strong><small>Regras determinísticas com evidência</small></article>
+            </div>
+            <div id="recommendation-list" class="recommendation-list" aria-live="polite"></div>
+        </section>
+    </main>
 
-        <div class="card success">
-            <span>Compliance KPI</span>
-            <strong id="kpi-compliance">-</strong>
-        </div>
-
-    </section>
-
-
-    <section class="chart-grid">
-
-        <div class="chart-card chart-wide">
-            <h2>Incidentes por mês</h2>
-            <canvas id="monthlyChart"></canvas>
-        </div>
-
-
-        <div class="chart-card">
-            <h2>Incidentes por prioridade</h2>
-            <canvas id="priorityChart"></canvas>
-        </div>
-
-
-        <div class="chart-card">
-            <h2>Top 10 equipes por volume</h2>
-            <canvas id="teamChart"></canvas>
-        </div>
-
-    </section>
-
-</main>
-
-
-<footer>
-    <p>
-        Análise consolidada de volume, prioridades, equipes responsáveis e indicadores de KPI
-    </p>
-</footer>
-
-
-<script src="js/app.js"></script>
-
+    <footer>
+        <p>Indicadores operacionais gerados a partir de dados agregados e contratos versionados.</p>
+        <span id="footer-version">Contrato de dados v1.0</span>
+    </footer>
+    <script src="js/app.js"></script>
 </body>
 </html>
