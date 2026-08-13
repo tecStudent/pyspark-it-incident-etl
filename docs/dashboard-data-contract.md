@@ -180,6 +180,24 @@ Para regenerar apenas o manifesto, sem executar o Spark:
 docker compose run --rm spark python3 src/dashboard_manifest.py
 ```
 
+Para verificar se o manifesto versionado ainda corresponde
+aos payloads publicados, sem alterar arquivos:
+
+```bash
+docker compose run --rm spark python3 \
+  src/dashboard_manifest.py --check
+```
+
+O quality gate compara versão, status, quantidade de arquivos,
+origem real ou simulada e, para cada payload, data dos dados,
+contagem de itens, tamanho normalizado e hash SHA-256. O cálculo
+normaliza apenas as quebras de linha, garantindo o mesmo resultado
+no Windows e no Linux.
+
+O GitHub Actions executa essa verificação após os testes. Se um
+payload for modificado sem a regeneração do manifesto, o Pull
+Request falha com a lista dos campos desatualizados.
+
 Para gerar um manifesto dos exemplos:
 
 ```bash
@@ -196,4 +214,4 @@ docker compose run --rm spark python3 src/dashboard_manifest.py \\
 4. Nenhuma regra de negócio é duplicada em JavaScript.
 5. O dashboard trata arquivos vazios, valores nulos e erros de carregamento.
 6. Os testes automatizados validam pelo menos os campos obrigatórios e os tipos principais.
-
+7. O CI rejeita payloads que não correspondem ao manifesto versionado.

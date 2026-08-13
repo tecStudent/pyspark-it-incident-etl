@@ -31,3 +31,6 @@ jobs:
 
       - name: Run automated tests
         run: docker compose run --rm spark python3 -m pytest -q -p no:cacheprovider
+
+      - name: Verify dashboard data manifest
+        run: docker compose run --rm spark python3 src/dashboard_manifest.py --check
