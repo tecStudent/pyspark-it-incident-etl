@@ -30,6 +30,12 @@ STAGES = {
         "local[2]",
         "src/incremental_gold.py",
     ],
+    "reconciliation": [
+        "/opt/spark/bin/spark-submit",
+        "--master",
+        "local[2]",
+        "src/pipeline_reconciliation.py",
+    ],
 }
 
 

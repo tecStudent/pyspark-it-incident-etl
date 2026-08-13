@@ -8,6 +8,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 
 - carga completa em camadas Raw, Bronze, Silver e Gold;
 - carga incremental idempotente por lotes;
+- reconciliação automática entre controles e arquivos físicos;
 - schema explícito, deduplicação, particionamento e Parquet;
 - Data Quality com quarentena;
 - controle e auditoria das execuções;
@@ -303,7 +304,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 90 passed |
+| Testes automatizados | 102 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -363,7 +364,8 @@ pyspark-it-incident-etl/
 |   |-- incremental_silver.py
 |   |-- incremental_gold.py
 |   |-- incremental_pipeline.py
-|   `-- pipeline_audit.py
+|   |-- pipeline_audit.py
+|   `-- pipeline_reconciliation.py
 |-- tests/
 |   |-- conftest.py
 |   |-- test_silver.py
@@ -377,7 +379,8 @@ pyspark-it-incident-etl/
    |-- test_dashboard_manifest.py
    |-- test_dashboard_manifest_quality_gate.py
    |-- test_e2e_smoke_test.py
-|   `-- test_pipeline_audit.py
+|   |-- test_pipeline_audit.py
+|   `-- test_pipeline_reconciliation.py
 |-- docs/
 |   |-- dashboard-data-contract.md
 |   |-- kpi-business-rules.md
@@ -452,7 +455,7 @@ docker compose run --rm spark python3 src/create_incremental_batches.py
 # Adicionar um lote
 cp data/raw/batches/incidents_2023_01.csv data/landing/
 
-# Executar Bronze, Silver e Gold incrementais
+# Executar Bronze, Silver, Gold e reconciliação
 docker compose run --rm spark python3 src/incremental_pipeline.py
 ~~~
 
@@ -461,6 +464,7 @@ docker compose run --rm spark python3 src/incremental_pipeline.py
 ~~~bash
 docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage silver
 docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage gold
+docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage reconciliation
 ~~~
 
 ### Conferir a última auditoria
@@ -469,6 +473,21 @@ docker compose run --rm spark python3 src/incremental_pipeline.py --from-stage g
 docker compose run --rm spark python3 -c \
 'import json; data=json.load(open("data/control/pipeline_runs.json", encoding="utf-8")); print(json.dumps(data["runs"][-1], indent=2, ensure_ascii=False))'
 ~~~
+
+### Reconciliação automática entre camadas
+
+Depois da Gold, o runner executa uma etapa de reconciliação que compara os controles JSON com as contagens físicas dos Parquets. Ela valida os batches, arquivos de origem, hashes, volumes recebidos, divisão entre válidos e inválidos, duplicidades, snapshot Gold e existência dos produtos analíticos.
+
+Para executar somente essa verificação:
+
+~~~bash
+MSYS_NO_PATHCONV=1 docker compose run --rm spark \
+  /opt/spark/bin/spark-submit \
+  --master "local[2]" \
+  src/pipeline_reconciliation.py
+~~~
+
+O resultado é registrado em `data/control/reconciliation_runs.json`. Uma divergência retorna exit code diferente de zero e interrompe o pipeline, preservando no relatório quais checks falharam e os valores esperados e encontrados.
 
 ## Executar camadas no Git Bash
 
@@ -490,10 +509,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-90 passed
+102 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais, auditoria e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais, auditoria, reconciliação e as validações auxiliares do smoke test.
 
 ### Smoke test end-to-end
 
@@ -516,7 +535,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 90 testes;
+- executa os 102 testes;
 - desabilita o cache do Pytest;
 - possui permissão somente de leitura;
 - cancela execuções anteriores do mesmo contexto;
@@ -543,6 +562,7 @@ docker compose down
 | Schema explícito | Evitar inferência inconsistente |
 | Regras calculadas separadas da origem | Preservar auditabilidade |
 | Hash SHA-256 por lote | Garantir idempotência |
+| Reconciliação após a Gold | Detectar divergências entre controles e dados físicos |
 | JSON agregado no GitHub Pages | Publicação gratuita sem expor dados brutos |
 | Manifesto com hash normalizado | Verificação reproduzível no Windows e no Linux |
 | Baseline explicável | Manter a previsão transparente |
@@ -578,8 +598,7 @@ docker compose down
 
 - Integrar os novos contratos à interface do dashboard.
 - Reduzir o tamanho de daily_trends.json com recortes ou partições.
-- Adicionar relatório de cobertura de testes.
-- Adicionar reconciliação automática entre as camadas do pipeline.
+- Adicionar relatório de cobertura de testes ao CI.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.
 - Publicar a imagem no GitHub Container Registry.
