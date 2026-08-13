@@ -17,7 +17,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 - previsão de volume por baseline estatístico;
 - recomendações determinísticas com evidências;
 - contrato JSON para integração com o dashboard;
-- testes automatizados e CI com GitHub Actions.
+- testes automatizados, smoke test end-to-end e CI com GitHub Actions.
 
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
 
@@ -303,7 +303,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 81 passed |
+| Testes automatizados | 90 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -356,6 +356,7 @@ pyspark-it-incident-etl/
 |   |-- export_dashboard.py
    |-- validate_dashboard_contracts.py
    |-- dashboard_manifest.py
+   |-- e2e_smoke_test.py
 |   |-- pipeline.py
 |   |-- create_incremental_batches.py
 |   |-- incremental_bronze.py
@@ -375,6 +376,7 @@ pyspark-it-incident-etl/
    |-- test_dashboard_json_schemas.py
    |-- test_dashboard_manifest.py
    |-- test_dashboard_manifest_quality_gate.py
+   |-- test_e2e_smoke_test.py
 |   `-- test_pipeline_audit.py
 |-- docs/
 |   |-- dashboard-data-contract.md
@@ -488,10 +490,23 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-81 passed
+90 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais e auditoria.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais, auditoria e as validações auxiliares do smoke test.
+
+### Smoke test end-to-end
+
+O smoke test utiliza a pequena amostra versionada em data/sample, grava todas as saídas em um diretório temporário e valida o fluxo integrado CSV -> Bronze -> Silver -> Gold.
+
+~~~bash
+MSYS_NO_PATHCONV=1 docker compose run --rm spark \
+  /opt/spark/bin/spark-submit \
+  --master "local[2]" \
+  src/e2e_smoke_test.py
+~~~
+
+Ele verifica as contagens entre camadas, Data Quality com quarentena, deduplicação pela versão mais recente, agregações Gold e idempotência por meio de duas execuções consecutivas. As saídas temporárias são removidas ao final; use --keep-output para preservá-las durante uma inspeção local.
 
 ## Integração contínua
 
@@ -501,12 +516,13 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 81 testes;
+- executa os 90 testes;
 - desabilita o cache do Pytest;
 - possui permissão somente de leitura;
 - cancela execuções anteriores do mesmo contexto;
 - aplica timeout de 20 minutos;
 - verifica se hashes, tamanhos, contagens e metadados do manifesto correspondem aos payloads versionados.
+- executa o smoke test integrado com uma amostra reduzida, sem depender do dataset acadêmico completo.
 
 ## Como interromper
 
@@ -563,7 +579,7 @@ docker compose down
 - Integrar os novos contratos à interface do dashboard.
 - Reduzir o tamanho de daily_trends.json com recortes ou partições.
 - Adicionar relatório de cobertura de testes.
-- Automatizar uma execução end-to-end com dataset reduzido no CI.
+- Adicionar reconciliação automática entre as camadas do pipeline.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.
 - Publicar a imagem no GitHub Container Registry.
