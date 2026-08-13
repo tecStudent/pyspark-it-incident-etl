@@ -34,3 +34,10 @@ jobs:
 
       - name: Verify dashboard data manifest
         run: docker compose run --rm spark python3 src/dashboard_manifest.py --check
+
+      - name: Run end-to-end smoke test
+        run: >-
+          docker compose run --rm spark
+          /opt/spark/bin/spark-submit
+          --master "local[2]"
+          src/e2e_smoke_test.py
