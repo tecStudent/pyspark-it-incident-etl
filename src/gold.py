@@ -12,6 +12,11 @@ from src.operational_gold import (
 )
 from src.recommendation_gold import create_recommendations
 from src.risk_gold import create_risk_summary
+from src.spark_performance import (
+    cache_reused_frames,
+    configure_analytical_builder,
+    unpersist_frames,
+)
 
 
 INPUT_PATH = "data/silver/incidents"
@@ -31,8 +36,11 @@ RECOMMENDATIONS_OUTPUT = "data/gold/recommendations"
 
 def create_spark_session() -> SparkSession:
     return (
-        SparkSession.builder
-        .appName("IT Incident Gold Aggregations")
+        configure_analytical_builder(
+            SparkSession.builder.appName(
+                "IT Incident Gold Aggregations"
+            )
+        )
         .getOrCreate()
     )
 
@@ -214,12 +222,16 @@ def write_gold(
 def main() -> None:
     spark = create_spark_session()
     spark.sparkContext.setLogLevel("WARN")
+    cached_frames = []
 
     try:
         silver_df = (
             spark.read
             .parquet(INPUT_PATH)
             .filter(F.col("dq_status") == "VALID")
+        )
+        cached_frames.extend(
+            cache_reused_frames(silver_df)
         )
 
         print(
@@ -245,6 +257,14 @@ def main() -> None:
         )
         forecast_summary_df = create_forecast_summary(
             silver_df
+        )
+        cached_frames.extend(
+            cache_reused_frames(
+                annual_ola_df,
+                risk_df,
+                forecast_history_df,
+                forecast_summary_df,
+            )
         )
         recommendations_df = create_recommendations(
             risk_df,
@@ -425,6 +445,7 @@ def main() -> None:
         )
 
     finally:
+        unpersist_frames(cached_frames)
         spark.stop()
 
 
