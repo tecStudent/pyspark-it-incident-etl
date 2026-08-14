@@ -327,7 +327,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 148 passed |
+| Testes automatizados | 176 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -383,6 +383,7 @@ pyspark-it-incident-etl/
 |   |-- dashboard_manifest.py
 |   |-- e2e_smoke_test.py
 |   |-- coverage_report.py
+|   |-- pipeline_benchmark.py
 |   |-- pipeline.py
 |   |-- create_incremental_batches.py
 |   |-- incremental_bronze.py
@@ -405,6 +406,7 @@ pyspark-it-incident-etl/
 |   |-- test_dashboard_manifest_quality_gate.py
 |   |-- test_e2e_smoke_test.py
 |   |-- test_coverage_report.py
+|   |-- test_pipeline_benchmark.py
 |   |-- test_ingestion_helpers.py
 |   |-- test_pipeline_audit.py
 |   |-- test_pipeline_reconciliation.py
@@ -412,6 +414,7 @@ pyspark-it-incident-etl/
 |-- docs/
 |   |-- dashboard-data-contract.md
 |   |-- kpi-business-rules.md
+|   |-- performance-benchmark.md
 |   |-- index.html
 |   |-- css/
 |   |-- js/
@@ -538,10 +541,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-148 passed
+176 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark e as validações auxiliares do smoke test.
 
 ### Cobertura de testes
 
@@ -575,6 +578,27 @@ docker compose run --rm spark python3 src/coverage_report.py \
 
 No GitHub Actions, o mesmo resumo aparece na página da execução. O runner prepara o diretório gravável `coverage-artifacts` para que o usuário não privilegiado do container possa salvar o banco temporário e os relatórios no volume Linux. O relatório HTML completo fica disponível por 14 dias no artefato `coverage-report`.
 
+### Benchmark de desempenho
+
+O benchmark executa uma carga sintética e determinística em dois processos Spark isolados. O perfil baseline preserva 200 partições de shuffle e desabilita Adaptive Query Execution. O perfil otimizado utiliza oito partições, Adaptive Query Execution, coalescência de partições e cache apenas para resultados analíticos reutilizados.
+
+~~~bash
+docker compose run --rm spark python3 src/pipeline_benchmark.py \
+  --rows 50000 \
+  --runs 3 \
+  --warmups 1
+~~~
+
+O processo mede as transformações Silver, deduplicação, agregações Gold históricas e produtos operacionais. Cada perfil produz mediana, P95, throughput e tempos por etapa. Um fingerprint compara contagens, duração acumulada, prioridades e quantidade de linhas de todas as saídas para impedir que uma configuração mais rápida altere os resultados.
+
+São gerados:
+
+- `data/control/performance_benchmark.json`: resultado completo da última execução, mantido localmente;
+- `data/control/performance_benchmark_history.json`: histórico local das medições;
+- `docs/performance-benchmark.md`: relatório consolidado destinado ao portfólio.
+
+O benchmark não faz parte do quality gate obrigatório do GitHub Actions porque tempos absolutos variam conforme CPU, memória, Docker e carga do runner. A otimização só deve ser incorporada ao pipeline principal quando apresentar equivalência funcional e ganho repetível no mesmo ambiente.
+
 ### Smoke test end-to-end
 
 O smoke test utiliza a pequena amostra versionada em data/sample, grava todas as saídas em um diretório temporário e valida o fluxo integrado CSV -> Bronze -> Silver -> Gold.
@@ -596,7 +620,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 148 testes com cobertura de linhas e branches;
+- executa os 176 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
