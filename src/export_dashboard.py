@@ -8,6 +8,9 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as F
 
 from src.dashboard_manifest import generate_dashboard_manifest
+from src.dashboard_trend_partitions import (
+    export_daily_trend_partitions,
+)
 from src.forecast_gold import FORECAST_METHOD, FORECAST_METHOD_VERSION
 from src.recommendation_gold import RECOMMENDATION_RULES_VERSION
 from src.risk_gold import (
@@ -562,13 +565,22 @@ def main() -> None:
                 generated_at,
             ),
         )
-        export_payload(
-            "daily_trends",
-            create_daily_trends_payload(
-                daily_trends_df,
-                generated_at,
-            ),
-            "records",
+        daily_trends_payload = create_daily_trends_payload(
+            daily_trends_df,
+            generated_at,
+        )
+        trend_index = export_daily_trend_partitions(
+            records=daily_trends_payload["records"],
+            generated_at=generated_at,
+            data_dir=OUTPUT_DIR,
+            mock=False,
+            remove_legacy=True,
+        )
+        print(
+            "daily_trends: "
+            f"{trend_index['total_records']} registros em "
+            f"{trend_index['partition_count']} partições -> "
+            f"{OUTPUT_DIR / 'daily_trends_index.json'}"
         )
         export_payload(
             "risk_summary",

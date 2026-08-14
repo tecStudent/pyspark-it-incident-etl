@@ -6,6 +6,11 @@ from typing import Any
 from jsonschema import Draft202012Validator, FormatChecker
 from jsonschema.exceptions import SchemaError, ValidationError
 
+from src.dashboard_trend_partitions import (
+    normalized_file_size,
+    sha256_file,
+)
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SCHEMA_DIR = PROJECT_ROOT / "docs" / "schemas"
@@ -13,10 +18,18 @@ DEFAULT_DATA_DIR = PROJECT_ROOT / "docs" / "data"
 
 CONTRACTS = {
     "filter_options": "filter_options.json",
-    "daily_trends": "daily_trends.json",
+    "daily_trends": "daily_trends_index.json",
     "risk_summary": "risk_summary.json",
     "forecast_summary": "forecast_summary.json",
     "recommendations": "recommendations.json",
+}
+
+CONTRACT_SCHEMAS = {
+    "filter_options": "filter_options.schema.json",
+    "daily_trends": "daily_trends_index.schema.json",
+    "risk_summary": "risk_summary.schema.json",
+    "forecast_summary": "forecast_summary.schema.json",
+    "recommendations": "recommendations.schema.json",
 }
 
 
@@ -108,7 +121,7 @@ def validate_contract(
         )
 
     data_filename = CONTRACTS[contract_name]
-    schema_filename = f"{contract_name}.schema.json"
+    schema_filename = CONTRACT_SCHEMAS[contract_name]
 
     payload = load_json(data_dir / data_filename)
     schema = load_json(schema_dir / schema_filename)
@@ -118,6 +131,114 @@ def validate_contract(
         payload=payload,
         schema=schema,
     )
+
+    if contract_name == "daily_trends":
+        validate_daily_trend_partitions(
+            index_payload=payload,
+            data_dir=data_dir,
+            schema_dir=schema_dir,
+        )
+
+
+def validate_daily_trend_partitions(
+    index_payload: dict[str, Any],
+    data_dir: Path = DEFAULT_DATA_DIR,
+    schema_dir: Path = DEFAULT_SCHEMA_DIR,
+) -> None:
+    partition_schema = load_json(
+        schema_dir / "daily_trends.schema.json"
+    )
+    total_records = 0
+    total_size_bytes = 0
+    available_partitions = set()
+
+    for entry in index_payload["partitions"]:
+        relative_path = Path(entry["path"])
+        partition_path = data_dir / relative_path
+        partition_payload = load_json(partition_path)
+
+        validate_payload(
+            contract_name=(
+                "daily_trends "
+                f"{entry['year']}-{entry['month']:02d}"
+            ),
+            payload=partition_payload,
+            schema=partition_schema,
+        )
+
+        if (
+            partition_payload["generated_at"]
+            != index_payload["generated_at"]
+        ):
+            raise DashboardContractError(
+                f"generated_at divergente na partição {entry['path']}"
+            )
+
+        if partition_payload["mock"] != index_payload["mock"]:
+            raise DashboardContractError(
+                f"Indicador mock divergente na partição {entry['path']}"
+            )
+
+        record_count = len(partition_payload["records"])
+        if record_count != entry["record_count"]:
+            raise DashboardContractError(
+                f"record_count divergente na partição {entry['path']}"
+            )
+
+        expected_prefix = (
+            f"{entry['year']}-{entry['month']:02d}-"
+        )
+        if any(
+            not record["date"].startswith(expected_prefix)
+            for record in partition_payload["records"]
+        ):
+            raise DashboardContractError(
+                f"Registro fora do mês da partição {entry['path']}"
+            )
+
+        current_size = normalized_file_size(partition_path)
+        if current_size != entry["size_bytes"]:
+            raise DashboardContractError(
+                f"size_bytes divergente na partição {entry['path']}"
+            )
+
+        current_hash = sha256_file(partition_path)
+        if current_hash != entry["sha256"]:
+            raise DashboardContractError(
+                f"sha256 divergente na partição {entry['path']}"
+            )
+
+        total_records += record_count
+        total_size_bytes += current_size
+        available_partitions.add(
+            (entry["year"], entry["month"])
+        )
+
+    if total_records != index_payload["total_records"]:
+        raise DashboardContractError(
+            "total_records do índice diverge das partições."
+        )
+
+    if total_size_bytes != index_payload["total_size_bytes"]:
+        raise DashboardContractError(
+            "total_size_bytes do índice diverge das partições."
+        )
+
+    if len(index_payload["partitions"]) != index_payload["partition_count"]:
+        raise DashboardContractError(
+            "partition_count do índice diverge das partições."
+        )
+
+    default_partition = index_payload["default_partition"]
+    if default_partition is not None:
+        default_key = (
+            default_partition["year"],
+            default_partition["month"],
+        )
+        if default_key not in available_partitions:
+            raise DashboardContractError(
+                "default_partition não existe na lista de partições."
+            )
 
 
 def validate_all_contracts(
@@ -148,7 +269,7 @@ def parse_args() -> argparse.Namespace:
         "--data-dir",
         type=Path,
         default=DEFAULT_DATA_DIR,
-        help="Diretório que contém os cinco JSONs do dashboard.",
+        help="Diretório que contém os payloads do dashboard.",
     )
     parser.add_argument(
         "--schema-dir",

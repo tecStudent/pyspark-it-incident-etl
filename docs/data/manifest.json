@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-08-13T10:32:29Z",
+  "generated_at": "2026-08-14T09:48:25Z",
   "status": "HEALTHY",
   "files_total": 5,
   "files_valid": 5,
@@ -21,16 +21,16 @@
     },
     {
       "name": "daily_trends",
-      "path": "daily_trends.json",
-      "schema_path": "../schemas/daily_trends.schema.json",
+      "path": "daily_trends_index.json",
+      "schema_path": "../schemas/daily_trends_index.schema.json",
       "contract_status": "VALID",
       "schema_version": "1.0",
       "data_generated_at": "2026-08-12T11:27:12Z",
       "mock": false,
       "item_count": 21064,
-      "item_count_source": "records",
-      "size_bytes": 7177177,
-      "sha256": "9c5a5ea072c883e7d4cac176ad310095765cef26c0a9d6ae7200e8e13d00026a"
+      "item_count_source": "total_records",
+      "size_bytes": 8551,
+      "sha256": "50732a84f8131aca586d41e76e99a4d4bb1b775c6073e3a53ba0e0f3eb43f039"
     },
     {
       "name": "risk_summary",

@@ -264,7 +264,8 @@ O dashboard não lê Parquet, o Excel bruto ou regras PySpark. A integração oc
 | Arquivo | Conteúdo |
 | --- | --- |
 | filter_options.json | Anos, meses, prioridades, produtos, categorias e equipes |
-| daily_trends.json | Indicadores diários multidimensionais |
+| daily_trends_index.json | Catálogo, integridade e recorte padrão das tendências |
+| daily_trends/AAAA/MM.json | Indicadores diários multidimensionais particionados |
 | risk_summary.json | Metodologia e ranking de risco |
 | forecast_summary.json | Histórico, escopo e previsão D+1/D+7 |
 | recommendations.json | Recomendações com evidências |
@@ -275,6 +276,15 @@ Os contratos contêm schema_version, generated_at em UTC, mock: false, datas ISO
 A especificação completa está em [docs/dashboard-data-contract.md](docs/dashboard-data-contract.md). Os exemplos para o front-end permanecem em docs/data/samples com mock: true.
 
 A exportação operacional é consumida pela interface sem reproduzir regras de negócio em JavaScript.
+
+Para migrar uma publicação antiga que ainda contém o arquivo único `daily_trends.json`:
+
+~~~bash
+docker compose run --rm spark \
+  python3 src/dashboard_trend_partitions.py
+~~~
+
+O comando cria as partições mensais, publica `daily_trends_index.json`, remove o arquivo monolítico e regenera o manifesto. As próximas execuções de `src/export_dashboard.py` já produzem diretamente o formato particionado.
 
 ## Dashboard
 
@@ -292,7 +302,7 @@ A interface preserva o estilo visual do projeto e organiza a análise em cinco �
 
 Os filtros usam as opções publicadas pelo pipeline. Ano, mês, prioridade e equipe afetam a Visão geral; os seis filtros afetam as Tendências. Previsão, risco e recomendações são snapshots com escopo declarado nos respectivos contratos e não são recalculados no navegador.
 
-Antes de renderizar os indicadores, a página verifica se o manifesto está `HEALTHY`, se todos os contratos estão válidos e se a publicação não contém dados simulados. O arquivo `daily_trends.json`, atualmente o maior payload, é carregado somente quando a aba Tendências é aberta.
+Antes de renderizar os indicadores, a página verifica se o manifesto está `HEALTHY`, se todos os contratos estão válidos e se a publicação não contém dados simulados. As tendências são particionadas por ano e mês. A aba Tendências abre no recorte mais recente e baixa apenas as partições necessárias, mantendo em memória as partições já consultadas.
 
 ### Executar localmente
 
@@ -317,7 +327,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 113 passed |
+| Testes automatizados | 121 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -368,6 +378,7 @@ pyspark-it-incident-etl/
 |   |-- forecast_gold.py
 |   |-- recommendation_gold.py
 |   |-- export_dashboard.py
+|   |-- dashboard_trend_partitions.py
    |-- validate_dashboard_contracts.py
    |-- dashboard_manifest.py
    |-- e2e_smoke_test.py
@@ -523,10 +534,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-113 passed
+121 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, controles incrementais, auditoria, reconciliação, integração estática da interface e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface e as validações auxiliares do smoke test.
 
 ### Smoke test end-to-end
 
@@ -549,7 +560,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 102 testes;
+- executa os 121 testes;
 - desabilita o cache do Pytest;
 - possui permissão somente de leitura;
 - cancela execuções anteriores do mesmo contexto;
@@ -579,6 +590,7 @@ docker compose down
 | Reconciliação após a Gold | Detectar divergências entre controles e dados físicos |
 | JSON agregado no GitHub Pages | Publicação gratuita sem expor dados brutos |
 | Manifesto com hash normalizado | Verificação reproduzível no Windows e no Linux |
+| Tendências particionadas por mês | Reduzir o download inicial e permitir cache no navegador |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
 
@@ -589,7 +601,6 @@ docker compose down
 - A carga incremental usa snapshots Parquet, não um formato transacional.
 - A previsão é uma baseline, não um modelo treinado e validado.
 - As recomendações são regras de apoio à decisão.
-- O payload de tendências ainda pode ser reduzido ou particionado para melhorar o tempo de carregamento.
 
 ## Conceitos demonstrados
 
@@ -609,7 +620,7 @@ docker compose down
 
 ## Possíveis evoluções
 
-- Reduzir o tamanho de daily_trends.json com recortes ou partições.
+- Adicionar métricas Web Vitals ao dashboard publicado.
 - Adicionar relatório de cobertura de testes ao CI.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.

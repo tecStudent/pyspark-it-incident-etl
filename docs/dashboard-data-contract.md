@@ -24,7 +24,8 @@ O dashboard não deve ler arquivos Parquet, CSV bruto ou reproduzir regras de KP
 | --- | --- |
 | `docs/data/dashboard_summary.json` | Visão geral já utilizada pelo dashboard atual |
 | `docs/data/filter_options.json` | Valores disponíveis nos filtros |
-| `docs/data/daily_trends.json` | Indicadores diários para tendências |
+| `docs/data/daily_trends_index.json` | Catálogo e integridade das partições de tendências |
+| `docs/data/daily_trends/AAAA/MM.json` | Indicadores diários particionados por mês |
 | `docs/data/forecast_summary.json` | Histórico e baseline de previsão D+1/D+7 |
 | `docs/data/risk_summary.json` | Rankings de risco operacional |
 | `docs/data/recommendations.json` | Recomendações determinísticas com evidências |
@@ -72,9 +73,17 @@ Objeto contendo as opções aceitas pelo dashboard:
 - `categories`: lista de categorias;
 - `teams`: lista de equipes.
 
-## `daily_trends.json`
+## Tendências diárias particionadas
 
-Cada item de `records` representa uma agregação diária por prioridade, produto, categoria e equipe.
+O arquivo `daily_trends_index.json` funciona como catálogo das partições mensais. Ele informa volume total, tamanho agregado, recorte padrão e, para cada partição, caminho, contagem, tamanho e hash SHA-256.
+
+As partições seguem o padrão:
+
+```text
+docs/data/daily_trends/AAAA/MM.json
+```
+
+Cada item de `records` dentro de uma partição representa uma agregação diária por prioridade, produto, categoria e equipe.
 
 Campos obrigatórios:
 
@@ -137,7 +146,8 @@ Os cinco payloads operacionais e o manifesto de publicação possuem definiçõe
 | Payload | Schema |
 | --- | --- |
 | `filter_options.json` | `docs/schemas/filter_options.schema.json` |
-| `daily_trends.json` | `docs/schemas/daily_trends.schema.json` |
+| `daily_trends_index.json` | `docs/schemas/daily_trends_index.schema.json` |
+| `daily_trends/AAAA/MM.json` | `docs/schemas/daily_trends.schema.json` |
 | `risk_summary.json` | `docs/schemas/risk_summary.schema.json` |
 | `forecast_summary.json` | `docs/schemas/forecast_summary.schema.json` |
 | `recommendations.json` | `docs/schemas/recommendations.schema.json` |
@@ -217,8 +227,11 @@ Na inicialização, a interface lê primeiro o manifesto e interrompe a
 renderização quando o status não é `HEALTHY`, quando existe contrato
 inválido ou quando a publicação contém dados simulados. Os payloads de
 visão geral, filtros, risco, previsão e recomendações são carregados em
-seguida. Por ser o maior arquivo, `daily_trends.json` é carregado sob
-demanda quando a aba Tendências é aberta.
+seguida. As tendências usam um índice pequeno. Na primeira abertura,
+a interface seleciona o mês mais recente e baixa somente sua partição.
+Alterações em ano ou mês carregam apenas as partições necessárias.
+Partições consultadas permanecem em cache durante a sessão, e respostas
+antigas são ignoradas quando os filtros mudam rapidamente.
 
 Ano, mês, prioridade e equipe filtram a Visão geral. Tendências utiliza
 também produto e categoria. Os demais módulos respeitam o escopo fixo
@@ -234,3 +247,4 @@ aplicado quando não existe agregação correspondente no pipeline.
 5. O dashboard trata arquivos vazios, valores nulos e erros de carregamento.
 6. Os testes automatizados validam pelo menos os campos obrigatórios e os tipos principais.
 7. O CI rejeita payloads que não correspondem ao manifesto versionado.
+8. O dashboard não baixa todo o histórico de tendências na primeira abertura.

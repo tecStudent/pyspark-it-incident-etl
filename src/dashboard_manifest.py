@@ -7,6 +7,7 @@ from typing import Any
 
 from src.validate_dashboard_contracts import (
     CONTRACTS,
+    CONTRACT_SCHEMAS,
     DEFAULT_DATA_DIR,
     DEFAULT_SCHEMA_DIR,
     DashboardContractError,
@@ -29,7 +30,6 @@ ITEM_COUNT_FIELDS = {
         "categories",
         "teams",
     ),
-    "daily_trends": ("records",),
     "risk_summary": ("items",),
     "forecast_summary": ("forecast",),
     "recommendations": ("items",),
@@ -73,6 +73,14 @@ def count_items(
     contract_name: str,
     payload: dict[str, Any],
 ) -> tuple[int, str]:
+    if contract_name == "daily_trends":
+        total_records = payload.get("total_records")
+        if not isinstance(total_records, int):
+            raise DashboardContractError(
+                "daily_trends.total_records deve ser inteiro."
+            )
+        return total_records, "total_records"
+
     fields = ITEM_COUNT_FIELDS[contract_name]
     total = 0
 
@@ -117,7 +125,7 @@ def create_file_entry(
         "name": contract_name,
         "path": filename,
         "schema_path": (
-            f"../schemas/{contract_name}.schema.json"
+            f"../schemas/{CONTRACT_SCHEMAS[contract_name]}"
         ),
         "contract_status": "VALID",
         "schema_version": payload["schema_version"],

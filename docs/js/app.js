@@ -2,7 +2,7 @@ const DATA_PATHS = {
     manifest: "data/manifest.json",
     overview: "data/dashboard_summary.json",
     filters: "data/filter_options.json",
-    trends: "data/daily_trends.json",
+    trendsIndex: "data/daily_trends_index.json",
     risk: "data/risk_summary.json",
     forecast: "data/forecast_summary.json",
     recommendations: "data/recommendations.json"
@@ -41,6 +41,10 @@ const state = {
     overview: [],
     filterOptions: null,
     trends: null,
+    trendsIndex: null,
+    trendPartitions: new Map(),
+    trendDefaultApplied: false,
+    trendLoadToken: 0,
     risk: null,
     forecast: null,
     recommendations: null,
@@ -811,27 +815,94 @@ function updateRecommendations() {
 }
 
 
-async function ensureTrendsLoaded() {
-    if (state.trends) {
-        updateTrends();
+function selectedTrendPartitions() {
+    const filters = selectedFilters();
+
+    return state.trendsIndex.partitions.filter(partition => {
+        return (!filters.year || String(partition.year) === filters.year)
+            && (!filters.month || String(partition.month) === filters.month);
+    });
+}
+
+
+function applyDefaultTrendPartition() {
+    if (state.trendDefaultApplied || !state.trendsIndex.default_partition) {
         return;
     }
 
+    const defaultPartition = state.trendsIndex.default_partition;
+    document.getElementById("year-filter").value = String(defaultPartition.year);
+    document.getElementById("month-filter").value = String(defaultPartition.month);
+    state.trendDefaultApplied = true;
+}
+
+
+async function loadTrendPartitions() {
     const loading = document.getElementById("trends-loading");
+    const requestToken = ++state.trendLoadToken;
+    const selectedPartitions = selectedTrendPartitions();
     loading.hidden = false;
 
     try {
-        state.trends = await fetchJson(DATA_PATHS.trends, "Tendências diárias");
+        const payloads = await Promise.all(
+            selectedPartitions.map(async partition => {
+                if (!state.trendPartitions.has(partition.path)) {
+                    const payload = await fetchJson(
+                        `data/${partition.path}`,
+                        `Tendências ${partition.year}-${String(partition.month).padStart(2, "0")}`
+                    );
 
-        if (state.trends.mock) {
-            throw new Error("O payload de tendências contém dados simulados.");
+                    if (payload.mock) {
+                        throw new Error(`A partição ${partition.path} contém dados simulados.`);
+                    }
+
+                    state.trendPartitions.set(partition.path, payload);
+                }
+
+                return state.trendPartitions.get(partition.path);
+            })
+        );
+
+        if (requestToken !== state.trendLoadToken) {
+            return;
         }
+
+        state.trends = {
+            schema_version: state.trendsIndex.schema_version,
+            generated_at: state.trendsIndex.generated_at,
+            mock: false,
+            records: payloads.flatMap(payload => payload.records)
+        };
 
         updateTrends();
     } catch (error) {
         showError(error);
     } finally {
-        loading.hidden = true;
+        if (requestToken === state.trendLoadToken) {
+            loading.hidden = true;
+        }
+    }
+}
+
+
+async function ensureTrendsLoaded() {
+    try {
+        if (!state.trendsIndex) {
+            state.trendsIndex = await fetchJson(
+                DATA_PATHS.trendsIndex,
+                "Índice das tendências diárias"
+            );
+
+            if (state.trendsIndex.mock) {
+                throw new Error("O índice de tendências contém dados simulados.");
+            }
+
+            applyDefaultTrendPartition();
+        }
+
+        await loadTrendPartitions();
+    } catch (error) {
+        showError(error);
     }
 }
 
@@ -839,7 +910,7 @@ async function ensureTrendsLoaded() {
 function updateFilterScopeNote(view) {
     const messages = {
         overview: "Ano, mês, prioridade e equipe afetam esta visão.",
-        trends: "Todos os seis filtros afetam as tendências.",
+        trends: "Ano e mês carregam apenas as partições necessárias; os demais filtros refinam o recorte.",
         forecast: "A previsão possui escopo fixo definido pelo pipeline.",
         risk: "O risco é um snapshot consolidado por dimensão.",
         recommendations: "As recomendações são um snapshot consolidado com evidências."
@@ -902,7 +973,9 @@ function clearFilters() {
 
     updateOverview();
 
-    if (state.trends) {
+    if (state.activeView === "trends" && state.trendsIndex) {
+        loadTrendPartitions();
+    } else if (state.trends) {
         updateTrends();
     }
 }
@@ -914,9 +987,18 @@ function registerEvents() {
     });
 
     document.querySelectorAll(".filters .filter-select").forEach(select => {
-        select.addEventListener("change", () => {
+        select.addEventListener("change", async () => {
             updateOverview();
-            if (state.trends) updateTrends();
+
+            if (state.activeView !== "trends" || !state.trendsIndex) {
+                return;
+            }
+
+            if (select.id === "year-filter" || select.id === "month-filter") {
+                await loadTrendPartitions();
+            } else if (state.trends) {
+                updateTrends();
+            }
         });
     });
 
