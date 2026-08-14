@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from src.spark_performance import ANALYTICAL_SPARK_CONFIG
+
 
 SCHEMA_VERSION = "1.0"
 RESULT_PREFIX = "BENCHMARK_RESULT="
@@ -31,10 +33,7 @@ PROFILE_CONFIGS = {
         "spark.sql.shuffle.partitions": "200",
     },
     "optimized": {
-        "spark.sql.adaptive.enabled": "true",
-        "spark.sql.adaptive.coalescePartitions.enabled": "true",
-        "spark.sql.adaptive.localShuffleReader.enabled": "true",
-        "spark.sql.shuffle.partitions": "8",
+        **ANALYTICAL_SPARK_CONFIG,
     },
 }
 

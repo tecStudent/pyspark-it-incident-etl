@@ -327,7 +327,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 176 passed |
+| Testes automatizados | 184 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -541,7 +541,7 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-176 passed
+184 passed
 ~~~
 
 Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark e as validações auxiliares do smoke test.
@@ -580,7 +580,7 @@ No GitHub Actions, o mesmo resumo aparece na página da execução. O runner pre
 
 ### Benchmark de desempenho
 
-O benchmark executa uma carga sintética e determinística em dois processos Spark isolados. O perfil baseline preserva 200 partições de shuffle e desabilita Adaptive Query Execution. O perfil otimizado utiliza oito partições, Adaptive Query Execution, coalescência de partições e cache apenas para resultados analíticos reutilizados.
+O benchmark executa uma carga sintética e determinística em dois processos Spark isolados. O perfil baseline preserva 200 partições de shuffle e desabilita Adaptive Query Execution. O perfil otimizado utiliza oito partições, Adaptive Query Execution, coalescência de partições e cache apenas para resultados analíticos reutilizados. Esse perfil foi incorporado às execuções Gold completa e incremental depois de apresentar equivalência funcional e speedup de 5,093x na medição documentada.
 
 ~~~bash
 docker compose run --rm spark python3 src/pipeline_benchmark.py \
@@ -597,7 +597,7 @@ São gerados:
 - `data/control/performance_benchmark_history.json`: histórico local das medições;
 - `docs/performance-benchmark.md`: relatório consolidado destinado ao portfólio.
 
-O benchmark não faz parte do quality gate obrigatório do GitHub Actions porque tempos absolutos variam conforme CPU, memória, Docker e carga do runner. A otimização só deve ser incorporada ao pipeline principal quando apresentar equivalência funcional e ganho repetível no mesmo ambiente.
+O benchmark não faz parte do quality gate obrigatório do GitHub Actions porque tempos absolutos variam conforme CPU, memória, Docker e carga do runner. A configuração aprovada fica centralizada em `src/spark_performance.py`, evitando divergência entre o perfil medido e o utilizado pelo pipeline. Os DataFrames compartilhados são liberados ao final da execução, inclusive quando ocorre uma falha.
 
 ### Smoke test end-to-end
 
@@ -620,7 +620,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 176 testes com cobertura de linhas e branches;
+- executa os 184 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;

@@ -24,6 +24,11 @@ from src.operational_gold import (
 )
 from src.recommendation_gold import create_recommendations
 from src.risk_gold import create_risk_summary
+from src.spark_performance import (
+    cache_reused_frames,
+    configure_analytical_builder,
+    unpersist_frames,
+)
 
 
 SILVER_INPUT = Path(
@@ -85,8 +90,11 @@ RECOMMENDATIONS_OUTPUT = (
 
 def create_spark_session() -> SparkSession:
     return (
-        SparkSession.builder
-        .appName("IT Incident Incremental Gold")
+        configure_analytical_builder(
+            SparkSession.builder.appName(
+                "IT Incident Incremental Gold"
+            )
+        )
         .getOrCreate()
     )
 
@@ -257,13 +265,15 @@ def main() -> None:
     spark = create_spark_session()
     spark.sparkContext.setLogLevel("WARN")
 
-    silver_df = None
+    cached_frames = []
 
     try:
         silver_df = (
             spark.read
             .parquet(str(SILVER_INPUT))
-            .cache()
+        )
+        cached_frames.extend(
+            cache_reused_frames(silver_df)
         )
 
         silver_count = silver_df.count()
@@ -318,6 +328,14 @@ def main() -> None:
 
         forecast_summary_df = create_forecast_summary(
             silver_df
+        )
+        cached_frames.extend(
+            cache_reused_frames(
+                annual_ola_df,
+                risk_df,
+                forecast_history_df,
+                forecast_summary_df,
+            )
         )
 
         recommendations_df = create_recommendations(
@@ -415,9 +433,7 @@ def main() -> None:
         )
 
     finally:
-        if silver_df is not None:
-            silver_df.unpersist()
-
+        unpersist_frames(cached_frames)
         spark.stop()
 
 
