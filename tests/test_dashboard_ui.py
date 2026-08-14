@@ -46,7 +46,7 @@ def test_dashboard_loads_all_published_payloads():
         "manifest.json",
         "dashboard_summary.json",
         "filter_options.json",
-        "daily_trends.json",
+        "daily_trends_index.json",
         "risk_summary.json",
         "forecast_summary.json",
         "recommendations.json",
@@ -72,13 +72,32 @@ def test_manifest_is_validated_before_operational_payloads_are_rendered():
     assert "manifest.contains_mock_data" in script
 
 
-def test_daily_trends_payload_is_loaded_on_demand():
+def test_daily_trends_partitions_are_loaded_on_demand():
     script = read(SCRIPT_PATH)
 
     assert "async function ensureTrendsLoaded()" in script
-    assert "state.trends = await fetchJson(DATA_PATHS.trends" in script
+    assert "async function loadTrendPartitions()" in script
+    assert "DATA_PATHS.trendsIndex" in script
+    assert "state.trendPartitions.has(partition.path)" in script
+    assert "`data/${partition.path}`" in script
     assert 'if (view === "trends")' in script
     assert "await ensureTrendsLoaded()" in script
+
+
+def test_trends_open_with_latest_partition_and_keep_explicit_all_periods():
+    script = read(SCRIPT_PATH)
+
+    assert "function applyDefaultTrendPartition()" in script
+    assert "state.trendsIndex.default_partition" in script
+    assert "state.trendDefaultApplied = true" in script
+    assert 'select.value = ""' in script
+
+
+def test_trend_partition_requests_ignore_stale_responses():
+    script = read(SCRIPT_PATH)
+
+    assert "const requestToken = ++state.trendLoadToken" in script
+    assert "requestToken !== state.trendLoadToken" in script
 
 
 def test_filters_are_enabled_only_for_supported_views():

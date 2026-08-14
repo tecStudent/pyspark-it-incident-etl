@@ -1,0 +1,302 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-08-12T11:27:12Z",
+  "mock": false,
+  "total_records": 21064,
+  "total_size_bytes": 5115966,
+  "partition_count": 36,
+  "default_partition": {
+    "year": 2025,
+    "month": 12
+  },
+  "partitions": [
+    {
+      "year": 2023,
+      "month": 1,
+      "path": "daily_trends/2023/01.json",
+      "record_count": 9,
+      "size_bytes": 2341,
+      "sha256": "908edc3ac584dbc3018cdfc67f6470b0590e518452002ed178a5c9d24278668e"
+    },
+    {
+      "year": 2023,
+      "month": 2,
+      "path": "daily_trends/2023/02.json",
+      "record_count": 7,
+      "size_bytes": 1839,
+      "sha256": "f396367e5734168b1970cb7d8a6e5e29955572f09e6d9f4ef0f63054dd8e4e87"
+    },
+    {
+      "year": 2023,
+      "month": 3,
+      "path": "daily_trends/2023/03.json",
+      "record_count": 8,
+      "size_bytes": 2089,
+      "sha256": "0fce7aadfa8b9a04f78a3cca94b8972dcc078fb86a712f03babc421959f10892"
+    },
+    {
+      "year": 2023,
+      "month": 4,
+      "path": "daily_trends/2023/04.json",
+      "record_count": 6,
+      "size_bytes": 1588,
+      "sha256": "2ab6b23dc00ea8404b7c30a6c90a60c1cc2fa01702b32bf50aaf8db9489904f4"
+    },
+    {
+      "year": 2023,
+      "month": 5,
+      "path": "daily_trends/2023/05.json",
+      "record_count": 7,
+      "size_bytes": 1844,
+      "sha256": "6ea7ddcdcdb4ba6443ba01607f78287d601d19f7271f9d844262e6097e8f1c33"
+    },
+    {
+      "year": 2023,
+      "month": 6,
+      "path": "daily_trends/2023/06.json",
+      "record_count": 2,
+      "size_bytes": 588,
+      "sha256": "9c8c53773297baa8144a5957581cca85b782be7f9d9d3878c08e1ead0846395b"
+    },
+    {
+      "year": 2023,
+      "month": 7,
+      "path": "daily_trends/2023/07.json",
+      "record_count": 6,
+      "size_bytes": 1587,
+      "sha256": "4626f7bdc1a7da4a55ac210ca9181b035bc16c5fe89f1b70cdf615e81fcd9fb7"
+    },
+    {
+      "year": 2023,
+      "month": 8,
+      "path": "daily_trends/2023/08.json",
+      "record_count": 6,
+      "size_bytes": 1585,
+      "sha256": "6b4018095c11825ff5eb30444e779aa57c1e1b6ef0d5fcb50cd9ca02b040dba7"
+    },
+    {
+      "year": 2023,
+      "month": 9,
+      "path": "daily_trends/2023/09.json",
+      "record_count": 14,
+      "size_bytes": 3587,
+      "sha256": "6acca4425140339d712bbf16f93297e2b137b11bb1c1f0ae9b50064e846fc990"
+    },
+    {
+      "year": 2023,
+      "month": 10,
+      "path": "daily_trends/2023/10.json",
+      "record_count": 17,
+      "size_bytes": 4333,
+      "sha256": "f29dd54e43b70200723ac01b129f04bc6bcbacc36b711ac3b2fae8b6889f2308"
+    },
+    {
+      "year": 2023,
+      "month": 11,
+      "path": "daily_trends/2023/11.json",
+      "record_count": 11,
+      "size_bytes": 2839,
+      "sha256": "dccb41fe9db683b22daef98f287fb1a3261e65fc45b733f29d4b5834df223d5a"
+    },
+    {
+      "year": 2023,
+      "month": 12,
+      "path": "daily_trends/2023/12.json",
+      "record_count": 8,
+      "size_bytes": 2085,
+      "sha256": "b878460c29c7515e24e2719becfe72a4fc132c6f2c255b9bb028b44977ca63e5"
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "path": "daily_trends/2024/01.json",
+      "record_count": 7,
+      "size_bytes": 1837,
+      "sha256": "7da747cbb82b559f4e9ba8f1c813b595140fc01aa184864e09ee7cf5bb5fddd7"
+    },
+    {
+      "year": 2024,
+      "month": 2,
+      "path": "daily_trends/2024/02.json",
+      "record_count": 10,
+      "size_bytes": 2588,
+      "sha256": "17d651fffbe1c6de8d81e1d6bad4fa2ca05e3ea61041718ea24ce927a5436912"
+    },
+    {
+      "year": 2024,
+      "month": 3,
+      "path": "daily_trends/2024/03.json",
+      "record_count": 26,
+      "size_bytes": 6581,
+      "sha256": "a315967faa59a3300b0ef68388db6f4223ed1bbf15e0977e07537f3ec9522db2"
+    },
+    {
+      "year": 2024,
+      "month": 4,
+      "path": "daily_trends/2024/04.json",
+      "record_count": 21,
+      "size_bytes": 5328,
+      "sha256": "f4510eae9af27ac53b1d9ef360d8f878d4d67e5fe1832495fa69e16118d14a91"
+    },
+    {
+      "year": 2024,
+      "month": 5,
+      "path": "daily_trends/2024/05.json",
+      "record_count": 16,
+      "size_bytes": 4086,
+      "sha256": "87296374daf8966122536d27b1dbf0ade248381d59cd860e6058d449c6c71f67"
+    },
+    {
+      "year": 2024,
+      "month": 6,
+      "path": "daily_trends/2024/06.json",
+      "record_count": 16,
+      "size_bytes": 4088,
+      "sha256": "166ced23c7b926598eca9991e090ee126fc1135613d119a3b43dbd3e1081487a"
+    },
+    {
+      "year": 2024,
+      "month": 7,
+      "path": "daily_trends/2024/07.json",
+      "record_count": 39,
+      "size_bytes": 9828,
+      "sha256": "092d9edcde34124b8e782d169bb41df491fc7a7f57a8c614ffd7761f15de561c"
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "path": "daily_trends/2024/08.json",
+      "record_count": 35,
+      "size_bytes": 8827,
+      "sha256": "e057c1ac998b9fcdcf0fd22dedd42362c2bb0c0a48d3c6bf043fd6aaaf01cce2"
+    },
+    {
+      "year": 2024,
+      "month": 9,
+      "path": "daily_trends/2024/09.json",
+      "record_count": 26,
+      "size_bytes": 6577,
+      "sha256": "e623c0d6ba4dcf537ce22b94006a2265342293358c446101fa07b2dbd50e091d"
+    },
+    {
+      "year": 2024,
+      "month": 10,
+      "path": "daily_trends/2024/10.json",
+      "record_count": 44,
+      "size_bytes": 11052,
+      "sha256": "5a72738d42c21f3d0693d7c8f059bcdf68af0e6384f752296bae24832ac770de"
+    },
+    {
+      "year": 2024,
+      "month": 11,
+      "path": "daily_trends/2024/11.json",
+      "record_count": 57,
+      "size_bytes": 14286,
+      "sha256": "1bf4fc424249cae1e7d0a9c8fb464c859841aa9bced6932b68866c9458ac4398"
+    },
+    {
+      "year": 2024,
+      "month": 12,
+      "path": "daily_trends/2024/12.json",
+      "record_count": 179,
+      "size_bytes": 44003,
+      "sha256": "d44795e3871362aede5e3be1f8592db3507295e423bea0b04d6dba4d7245ccde"
+    },
+    {
+      "year": 2025,
+      "month": 1,
+      "path": "daily_trends/2025/01.json",
+      "record_count": 1716,
+      "size_bytes": 416734,
+      "sha256": "97900b73ce6f2f5600fde0b20b82b82b355086fabbedeb2ecb7cb18cd5813684"
+    },
+    {
+      "year": 2025,
+      "month": 2,
+      "path": "daily_trends/2025/02.json",
+      "record_count": 1613,
+      "size_bytes": 391774,
+      "sha256": "37bc4d1ca849e3fbed74df5f9448deed98ab05e5e09ee7c9cd83af8bb077ff28"
+    },
+    {
+      "year": 2025,
+      "month": 3,
+      "path": "daily_trends/2025/03.json",
+      "record_count": 1730,
+      "size_bytes": 420394,
+      "sha256": "6a59faa0a89d86cdea2cc633172b495193918e540cdfb3b94d1097192518056c"
+    },
+    {
+      "year": 2025,
+      "month": 4,
+      "path": "daily_trends/2025/04.json",
+      "record_count": 1574,
+      "size_bytes": 382610,
+      "sha256": "6caa4dcd006275e890cdf88c8d846f69253f8d53f752d0c38b916cc748da825b"
+    },
+    {
+      "year": 2025,
+      "month": 5,
+      "path": "daily_trends/2025/05.json",
+      "record_count": 1630,
+      "size_bytes": 396190,
+      "sha256": "7cd21c93233a9e292b30fc666698915ecfbfb7f4508c068d8ca01018ef53865d"
+    },
+    {
+      "year": 2025,
+      "month": 6,
+      "path": "daily_trends/2025/06.json",
+      "record_count": 1574,
+      "size_bytes": 382371,
+      "sha256": "ad3775fded40f78ae9c6ae9970e88e59498388834cbcc382a34881acb7ca0d0f"
+    },
+    {
+      "year": 2025,
+      "month": 7,
+      "path": "daily_trends/2025/07.json",
+      "record_count": 1606,
+      "size_bytes": 390435,
+      "sha256": "e92ed31cdb3966ba154878a69a74fcfcff586f2d94de1f08b20c61d05a864ebf"
+    },
+    {
+      "year": 2025,
+      "month": 8,
+      "path": "daily_trends/2025/08.json",
+      "record_count": 1602,
+      "size_bytes": 389484,
+      "sha256": "435e5fd23003193c09dce2117e9cf34dc43af6642a0d5d0d8b31000cfcc613a0"
+    },
+    {
+      "year": 2025,
+      "month": 9,
+      "path": "daily_trends/2025/09.json",
+      "record_count": 1995,
+      "size_bytes": 482983,
+      "sha256": "da0a0d0c7e2d65e31d61365a2d28d1d15fcb5c2fbb4c94333c006d8d4d7ed65b"
+    },
+    {
+      "year": 2025,
+      "month": 10,
+      "path": "daily_trends/2025/10.json",
+      "record_count": 2121,
+      "size_bytes": 513198,
+      "sha256": "5904140bf70af738634cd0bdb8596423032230a2a820c5e0d774b83e150d335d"
+    },
+    {
+      "year": 2025,
+      "month": 11,
+      "path": "daily_trends/2025/11.json",
+      "record_count": 1728,
+      "size_bytes": 418149,
+      "sha256": "7d5f467400ff6548c17cbbf87979303df28111ec8a28a9c7e2d597dcade038a6"
+    },
+    {
+      "year": 2025,
+      "month": 12,
+      "path": "daily_trends/2025/12.json",
+      "record_count": 1598,
+      "size_bytes": 386258,
+      "sha256": "8905b1b6e2657b371e2213c440b7e60a0be7abae37fdeb1d5d6255e0338fcb03"
+    }
+  ]
+}

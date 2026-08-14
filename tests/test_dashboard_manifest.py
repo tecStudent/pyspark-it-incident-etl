@@ -47,9 +47,12 @@ def test_file_entries_include_counts_and_integrity(
 
     assert entry["contract_status"] == "VALID"
     assert entry["item_count"] == expected_count
-    assert entry["item_count_source"] == "+".join(
-        ITEM_COUNT_FIELDS[contract_name]
+    expected_source = (
+        "total_records"
+        if contract_name == "daily_trends"
+        else "+".join(ITEM_COUNT_FIELDS[contract_name])
     )
+    assert entry["item_count_source"] == expected_source
     assert entry["size_bytes"] > 0
     assert len(entry["sha256"]) == 64
     assert entry["mock"] is True
@@ -128,7 +131,12 @@ def test_invalid_payload_prevents_healthy_manifest(
 ):
     data_dir = tmp_path / "data"
     shutil.copytree(SAMPLE_DATA_DIR, data_dir)
-    daily_path = data_dir / "daily_trends.json"
+    daily_path = (
+        data_dir
+        / "daily_trends"
+        / "2025"
+        / "01.json"
+    )
     daily_payload = json.loads(
         daily_path.read_text(encoding="utf-8")
     )

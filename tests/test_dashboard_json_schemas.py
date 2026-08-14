@@ -6,6 +6,7 @@ import pytest
 
 from src.validate_dashboard_contracts import (
     CONTRACTS,
+    CONTRACT_SCHEMAS,
     DEFAULT_DATA_DIR,
     DEFAULT_SCHEMA_DIR,
     DashboardContractError,
@@ -49,7 +50,7 @@ def test_contract_rejects_missing_required_metadata():
     )
     schema = load_json(
         DEFAULT_SCHEMA_DIR
-        / f"{contract_name}.schema.json"
+        / CONTRACT_SCHEMAS[contract_name]
     )
     invalid_payload = copy.deepcopy(payload)
     invalid_payload.pop("schema_version")
@@ -68,7 +69,10 @@ def test_contract_rejects_missing_required_metadata():
 def test_contract_rejects_invalid_iso_date():
     contract_name = "daily_trends"
     payload = load_json(
-        SAMPLE_DATA_DIR / CONTRACTS[contract_name]
+        SAMPLE_DATA_DIR
+        / "daily_trends"
+        / "2025"
+        / "01.json"
     )
     schema = load_json(
         DEFAULT_SCHEMA_DIR
@@ -95,7 +99,7 @@ def test_contract_rejects_unexpected_fields():
     )
     schema = load_json(
         DEFAULT_SCHEMA_DIR
-        / f"{contract_name}.schema.json"
+        / CONTRACT_SCHEMAS[contract_name]
     )
     invalid_payload = copy.deepcopy(payload)
     invalid_payload["unexpected_field"] = True
