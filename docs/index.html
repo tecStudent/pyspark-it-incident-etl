@@ -222,9 +222,30 @@
     </main>
 
     <footer>
-        <p>Indicadores operacionais gerados a partir de dados agregados e contratos versionados.</p>
-        <span id="footer-version">Contrato de dados v1.0</span>
+        <div class="footer-content">
+            <p>Indicadores operacionais gerados a partir de dados agregados e contratos versionados.</p>
+            <span id="footer-version">Contrato de dados v1.0</span>
+        </div>
+        <details id="performance-diagnostics" class="performance-diagnostics">
+            <summary>
+                Diagnóstico de desempenho
+                <span id="performance-summary" class="performance-summary rating-unavailable">Coletando</span>
+            </summary>
+            <p class="performance-privacy">Métricas coletadas somente neste navegador. Nenhum dado é enviado para serviços externos.</p>
+            <div class="performance-grid">
+                <article><span>LCP</span><strong id="performance-lcp">Coletando</strong><small id="performance-lcp-rating" class="metric-rating rating-unavailable">Indisponível</small></article>
+                <article><span>CLS</span><strong id="performance-cls">Coletando</strong><small id="performance-cls-rating" class="metric-rating rating-unavailable">Indisponível</small></article>
+                <article><span>INP estimado</span><strong id="performance-inp">Interaja com o painel</strong><small id="performance-inp-rating" class="metric-rating rating-unavailable">Indisponível</small></article>
+                <article><span>TTFB</span><strong id="performance-ttfb">Coletando</strong><small id="performance-ttfb-rating" class="metric-rating rating-unavailable">Indisponível</small></article>
+                <article><span>Painel pronto</span><strong id="performance-ready">Coletando</strong><small id="performance-ready-rating" class="metric-rating rating-unavailable">Indisponível</small></article>
+            </div>
+            <div class="performance-actions">
+                <button id="copy-performance-diagnostics" class="diagnostic-button" type="button">Copiar diagnóstico</button>
+                <span id="performance-copy-status" role="status" aria-live="polite"></span>
+            </div>
+        </details>
     </footer>
+    <script src="js/web-vitals.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

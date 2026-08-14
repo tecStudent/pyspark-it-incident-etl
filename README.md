@@ -327,7 +327,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 184 passed |
+| Testes automatizados | 196 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -541,10 +541,16 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-184 passed
+196 passed
 ~~~
 
 Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark e as validações auxiliares do smoke test.
+
+### Web Vitals do dashboard
+
+O rodapé do dashboard contém um diagnóstico de desempenho executado localmente pelo navegador. São acompanhados LCP, CLS, uma estimativa de INP, TTFB e o tempo até o painel concluir a carga dos dados essenciais. As classificações usam faixas explícitas de Bom, Atenção e Ruim.
+
+O diagnóstico utiliza `PerformanceObserver`, não cria cookies e não envia telemetria para serviços externos. O botão **Copiar diagnóstico** gera um snapshot JSON que pode ser anexado manualmente a uma análise de desempenho. Navegadores sem suporte a alguma API apresentam a métrica como indisponível, sem impedir o carregamento do dashboard.
 
 ### Cobertura de testes
 
@@ -620,7 +626,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 184 testes com cobertura de linhas e branches;
+- executa os 196 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -655,6 +661,7 @@ docker compose down
 | JSON agregado no GitHub Pages | Publicação gratuita sem expor dados brutos |
 | Manifesto com hash normalizado | Verificação reproduzível no Windows e no Linux |
 | Tendências particionadas por mês | Reduzir o download inicial e permitir cache no navegador |
+| Web Vitals coletados localmente | Observar a experiência publicada sem expor dados a terceiros |
 | Cobertura mínima no CI | Impedir regressões de testes com uma baseline mensurável |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
@@ -685,7 +692,6 @@ docker compose down
 
 ## Possíveis evoluções
 
-- Adicionar métricas Web Vitals ao dashboard publicado.
 - Ampliar progressivamente o limite mínimo de cobertura.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.

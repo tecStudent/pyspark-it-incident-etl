@@ -668,12 +668,113 @@ tbody tr:hover {
 }
 
 footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
+    display: grid;
+    gap: 18px;
     padding: 28px 5%;
     border-top: 1px solid var(--border);
     font-size: 11px;
+}
+
+.footer-content,
+.performance-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.performance-diagnostics {
+    width: min(100%, 1480px);
+    margin: 0 auto;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.performance-diagnostics summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    color: var(--white);
+    font-weight: 700;
+}
+
+.performance-summary,
+.metric-rating {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.performance-privacy {
+    margin: 13px 0;
+    color: var(--muted);
+}
+
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.performance-grid article {
+    display: grid;
+    gap: 7px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-soft);
+}
+
+.performance-grid strong {
+    color: var(--white);
+    font-size: 15px;
+}
+
+.rating-good {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.rating-needs-improvement {
+    color: var(--yellow);
+    background: var(--yellow-soft);
+}
+
+.rating-poor {
+    color: #ff7b9a;
+    background: var(--danger-soft);
+}
+
+.rating-unavailable {
+    color: var(--muted);
+    background: rgba(173, 192, 205, 0.1);
+}
+
+.performance-actions {
+    justify-content: flex-start;
+    margin-top: 14px;
+}
+
+.diagnostic-button {
+    padding: 9px 12px;
+    color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-soft);
+    cursor: pointer;
+}
+
+.diagnostic-button:hover,
+.diagnostic-button:focus-visible {
+    border-color: var(--blue);
 }
 
 @media (max-width: 1180px) {
@@ -690,9 +791,13 @@ footer {
     .site-header,
     .filter-heading,
     .section-heading,
-    footer {
+    .footer-content {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .performance-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .header-status {
@@ -773,5 +878,9 @@ footer {
 
     .compact-select {
         min-width: 100%;
+    }
+
+    .performance-grid {
+        grid-template-columns: 1fr;
     }
 }

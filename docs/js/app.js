@@ -1042,6 +1042,7 @@ async function loadCoreData() {
 
 async function main() {
     const loadingOverlay = document.getElementById("loading-overlay");
+    let dashboardStatus = "ready";
 
     try {
         if (typeof Chart === "undefined") {
@@ -1057,9 +1058,11 @@ async function main() {
         registerEvents();
         updateFilterAvailability("overview");
     } catch (error) {
+        dashboardStatus = "error";
         showError(error);
     } finally {
         loadingOverlay.hidden = true;
+        window.dashboardVitals?.markDashboardReady(dashboardStatus);
     }
 }
 
