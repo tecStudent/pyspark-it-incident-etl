@@ -1,0 +1,22 @@
+[run]
+branch = True
+source = src
+
+[report]
+fail_under = 50
+precision = 2
+show_missing = True
+skip_covered = True
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml
+
+[json]
+output = coverage.json

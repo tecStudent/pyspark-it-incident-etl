@@ -29,8 +29,48 @@ jobs:
       - name: Build Spark Docker image
         run: docker compose build
 
-      - name: Run automated tests
-        run: docker compose run --rm spark python3 -m pytest -q -p no:cacheprovider
+      - name: Prepare coverage output directory
+        run: |
+          mkdir -p coverage-artifacts
+          chmod 0777 coverage-artifacts
+
+      - name: Run automated tests with coverage
+        run: >-
+          docker compose run --rm
+          -e COVERAGE_FILE=coverage-artifacts/.coverage
+          spark
+          python3 -m pytest
+          -q
+          -p no:cacheprovider
+          --cov=src
+          --cov-branch
+          --cov-config=.coveragerc
+          --cov-report=term-missing
+          --cov-report=xml:coverage-artifacts/coverage.xml
+          --cov-report=json:coverage-artifacts/coverage.json
+          --cov-report=html:coverage-artifacts/html
+          --cov-fail-under=50
+
+      - name: Publish coverage summary
+        if: ${{ always() && hashFiles('coverage-artifacts/coverage.json') != '' }}
+        continue-on-error: true
+        run: >-
+          python3 src/coverage_report.py
+          coverage-artifacts/coverage.json
+          --minimum 50
+          >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage reports
+        if: ${{ always() && hashFiles('coverage-artifacts/coverage.json') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: |
+            coverage-artifacts/coverage.xml
+            coverage-artifacts/coverage.json
+            coverage-artifacts/html/
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Verify dashboard data manifest
         run: docker compose run --rm spark python3 src/dashboard_manifest.py --check
