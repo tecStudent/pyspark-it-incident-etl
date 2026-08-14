@@ -11,3 +11,10 @@ data/quarantine/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Test coverage
+.coverage
+coverage.json
+coverage.xml
+coverage-summary.md
+htmlcov/

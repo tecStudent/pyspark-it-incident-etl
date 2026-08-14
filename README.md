@@ -19,7 +19,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 - recomendações determinísticas com evidências;
 - contrato JSON para integração com o dashboard;
 - dashboard operacional com cinco áreas analíticas e carregamento sob demanda;
-- testes automatizados, smoke test end-to-end e CI com GitHub Actions.
+- testes automatizados, cobertura, smoke test end-to-end e CI com GitHub Actions.
 
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
 
@@ -327,7 +327,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 121 passed |
+| Testes automatizados | 147 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -348,7 +348,7 @@ No snapshot mais recente utilizado durante o desenvolvimento:
 - Python e OpenJDK 21
 - Apache Parquet
 - Docker e Docker Compose
-- Pytest e OpenPyXL
+- Pytest, pytest-cov e OpenPyXL
 - HTML5, CSS3, JavaScript e Chart.js
 - Git, GitHub, GitHub Actions e GitHub Pages
 
@@ -379,9 +379,10 @@ pyspark-it-incident-etl/
 |   |-- recommendation_gold.py
 |   |-- export_dashboard.py
 |   |-- dashboard_trend_partitions.py
-   |-- validate_dashboard_contracts.py
-   |-- dashboard_manifest.py
-   |-- e2e_smoke_test.py
+|   |-- validate_dashboard_contracts.py
+|   |-- dashboard_manifest.py
+|   |-- e2e_smoke_test.py
+|   |-- coverage_report.py
 |   |-- pipeline.py
 |   |-- create_incremental_batches.py
 |   |-- incremental_bronze.py
@@ -399,10 +400,12 @@ pyspark-it-incident-etl/
 |   |-- test_forecast_gold.py
 |   |-- test_recommendation_gold.py
 |   |-- test_dashboard_export.py
-   |-- test_dashboard_json_schemas.py
-   |-- test_dashboard_manifest.py
-   |-- test_dashboard_manifest_quality_gate.py
-   |-- test_e2e_smoke_test.py
+|   |-- test_dashboard_json_schemas.py
+|   |-- test_dashboard_manifest.py
+|   |-- test_dashboard_manifest_quality_gate.py
+|   |-- test_e2e_smoke_test.py
+|   |-- test_coverage_report.py
+|   |-- test_ingestion_helpers.py
 |   |-- test_pipeline_audit.py
 |   |-- test_pipeline_reconciliation.py
 |   `-- test_dashboard_ui.py
@@ -415,6 +418,7 @@ pyspark-it-incident-etl/
 |   `-- data/
 |-- Dockerfile
 |-- docker-compose.yml
+|-- .coveragerc
 |-- requirements.txt
 `-- README.md
 ~~~
@@ -534,10 +538,42 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-121 passed
+147 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura e as validações auxiliares do smoke test.
+
+### Cobertura de testes
+
+O projeto mede linhas e branches do diretório `src`. O quality gate começa em 50% para registrar uma baseline reproduzível e impedir regressões enquanto a cobertura é ampliada progressivamente.
+
+~~~bash
+docker compose run --rm spark python3 -m pytest \
+  -q \
+  -p no:cacheprovider \
+  --cov=src \
+  --cov-branch \
+  --cov-config=.coveragerc \
+  --cov-report=term-missing \
+  --cov-report=xml:coverage.xml \
+  --cov-report=json:coverage.json \
+  --cov-report=html:htmlcov \
+  --cov-fail-under=50
+~~~
+
+Os arquivos `coverage.json`, `coverage.xml`, `.coverage` e o diretório `htmlcov` são resultados locais e permanecem fora do versionamento.
+
+Para gerar um resumo Markdown a partir do relatório JSON:
+
+~~~bash
+docker compose run --rm spark python3 src/coverage_report.py \
+  coverage.json \
+  --minimum 50 \
+  --output coverage-summary.md \
+  --check
+~~~
+
+No GitHub Actions, o mesmo resumo aparece na página da execução. O relatório HTML completo fica disponível por 14 dias no artefato `coverage-report`.
 
 ### Smoke test end-to-end
 
@@ -560,7 +596,10 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 121 testes;
+- executa os 147 testes com cobertura de linhas e branches;
+- reprova quando a cobertura total fica abaixo de 50%;
+- publica o resumo da cobertura na página da execução;
+- disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
 - desabilita o cache do Pytest;
 - possui permissão somente de leitura;
 - cancela execuções anteriores do mesmo contexto;
@@ -591,6 +630,7 @@ docker compose down
 | JSON agregado no GitHub Pages | Publicação gratuita sem expor dados brutos |
 | Manifesto com hash normalizado | Verificação reproduzível no Windows e no Linux |
 | Tendências particionadas por mês | Reduzir o download inicial e permitir cache no navegador |
+| Cobertura mínima no CI | Impedir regressões de testes com uma baseline mensurável |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
 
@@ -616,12 +656,12 @@ docker compose down
 - ranking e previsão explicáveis;
 - recomendações baseadas em regras;
 - contrato de dados, JSON Schema e manifesto de integridade;
-- testes automatizados, CI/CD e GitHub Pages.
+- testes automatizados, cobertura, CI/CD e GitHub Pages.
 
 ## Possíveis evoluções
 
 - Adicionar métricas Web Vitals ao dashboard publicado.
-- Adicionar relatório de cobertura de testes ao CI.
+- Ampliar progressivamente o limite mínimo de cobertura.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.
 - Publicar a imagem no GitHub Container Registry.
