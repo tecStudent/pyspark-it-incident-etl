@@ -143,6 +143,10 @@ git status
 
 O resultado esperado é a branch `main` sincronizada com `origin/main` e o working tree limpo.
 
+## Releases
+
+Somente mantenedores publicam tags e Releases. O processo exige `main` limpa, GitHub Actions aprovado, versão registrada e tag anotada. As instruções estão em [RELEASING.md](RELEASING.md).
+
 ## Dados e segurança
 
 - Nunca versione o arquivo XLSX acadêmico completo.
@@ -154,4 +158,3 @@ O resultado esperado é a branch `main` sincronizada com `origin/main` e o worki
 ## Conduta
 
 Ao participar do projeto, siga o [Código de Conduta](CODE_OF_CONDUCT.md).
-

@@ -2,6 +2,7 @@
 
 [![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Release: v1.0.0](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0)
 
 Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para transformar dados de incidentes de TI em indicadores operacionais auditáveis.
 
@@ -26,6 +27,16 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
 
 [Acessar o dashboard publicado no GitHub Pages](https://tecstudent.github.io/pyspark-it-incident-etl/)
+
+## Dashboard operacional
+
+[![Visão geral do dashboard operacional](docs/assets/dashboard-preview.png)](https://tecstudent.github.io/pyspark-it-incident-etl/)
+
+A visão geral consolida volume, compliance, tendências, prioridades e capacidade das equipes. O dashboard verifica a integridade dos contratos antes de apresentar os indicadores.
+
+[![Recomendações operacionais baseadas em evidências](docs/assets/dashboard-recommendations.png)](https://tecstudent.github.io/pyspark-it-incident-etl/)
+
+As áreas de previsão, risco e recomendações transformam os produtos analíticos da Gold em uma experiência navegável, mantendo metodologia, escopo e evidências disponíveis para auditoria.
 
 ## Visão geral da arquitetura
 
@@ -314,6 +325,19 @@ python -m http.server 8000 --directory docs
 
 Acesse http://localhost:8000 e encerre com Ctrl + C.
 
+## Release estável
+
+A primeira versão estável do projeto é a **v1.0.0**. O histórico das mudanças está no [CHANGELOG.md](CHANGELOG.md), e o procedimento para preparar, versionar e publicar novas versões está em [RELEASING.md](RELEASING.md).
+
+Antes de criar uma tag, execute o quality gate específico da release:
+
+~~~bash
+docker compose run --rm spark \
+  python3 src/release_readiness.py --check --version 1.0.0
+~~~
+
+As notas completas da versão estão em [docs/releases/v1.0.0.md](docs/releases/v1.0.0.md). Depois que a tag for publicada, a release ficará disponível na [página v1.0.0 do GitHub](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0).
+
 ## Resultados de referência
 
 ### Carga completa
@@ -329,7 +353,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 207 passed |
+| Testes automatizados | 219 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -365,6 +389,7 @@ pyspark-it-incident-etl/
 |   |   `-- config.yml
 |   |-- workflows/
 |   |   `-- ci.yml
+|   |-- release.yml
 |   `-- pull_request_template.md
 |-- data/
 |   |-- raw/
@@ -392,6 +417,7 @@ pyspark-it-incident-etl/
 |   |-- e2e_smoke_test.py
 |   |-- coverage_report.py
 |   |-- pipeline_benchmark.py
+|   |-- release_readiness.py
 |   |-- pipeline.py
 |   |-- create_incremental_batches.py
 |   |-- incremental_bronze.py
@@ -420,11 +446,15 @@ pyspark-it-incident-etl/
 |   |-- test_pipeline_reconciliation.py
 |   |-- test_dashboard_ui.py
 |   |-- test_dashboard_web_vitals.py
-|   `-- test_repository_governance.py
+|   |-- test_repository_governance.py
+|   `-- test_release_readiness.py
 |-- docs/
+|   |-- assets/
 |   |-- dashboard-data-contract.md
 |   |-- kpi-business-rules.md
 |   |-- performance-benchmark.md
+|   |-- releases/
+|   |   `-- v1.0.0.md
 |   |-- index.html
 |   |-- css/
 |   |-- js/
@@ -436,6 +466,9 @@ pyspark-it-incident-etl/
 |-- CONTRIBUTING.md
 |-- CODE_OF_CONDUCT.md
 |-- LICENSE
+|-- VERSION
+|-- CHANGELOG.md
+|-- RELEASING.md
 `-- README.md
 ~~~
 
@@ -554,10 +587,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-207 passed
+219 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release e as validações auxiliares do smoke test.
 
 ### Web Vitals do dashboard
 
@@ -639,7 +672,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 207 testes com cobertura de linhas e branches;
+- executa os 219 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -650,6 +683,7 @@ O CI:
 - aplica timeout de 20 minutos;
 - verifica se hashes, tamanhos, contagens e metadados do manifesto correspondem aos payloads versionados.
 - executa o smoke test integrado com uma amostra reduzida, sem depender do dataset acadêmico completo.
+- verifica se versão, changelog, notas, screenshots, manifesto e arquivos de governança estão preparados para a release.
 
 ## Contribuindo
 
@@ -696,6 +730,7 @@ docker compose down
 | Tendências particionadas por mês | Reduzir o download inicial e permitir cache no navegador |
 | Web Vitals coletados localmente | Observar a experiência publicada sem expor dados a terceiros |
 | Cobertura mínima no CI | Impedir regressões de testes com uma baseline mensurável |
+| Release readiness no CI | Bloquear versões incompletas ou inconsistentes antes da tag |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
 
