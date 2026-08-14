@@ -1,6 +1,7 @@
 # PySpark IT Incident ETL
 
 [![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para transformar dados de incidentes de TI em indicadores operacionais auditáveis.
 
@@ -19,7 +20,8 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 - recomendações determinísticas com evidências;
 - contrato JSON para integração com o dashboard;
 - dashboard operacional com cinco áreas analíticas e carregamento sob demanda;
-- testes automatizados, cobertura, smoke test end-to-end e CI com GitHub Actions.
+- testes automatizados, cobertura, smoke test end-to-end e CI com GitHub Actions;
+- governança de contribuição com templates, fluxo de revisão e código de conduta.
 
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
 
@@ -327,7 +329,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 196 passed |
+| Testes automatizados | 207 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -356,8 +358,14 @@ No snapshot mais recente utilizado durante o desenvolvimento:
 
 ~~~text
 pyspark-it-incident-etl/
-|-- .github/workflows/
-|   `-- ci.yml
+|-- .github/
+|   |-- ISSUE_TEMPLATE/
+|   |   |-- bug_report.yml
+|   |   |-- feature_request.yml
+|   |   `-- config.yml
+|   |-- workflows/
+|   |   `-- ci.yml
+|   `-- pull_request_template.md
 |-- data/
 |   |-- raw/
 |   |-- landing/
@@ -410,7 +418,9 @@ pyspark-it-incident-etl/
 |   |-- test_ingestion_helpers.py
 |   |-- test_pipeline_audit.py
 |   |-- test_pipeline_reconciliation.py
-|   `-- test_dashboard_ui.py
+|   |-- test_dashboard_ui.py
+|   |-- test_dashboard_web_vitals.py
+|   `-- test_repository_governance.py
 |-- docs/
 |   |-- dashboard-data-contract.md
 |   |-- kpi-business-rules.md
@@ -423,6 +433,9 @@ pyspark-it-incident-etl/
 |-- docker-compose.yml
 |-- .coveragerc
 |-- requirements.txt
+|-- CONTRIBUTING.md
+|-- CODE_OF_CONDUCT.md
+|-- LICENSE
 `-- README.md
 ~~~
 
@@ -541,7 +554,7 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-196 passed
+207 passed
 ~~~
 
 Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark e as validações auxiliares do smoke test.
@@ -626,7 +639,7 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 196 testes com cobertura de linhas e branches;
+- executa os 207 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -637,6 +650,26 @@ O CI:
 - aplica timeout de 20 minutos;
 - verifica se hashes, tamanhos, contagens e metadados do manifesto correspondem aos payloads versionados.
 - executa o smoke test integrado com uma amostra reduzida, sem depender do dataset acadêmico completo.
+
+## Contribuindo
+
+Contribuições são organizadas por Issues, branches curtas e Pull Requests direcionados à `main`. O projeto fornece formulários específicos para bugs e melhorias, além de um template que padroniza objetivo, impacto, validações, evidências e checklist de segurança.
+
+O fluxo completo está documentado em [CONTRIBUTING.md](CONTRIBUTING.md):
+
+~~~text
+Issue -> Branch -> Commit -> Push -> Pull Request -> CI -> Review -> Merge
+~~~
+
+As mensagens seguem Conventional Commits, os testes e o GitHub Actions devem estar aprovados e o merge utiliza **Create a merge commit** para preservar o histórico.
+
+Toda participação também deve seguir o [Código de Conduta](CODE_OF_CONDUCT.md).
+
+## Licença
+
+O código-fonte e a documentação deste repositório são disponibilizados sob a [licença MIT](LICENSE).
+
+O dataset acadêmico original, os controles locais e as saídas intermediárias não fazem parte da licença nem são redistribuídos pelo repositório.
 
 ## Como interromper
 
