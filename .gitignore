@@ -18,3 +18,4 @@ coverage.json
 coverage.xml
 coverage-summary.md
 htmlcov/
+coverage-artifacts/

@@ -327,7 +327,7 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 147 passed |
+| Testes automatizados | 148 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -538,7 +538,7 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-147 passed
+148 passed
 ~~~
 
 Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura e as validações auxiliares do smoke test.
@@ -573,7 +573,7 @@ docker compose run --rm spark python3 src/coverage_report.py \
   --check
 ~~~
 
-No GitHub Actions, o mesmo resumo aparece na página da execução. O relatório HTML completo fica disponível por 14 dias no artefato `coverage-report`.
+No GitHub Actions, o mesmo resumo aparece na página da execução. O runner prepara o diretório gravável `coverage-artifacts` para que o usuário não privilegiado do container possa salvar o banco temporário e os relatórios no volume Linux. O relatório HTML completo fica disponível por 14 dias no artefato `coverage-report`.
 
 ### Smoke test end-to-end
 
@@ -596,10 +596,11 @@ O CI:
 
 - utiliza actions/checkout@v5;
 - constrói a imagem Docker;
-- executa os 147 testes com cobertura de linhas e branches;
+- executa os 148 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
+- prepara um diretório isolado e gravável para os relatórios no runner Linux;
 - desabilita o cache do Pytest;
 - possui permissão somente de leitura;
 - cancela execuções anteriores do mesmo contexto;

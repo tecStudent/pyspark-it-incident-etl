@@ -213,6 +213,23 @@ def test_ci_publishes_summary_and_artifact():
     assert "name: coverage-report" in workflow
 
 
+def test_ci_prepares_writable_coverage_directory():
+    workflow = (
+        PROJECT_ROOT
+        / ".github"
+        / "workflows"
+        / "ci.yml"
+    ).read_text(encoding="utf-8")
+
+    assert "mkdir -p coverage-artifacts" in workflow
+    assert "chmod 0777 coverage-artifacts" in workflow
+    assert (
+        "COVERAGE_FILE=coverage-artifacts/.coverage"
+        in workflow
+    )
+    assert "coverage-artifacts/coverage.json" in workflow
+
+
 def test_coverage_config_defines_minimum():
     configuration = (
         PROJECT_ROOT / ".coveragerc"
@@ -230,3 +247,4 @@ def test_gitignore_excludes_coverage_outputs():
     assert "coverage.json" in gitignore
     assert "coverage.xml" in gitignore
     assert "htmlcov/" in gitignore
+    assert "coverage-artifacts/" in gitignore
