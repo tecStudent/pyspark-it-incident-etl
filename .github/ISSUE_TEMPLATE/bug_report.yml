@@ -1,0 +1,72 @@
+name: Relatar um problema
+description: Informe um comportamento incorreto ou uma regressão reproduzível.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por ajudar a melhorar o projeto. Não inclua credenciais, dados pessoais ou o dataset acadêmico bruto.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área afetada
+      options:
+        - Pipeline completo
+        - Pipeline incremental
+        - Data Quality e reconciliação
+        - Dashboard e contratos JSON
+        - GitHub Actions
+        - Documentação
+        - Outra
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Descrição do problema
+      description: Explique o que aconteceu e qual foi o impacto.
+      placeholder: Descreva o comportamento observado.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Passos para reproduzir
+      description: Informe comandos, entradas sintéticas e sequência utilizada.
+      placeholder: |
+        1. Execute ...
+        2. Abra ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Resultado esperado
+      placeholder: Explique como o sistema deveria se comportar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidências sanitizadas
+      description: Inclua logs, imagens ou mensagens de erro sem informações sensíveis.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmações
+      options:
+        - label: Pesquisei Issues existentes e não encontrei uma duplicada.
+          required: true
+        - label: Removi credenciais, dados pessoais e dados acadêmicos brutos das evidências.
+          required: true
+

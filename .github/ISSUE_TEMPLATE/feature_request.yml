@@ -1,0 +1,69 @@
+name: Propor uma melhoria
+description: Sugira uma evolução para o pipeline, qualidade, dashboard ou documentação.
+title: "[Melhoria]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Descreva a necessidade antes da solução. Propostas pequenas e verificáveis são mais fáceis de revisar.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área da melhoria
+      options:
+        - Ingestão e Bronze
+        - Silver e Data Quality
+        - Gold e produtos analíticos
+        - Pipeline incremental
+        - Dashboard e contratos JSON
+        - Testes e CI/CD
+        - Documentação e governança
+        - Outra
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema ou oportunidade
+      description: Explique por que a melhoria é necessária.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Solução proposta
+      description: Descreva o comportamento desejado sem expor dados ou credenciais.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceite
+      placeholder: |
+        - [ ] Comportamento verificável 1
+        - [ ] Comportamento verificável 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Informe outras opções avaliadas e seus trade-offs.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmações
+      options:
+        - label: Pesquisei Issues e Pull Requests existentes.
+          required: true
+        - label: A proposta não exige a publicação de dados acadêmicos brutos ou informações sensíveis.
+          required: true
+
