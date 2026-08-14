@@ -75,6 +75,12 @@ jobs:
       - name: Verify dashboard data manifest
         run: docker compose run --rm spark python3 src/dashboard_manifest.py --check
 
+      - name: Verify release readiness
+        run: >-
+          docker compose run --rm spark
+          python3 src/release_readiness.py
+          --check
+
       - name: Run end-to-end smoke test
         run: >-
           docker compose run --rm spark
