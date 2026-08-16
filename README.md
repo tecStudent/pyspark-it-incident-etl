@@ -1,6 +1,8 @@
 # PySpark IT Incident ETL
 
 [![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/codeql.yml)
+[![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](SECURITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Release: v1.0.0](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0)
 
@@ -22,6 +24,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 - contrato JSON para integração com o dashboard;
 - dashboard operacional com cinco áreas analíticas e carregamento sob demanda;
 - testes automatizados, cobertura, smoke test end-to-end e CI com GitHub Actions;
+- segurança automatizada com CodeQL, Dependabot e revisão de dependências;
 - governança de contribuição com templates, fluxo de revisão e código de conduta.
 
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
@@ -353,7 +356,7 @@ As notas completas da versão estão em [docs/releases/v1.0.0.md](docs/releases/
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 219 passed |
+| Testes automatizados | 229 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -388,7 +391,10 @@ pyspark-it-incident-etl/
 |   |   |-- feature_request.yml
 |   |   `-- config.yml
 |   |-- workflows/
-|   |   `-- ci.yml
+|   |   |-- ci.yml
+|   |   |-- codeql.yml
+|   |   `-- dependency-review.yml
+|   |-- dependabot.yml
 |   |-- release.yml
 |   `-- pull_request_template.md
 |-- data/
@@ -447,6 +453,7 @@ pyspark-it-incident-etl/
 |   |-- test_dashboard_ui.py
 |   |-- test_dashboard_web_vitals.py
 |   |-- test_repository_governance.py
+|   |-- test_security_governance.py
 |   `-- test_release_readiness.py
 |-- docs/
 |   |-- assets/
@@ -465,6 +472,7 @@ pyspark-it-incident-etl/
 |-- requirements.txt
 |-- CONTRIBUTING.md
 |-- CODE_OF_CONDUCT.md
+|-- SECURITY.md
 |-- LICENSE
 |-- VERSION
 |-- CHANGELOG.md
@@ -587,10 +595,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-219 passed
+229 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release, governança de segurança e as validações auxiliares do smoke test.
 
 ### Web Vitals do dashboard
 
@@ -670,9 +678,9 @@ O GitHub Actions executa em pushes para main, Pull Requests direcionados à main
 
 O CI:
 
-- utiliza actions/checkout@v5;
+- utiliza actions/checkout@v7;
 - constrói a imagem Docker;
-- executa os 219 testes com cobertura de linhas e branches;
+- executa os 229 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -684,6 +692,20 @@ O CI:
 - verifica se hashes, tamanhos, contagens e metadados do manifesto correspondem aos payloads versionados.
 - executa o smoke test integrado com uma amostra reduzida, sem depender do dataset acadêmico completo.
 - verifica se versão, changelog, notas, screenshots, manifesto e arquivos de governança estão preparados para a release.
+
+## Segurança automatizada
+
+O repositório combina controles preventivos e verificações contínuas para proteger o código e a cadeia de dependências:
+
+- o CodeQL analisa o código Python em pushes e Pull Requests para `main`, em execução semanal e por acionamento manual;
+- o Dependency Review inspeciona as dependências introduzidas em cada Pull Request e reprova vulnerabilidades novas de severidade alta ou crítica;
+- o Dependabot procura semanalmente atualizações de pacotes Python e GitHub Actions, mantendo no máximo cinco Pull Requests abertos por ecossistema;
+- os workflows usam permissões mínimas e nunca executam código de Pull Requests com `pull_request_target`;
+- atualizações de dependências permanecem sujeitas a testes e revisão humana antes do merge.
+
+Vulnerabilidades não devem ser divulgadas em Issues públicas. Consulte o arquivo [SECURITY.md](SECURITY.md) para usar o canal privado e informar impacto, reprodução e versão afetada.
+
+Depois do merge desta configuração, o mantenedor deve conferir em **Settings > Security** se Dependency graph, Dependabot alerts, Dependabot security updates e Private vulnerability reporting estão habilitados para o repositório.
 
 ## Contribuindo
 
@@ -730,6 +752,8 @@ docker compose down
 | Tendências particionadas por mês | Reduzir o download inicial e permitir cache no navegador |
 | Web Vitals coletados localmente | Observar a experiência publicada sem expor dados a terceiros |
 | Cobertura mínima no CI | Impedir regressões de testes com uma baseline mensurável |
+| CodeQL e revisão de dependências | Detectar vulnerabilidades antes do merge |
+| Dependabot semanal | Manter Python e GitHub Actions atualizados com revisão humana |
 | Release readiness no CI | Bloquear versões incompletas ou inconsistentes antes da tag |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
@@ -756,7 +780,8 @@ docker compose down
 - ranking e previsão explicáveis;
 - recomendações baseadas em regras;
 - contrato de dados, JSON Schema e manifesto de integridade;
-- testes automatizados, cobertura, CI/CD e GitHub Pages.
+- testes automatizados, cobertura, CI/CD e GitHub Pages;
+- segurança de software, análise estática e governança da cadeia de dependências.
 
 ## Possíveis evoluções
 

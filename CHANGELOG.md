@@ -6,6 +6,17 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Unreleased]
 
+### Adicionado
+
+- Análise estática de segurança do código Python com CodeQL.
+- Dependency Review para impedir novas dependências com vulnerabilidades de severidade alta ou crítica.
+- Atualizações semanais de pacotes Python e GitHub Actions com Dependabot.
+- Política para comunicação privada e tratamento responsável de vulnerabilidades.
+
+### Alterado
+
+- GitHub Actions atualizado para `actions/checkout@v7` nos workflows ativos.
+
 ### Planejado
 
 - Ampliação progressiva da cobertura automatizada.
@@ -51,4 +62,3 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 [Unreleased]: https://github.com/tecStudent/pyspark-it-incident-etl/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0
-
