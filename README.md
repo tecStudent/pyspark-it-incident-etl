@@ -356,7 +356,7 @@ As notas completas da versão estão em [docs/releases/v1.0.0.md](docs/releases/
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 229 passed |
+| Testes automatizados | 239 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -395,6 +395,7 @@ pyspark-it-incident-etl/
 |   |   |-- codeql.yml
 |   |   `-- dependency-review.yml
 |   |-- dependabot.yml
+|   |-- CODEOWNERS
 |   |-- release.yml
 |   `-- pull_request_template.md
 |-- data/
@@ -453,6 +454,7 @@ pyspark-it-incident-etl/
 |   |-- test_dashboard_ui.py
 |   |-- test_dashboard_web_vitals.py
 |   |-- test_repository_governance.py
+|   |-- test_repository_ruleset.py
 |   |-- test_security_governance.py
 |   `-- test_release_readiness.py
 |-- docs/
@@ -460,6 +462,7 @@ pyspark-it-incident-etl/
 |   |-- dashboard-data-contract.md
 |   |-- kpi-business-rules.md
 |   |-- performance-benchmark.md
+|   |-- repository-ruleset.md
 |   |-- releases/
 |   |   `-- v1.0.0.md
 |   |-- index.html
@@ -595,7 +598,7 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-229 passed
+239 passed
 ~~~
 
 Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release, governança de segurança e as validações auxiliares do smoke test.
@@ -680,7 +683,7 @@ O CI:
 
 - utiliza actions/checkout@v7;
 - constrói a imagem Docker;
-- executa os 229 testes com cobertura de linhas e branches;
+- executa os 239 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -706,6 +709,12 @@ O repositório combina controles preventivos e verificações contínuas para pr
 Vulnerabilidades não devem ser divulgadas em Issues públicas. Consulte o arquivo [SECURITY.md](SECURITY.md) para usar o canal privado e informar impacto, reprodução e versão afetada.
 
 Depois do merge desta configuração, o mantenedor deve conferir em **Settings > Security** se Dependency graph, Dependabot alerts, Dependabot security updates e Private vulnerability reporting estão habilitados para o repositório.
+
+### Proteção da branch principal
+
+O arquivo `CODEOWNERS` identifica o responsável pelas áreas críticas do projeto. O ruleset recomendado para `main` exige Pull Request, os checks `Run PySpark tests`, `Analyze Python` e `Review dependency changes`, além de bloquear exclusões e force pushes.
+
+A configuração começa com zero aprovações obrigatórias para não bloquear o fluxo de um único mantenedor. Quando outro colaborador receber permissão de escrita, o projeto poderá exigir uma aprovação e revisão do Code Owner. Consulte o guia [Proteção da branch principal](docs/repository-ruleset.md) para aplicar e validar cada opção no GitHub.
 
 ## Contribuindo
 
@@ -754,6 +763,7 @@ docker compose down
 | Cobertura mínima no CI | Impedir regressões de testes com uma baseline mensurável |
 | CodeQL e revisão de dependências | Detectar vulnerabilidades antes do merge |
 | Dependabot semanal | Manter Python e GitHub Actions atualizados com revisão humana |
+| Ruleset da `main` e CODEOWNERS | Impedir bypass dos checks e explicitar responsabilidade técnica |
 | Release readiness no CI | Bloquear versões incompletas ou inconsistentes antes da tag |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
@@ -781,7 +791,8 @@ docker compose down
 - recomendações baseadas em regras;
 - contrato de dados, JSON Schema e manifesto de integridade;
 - testes automatizados, cobertura, CI/CD e GitHub Pages;
-- segurança de software, análise estática e governança da cadeia de dependências.
+- segurança de software, análise estática e governança da cadeia de dependências;
+- proteção de branches, status checks obrigatórios e propriedade de código.
 
 ## Possíveis evoluções
 

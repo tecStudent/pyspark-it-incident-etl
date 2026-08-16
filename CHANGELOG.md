@@ -12,6 +12,8 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Dependency Review para impedir novas dependências com vulnerabilidades de severidade alta ou crítica.
 - Atualizações semanais de pacotes Python e GitHub Actions com Dependabot.
 - Política para comunicação privada e tratamento responsável de vulnerabilidades.
+- Responsabilidade técnica das áreas críticas definida em `CODEOWNERS`.
+- Guia reproduzível para proteger a `main` com Pull Requests e status checks obrigatórios.
 
 ### Alterado
 

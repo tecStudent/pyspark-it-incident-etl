@@ -100,7 +100,7 @@ def test_readme_exposes_security_status_and_policy():
     assert "actions/workflows/codeql.yml/badge.svg" in content
     assert "## Segurança automatizada" in content
     assert "[SECURITY.md](SECURITY.md)" in content
-    assert "229 passed" in content
+    assert "239 passed" in content
 
 
 def test_security_changes_are_documented_for_contributors():
