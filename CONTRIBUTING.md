@@ -143,6 +143,18 @@ git status
 
 O resultado esperado é a branch `main` sincronizada com `origin/main` e o working tree limpo.
 
+## Atualizações de dependências
+
+Pull Requests abertos pelo Dependabot seguem o mesmo fluxo de validação das demais contribuições. Antes do merge:
+
+1. leia as notas da versão e confirme se existem mudanças incompatíveis;
+2. verifique se Dependency Review, CodeQL e a suíte de testes estão aprovados;
+3. mantenha atualizações de versão principal em Pull Requests separados;
+4. não use merge automático sem revisão humana;
+5. execute localmente os testes quando a dependência puder alterar o comportamento do pipeline ou do dashboard.
+
+Se uma atualização falhar, registre a causa no Pull Request e corrija ou adie a mudança de forma explícita. Nunca desative um quality gate apenas para concluir o merge.
+
 ## Releases
 
 Somente mantenedores publicam tags e Releases. O processo exige `main` limpa, GitHub Actions aprovado, versão registrada e tag anotada. As instruções estão em [RELEASING.md](RELEASING.md).
