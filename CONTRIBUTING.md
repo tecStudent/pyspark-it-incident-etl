@@ -130,6 +130,8 @@ Antes do merge:
 
 Não utilize **Squash and merge** neste projeto, salvo decisão explícita do mantenedor.
 
+A branch `main` deve permanecer protegida pelo ruleset documentado em [docs/repository-ruleset.md](docs/repository-ruleset.md). Alterações em áreas críticas seguem o arquivo `.github/CODEOWNERS`. Enquanto houver apenas um mantenedor com permissão de escrita, o ruleset usa zero aprovações obrigatórias; com a entrada de outro revisor, esse valor deve passar para uma aprovação com revisão do Code Owner.
+
 ## Sincronizar depois do merge
 
 ~~~bash

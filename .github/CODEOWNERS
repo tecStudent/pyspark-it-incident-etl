@@ -1,0 +1,15 @@
+# Proprietário padrão do repositório
+* @tecStudent
+
+# Componentes críticos da plataforma
+/.github/ @tecStudent
+/src/ @tecStudent
+/tests/ @tecStudent
+/docs/ @tecStudent
+
+# Ambiente, dependências e governança
+/Dockerfile @tecStudent
+/docker-compose.yml @tecStudent
+/requirements.txt @tecStudent
+/SECURITY.md @tecStudent
+/RELEASING.md @tecStudent
