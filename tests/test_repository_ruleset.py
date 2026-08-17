@@ -55,6 +55,8 @@ def test_ruleset_requires_all_security_checks():
     assert "`Run PySpark tests`" in content
     assert "`Analyze Python`" in content
     assert "`Review dependency changes`" in content
+    assert "`Build and scan container image`" in content
+    assert "`container-image.yml`" in content
     assert "**Require status checks to pass**" in content
 
 
