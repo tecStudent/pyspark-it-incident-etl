@@ -10,7 +10,7 @@ O projeto utiliza Versionamento Semântico:
 - `MINOR`: nova funcionalidade compatível;
 - `PATCH`: correção compatível.
 
-As tags utilizam o prefixo `v`, enquanto o arquivo `VERSION` contém apenas o número. Exemplo: `VERSION=1.0.0` e tag `v1.0.0`.
+As tags utilizam o prefixo `v`, enquanto o arquivo `VERSION` contém apenas o número. Exemplo: `VERSION=1.1.0` e tag `v1.1.0`.
 
 ## Pré-condições
 
@@ -31,7 +31,7 @@ Uma release só pode ser criada quando:
 docker compose run --rm spark python3 -m pytest -q
 
 docker compose run --rm spark \
-  python3 src/release_readiness.py --check --version 1.0.0
+  python3 src/release_readiness.py --check --version 1.1.0
 
 git status
 ~~~
@@ -54,9 +54,9 @@ Confirme no GitHub que a execução da `main` está verde antes de criar a tag.
 ## Criar a tag anotada
 
 ~~~bash
-git tag -a v1.0.0 -m "Release v1.0.0"
-git show v1.0.0 --no-patch
-git push origin v1.0.0
+git tag -a v1.1.0 -m "Release v1.1.0"
+git show v1.1.0 --no-patch
+git push origin v1.1.0
 ~~~
 
 A tag deve apontar para o merge commit da preparação da release na `main`, nunca para a branch do Pull Request.
@@ -65,9 +65,9 @@ A tag deve apontar para o merge commit da preparação da release na `main`, nun
 
 1. Abra **Releases** no repositório.
 2. Selecione **Draft a new release**.
-3. Escolha a tag existente `v1.0.0`.
-4. Use o título `v1.0.0 — Operational PySpark Incident ETL`.
-5. Copie o conteúdo de `docs/releases/v1.0.0.md` para a descrição.
+3. Escolha a tag existente `v1.1.0`.
+4. Use o título `v1.1.0 — Local Airflow Orchestration and CI Hardening`.
+5. Copie o conteúdo de `docs/releases/v1.1.0.md` para a descrição.
 6. Marque a versão como **Set as the latest release**.
 7. Não marque **Set as a pre-release**.
 8. Revise os links e publique com **Publish release**.
@@ -78,9 +78,9 @@ O GitHub disponibiliza automaticamente os arquivos-fonte `.zip` e `.tar.gz`. O d
 
 Confirme:
 
-- Release: `https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0`;
+- Release: `https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.1.0`;
 - Pages: `https://tecstudent.github.io/pyspark-it-incident-etl/`;
-- badge `v1.0.0` no README;
+- badge `v1.1.0` no README;
 - screenshots atuais no README;
 - download dos arquivos-fonte;
 - tag visível na página de commits.
@@ -90,8 +90,8 @@ Confirme:
 Se a tag estiver incorreta e a Release ainda não tiver sido publicada, confirme o alvo antes de removê-la:
 
 ~~~bash
-git tag -d v1.0.0
-git push origin :refs/tags/v1.0.0
+git tag -d v1.1.0
+git push origin :refs/tags/v1.1.0
 ~~~
 
 Não mova ou substitua uma tag de release já publicada. Nesse caso, corrija o problema em uma nova versão PATCH.
