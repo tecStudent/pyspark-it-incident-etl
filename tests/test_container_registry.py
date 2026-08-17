@@ -84,7 +84,7 @@ def test_workflow_uses_least_privilege_and_safe_events():
 def test_workflow_builds_a_local_validation_image_first():
     content = read(".github/workflows/container-image.yml")
 
-    assert "docker/build-push-action@v6" in content
+    assert "docker/build-push-action@v7" in content
     assert "load: true" in content
     assert "push: false" in content
     assert ":validation" in content
@@ -108,14 +108,14 @@ def test_workflow_publishes_only_for_push_events():
     content = read(".github/workflows/container-image.yml")
 
     assert content.count("if: github.event_name == 'push'") == 2
-    assert "docker/login-action@v3" in content
+    assert "docker/login-action@v4" in content
     assert "docker push" in content
 
 
 def test_workflow_generates_traceable_version_tags():
     content = read(".github/workflows/container-image.yml")
 
-    assert "docker/metadata-action@v5" in content
+    assert "docker/metadata-action@v6" in content
     assert "type=sha,prefix=sha-" in content
     assert "type=semver,pattern={{version}}" in content
     assert "type=raw,value=latest,enable={{is_default_branch}}" in content
