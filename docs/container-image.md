@@ -54,7 +54,14 @@ docker run --rm \
 
 ## Segurança e publicação inicial
 
-Antes de publicar, o job `Build and scan container image` valida as bibliotecas, o usuário não privilegiado, os arquivos mínimos do runtime e executa o Trivy. Vulnerabilidades corrigíveis de severidade alta ou crítica reprovam o job.
+Antes de publicar, o job `Build and scan container image` valida as bibliotecas, o usuário não privilegiado, os arquivos mínimos do runtime e executa duas verificações com o Trivy:
+
+1. um relatório completo apresenta vulnerabilidades de severidade alta ou crítica de todo o sistema operacional e também dos JARs herdados da distribuição oficial Spark/Hadoop;
+2. o gate bloqueante reprova vulnerabilidades corrigíveis de severidade alta ou crítica no sistema operacional e nas dependências controladas pelo projeto.
+
+Os JARs em `/opt/spark/jars` permanecem visíveis no relatório completo, mas não bloqueiam isoladamente a publicação. Eles fazem parte da distribuição Spark fixada por digest e não devem ser substituídos individualmente, pois versões incompatíveis podem alterar o runtime. A correção dessas ocorrências deve acontecer pela atualização testada da imagem oficial do Spark.
+
+Durante o build, os pacotes de segurança do Ubuntu são atualizados antes da instalação das dependências Python. Essa etapa corrige vulnerabilidades do sistema operacional que já possuem atualização no repositório da distribuição.
 
 Na primeira publicação, abra **Packages > Package settings** e confirme que a imagem está com visibilidade **Public**. O pacote pode nascer privado mesmo quando o repositório é público, dependendo das configurações da conta.
 
@@ -65,4 +72,5 @@ Depois que o check aparecer pela primeira vez em um Pull Request, adicione `Buil
 - `denied: permission_denied`: confirme `packages: write` no job e Actions habilitado no repositório;
 - pacote não aparece: verifique se o evento foi push na `main` ou tag, pois Pull Requests apenas validam;
 - imagem privada: altere a visibilidade nas configurações do pacote;
-- Trivy reprovou: atualize ou substitua a dependência vulnerável; não remova o gate para liberar a publicação.
+- relatório completo mostrou CVEs nos JARs: registre a evidência e avalie uma nova imagem oficial do Spark, sem trocar JARs isoladamente;
+- gate acionável reprovou: atualize o pacote do sistema operacional ou a dependência Python indicada; não remova o gate para liberar a publicação.

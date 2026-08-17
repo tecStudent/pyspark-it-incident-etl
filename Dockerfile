@@ -14,7 +14,10 @@ USER root
 
 COPY requirements.txt /tmp/requirements.txt
 
-RUN python3 -m pip install --no-cache-dir -r /tmp/requirements.txt
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/* \
+    && python3 -m pip install --no-cache-dir -r /tmp/requirements.txt
 
 WORKDIR /app
 

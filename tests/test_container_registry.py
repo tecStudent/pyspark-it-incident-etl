@@ -47,6 +47,8 @@ def test_dockerfile_exposes_oci_traceability_labels():
 def test_dockerfile_packages_only_required_runtime_content():
     content = read("Dockerfile")
 
+    assert "apt-get upgrade --yes --no-install-recommends" in content
+    assert "rm -rf /var/lib/apt/lists/*" in content
     assert "COPY --chown=185:0 src/ /app/src/" in content
     assert "COPY --chown=185:0 VERSION /app/VERSION" in content
     assert "COPY --chown=185:0 data/sample/ /app/data/sample/" in content
@@ -92,10 +94,14 @@ def test_workflow_builds_a_local_validation_image_first():
 def test_workflow_blocks_high_and_critical_vulnerabilities():
     content = read(".github/workflows/container-image.yml")
 
-    assert "aquasecurity/trivy-action@v0.36.0" in content
+    assert content.count("aquasecurity/trivy-action@v0.36.0") == 2
+    assert "Report complete image vulnerabilities" in content
+    assert "Enforce actionable image vulnerabilities" in content
+    assert 'exit-code: "0"' in content
     assert 'exit-code: "1"' in content
     assert "severity: CRITICAL,HIGH" in content
     assert "ignore-unfixed: true" in content
+    assert "skip-dirs: /opt/spark/jars" in content
 
 
 def test_workflow_publishes_only_for_push_events():

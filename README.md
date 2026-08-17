@@ -715,7 +715,7 @@ O CI:
 - executa o smoke test integrado com uma amostra reduzida, sem depender do dataset acadêmico completo.
 - verifica se versão, changelog, notas, screenshots, manifesto e arquivos de governança estão preparados para a release.
 
-O workflow `Container Image` é separado do CI de dados: constrói uma imagem executável, valida o runtime como usuário não privilegiado e bloqueia vulnerabilidades corrigíveis de severidade alta ou crítica com Trivy. Em Pull Requests e execuções manuais ele apenas valida; a publicação no GHCR ocorre exclusivamente após push na `main` ou de uma tag semântica.
+O workflow `Container Image` é separado do CI de dados: constrói uma imagem executável, atualiza os pacotes de segurança do Ubuntu e valida o runtime como usuário não privilegiado. O Trivy gera um relatório completo, incluindo os JARs herdados do Spark/Hadoop, e mantém um gate bloqueante para vulnerabilidades corrigíveis de severidade alta ou crítica no sistema operacional e nas dependências controladas pelo projeto. Em Pull Requests e execuções manuais ele apenas valida; a publicação no GHCR ocorre exclusivamente após push na `main` ou de uma tag semântica.
 
 ## Segurança automatizada
 
@@ -724,7 +724,7 @@ O repositório combina controles preventivos e verificações contínuas para pr
 - o CodeQL analisa o código Python em pushes e Pull Requests para `main`, em execução semanal e por acionamento manual;
 - o Dependency Review inspeciona as dependências introduzidas em cada Pull Request e reprova vulnerabilidades novas de severidade alta ou crítica;
 - o Dependabot procura semanalmente atualizações de pacotes Python e GitHub Actions, mantendo no máximo cinco Pull Requests abertos por ecossistema;
-- o Trivy examina o sistema operacional e as bibliotecas da imagem antes de qualquer publicação no GHCR;
+- o Trivy reporta todo o runtime e bloqueia vulnerabilidades acionáveis do sistema operacional e das dependências controladas pelo projeto antes da publicação no GHCR;
 - a allowlist do `.dockerignore` impede que o dataset completo e os artefatos locais entrem na imagem;
 - os workflows usam permissões mínimas e nunca executam código de Pull Requests com `pull_request_target`;
 - atualizações de dependências permanecem sujeitas a testes e revisão humana antes do merge.

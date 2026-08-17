@@ -16,7 +16,7 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Guia reproduzível para proteger a `main` com Pull Requests e status checks obrigatórios.
 - Publicação automatizada da imagem executável no GitHub Container Registry.
 - Tags de imagem para `latest`, branch, commit SHA e versões semânticas.
-- Smoke test do runtime e varredura Trivy antes de publicar a imagem.
+- Smoke test do runtime, relatório completo de vulnerabilidades herdadas e gate Trivy para componentes acionáveis antes de publicar a imagem.
 - Allowlist do contexto Docker para excluir datasets e artefatos locais.
 
 ### Alterado
