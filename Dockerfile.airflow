@@ -1,0 +1,25 @@
+ARG AIRFLOW_VERSION=3.3.1
+FROM apache/airflow:${AIRFLOW_VERSION}-python3.12
+
+ARG AIRFLOW_VERSION=3.3.1
+
+USER root
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+        --no-install-recommends openjdk-17-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+USER airflow
+
+COPY requirements-airflow.txt /tmp/requirements-airflow.txt
+
+RUN python -m pip install --no-cache-dir \
+    "apache-airflow==${AIRFLOW_VERSION}" \
+    -r /tmp/requirements-airflow.txt
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 \
+    PYTHONPATH=/opt/airflow/project \
+    SPARK_LOCAL_IP=127.0.0.1
+
+WORKDIR /opt/airflow/project

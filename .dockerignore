@@ -1,7 +1,9 @@
 *
 
 !Dockerfile
+!Dockerfile.airflow
 !requirements.txt
+!requirements-airflow.txt
 !VERSION
 !src/
 !src/**

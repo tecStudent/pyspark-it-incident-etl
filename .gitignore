@@ -19,3 +19,9 @@ coverage.xml
 coverage-summary.md
 htmlcov/
 coverage-artifacts/
+
+# Apache Airflow local
+.env.airflow
+airflow/logs/
+airflow/config/
+airflow/plugins/

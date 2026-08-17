@@ -373,7 +373,7 @@ O `.dockerignore` usa uma allowlist: entram apenas código, dependências, vers�
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 252 passed |
+| Testes automatizados | 278 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -617,10 +617,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-252 passed
+278 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release, governança de segurança, publicação da imagem e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release, governança de segurança, publicação da imagem, orquestração Airflow e as validações auxiliares do smoke test.
 
 ### Web Vitals do dashboard
 
@@ -694,6 +694,35 @@ MSYS_NO_PATHCONV=1 docker compose run --rm spark \
 
 Ele verifica as contagens entre camadas, Data Quality com quarentena, deduplicação pela versão mais recente, agregações Gold e idempotência por meio de duas execuções consecutivas. As saídas temporárias são removidas ao final; use --keep-output para preservá-las durante uma inspeção local.
 
+## Orquestração com Apache Airflow
+
+O pipeline incremental também pode ser executado por uma DAG do Apache Airflow 3.3.1. A interface separa Bronze, Silver, Gold e reconciliação, oferecendo logs por tarefa, retry seletivo, histórico e agendamento configurável.
+
+~~~bash
+cp .env.airflow.example .env.airflow
+
+docker compose \
+  --env-file .env.airflow \
+  -f docker-compose.airflow.yml \
+  build
+
+docker compose \
+  --env-file .env.airflow \
+  -f docker-compose.airflow.yml \
+  up airflow-init
+
+docker compose \
+  --env-file .env.airflow \
+  -f docker-compose.airflow.yml \
+  up -d
+~~~
+
+A interface fica disponível em <http://localhost:8080>. O acesso local inicial utiliza usuário e senha `airflow`. A DAG `it_incident_incremental_pipeline` começa pausada e sem agenda; ative-a e use **Trigger DAG** para a primeira execução.
+
+O ambiente usa `LocalExecutor` e PostgreSQL, mantém os dados no diretório compartilhado do projeto e envia ao XCom somente metadados pequenos. O socket do Docker não é exposto aos containers do Airflow.
+
+A instalação, validação da DAG, configuração de cron, retomada por tarefa e troubleshooting estão no guia [Orquestração local com Apache Airflow](docs/airflow-orchestration.md).
+
 ## Integração contínua
 
 O GitHub Actions executa em pushes para main, Pull Requests direcionados à main e acionamentos manuais.
@@ -702,7 +731,7 @@ O CI:
 
 - utiliza actions/checkout@v7;
 - constrói a imagem Docker;
-- executa os 252 testes com cobertura de linhas e branches;
+- executa os 278 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -788,6 +817,7 @@ docker compose down
 | Dependabot semanal | Manter Python e GitHub Actions atualizados com revisão humana |
 | Ruleset da `main` e CODEOWNERS | Impedir bypass dos checks e explicitar responsabilidade técnica |
 | Imagem versionada no GHCR | Reutilizar exatamente o runtime validado e rastrear versão e commit |
+| Airflow local com LocalExecutor | Expor dependências, retries e logs por etapa sem alterar as transformações Spark |
 | Trivy antes da publicação | Impedir a distribuição de vulnerabilidades corrigíveis de alto risco |
 | Release readiness no CI | Bloquear versões incompletas ou inconsistentes antes da tag |
 | Baseline explicável | Manter a previsão transparente |
@@ -817,12 +847,13 @@ docker compose down
 - contrato de dados, JSON Schema e manifesto de integridade;
 - testes automatizados, cobertura, CI/CD e GitHub Pages;
 - segurança de software, análise estática e governança da cadeia de dependências;
-- proteção de branches, status checks obrigatórios e propriedade de código.
+- proteção de branches, status checks obrigatórios e propriedade de código;
+- orquestração com Airflow, dependências, retries e auditoria por execução.
 
 ## Possíveis evoluções
 
 - Ampliar progressivamente o limite mínimo de cobertura.
-- Orquestrar o pipeline com Apache Airflow.
+- Evoluir a orquestração local para um executor distribuído em uma futura implantação.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.
 - Substituir controles locais por uma camada transacional.
 
