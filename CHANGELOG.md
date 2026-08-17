@@ -6,6 +6,13 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Unreleased]
 
+### Planejado
+
+- Ampliação progressiva da cobertura automatizada.
+- Avaliação de armazenamento transacional com Iceberg ou Delta Lake.
+
+## [1.1.0] - 2026-08-17
+
 ### Adicionado
 
 - Análise estática de segurança do código Python com CodeQL.
@@ -26,11 +33,14 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 ### Alterado
 
 - GitHub Actions atualizado para `actions/checkout@v7` nos workflows ativos.
+- Docker Actions atualizadas para `setup-buildx@v4`, `metadata@v6`, `login@v4` e `build-push@v7`, com runtime Node.js 24.
 
-### Planejado
+### Validação
 
-- Ampliação progressiva da cobertura automatizada.
-- Avaliação de armazenamento transacional com Iceberg ou Delta Lake.
+- 278 testes automatizados aprovados em ambiente Docker.
+- Cobertura total acima do quality gate mínimo de 50%.
+- Manifesto `HEALTHY` com cinco de cinco contratos válidos.
+- Testes de segurança, governança, imagem, Airflow e release readiness aprovados.
 
 ## [1.0.0] - 2026-08-14
 
@@ -69,5 +79,6 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Smoke test CSV -> Bronze -> Silver -> Gold aprovado.
 - Reexecução incremental idempotente e reconciliação aprovadas.
 
-[Unreleased]: https://github.com/tecStudent/pyspark-it-incident-etl/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/tecStudent/pyspark-it-incident-etl/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/tecStudent/pyspark-it-incident-etl/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0

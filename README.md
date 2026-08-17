@@ -5,7 +5,7 @@
 [![CodeQL](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/codeql.yml)
 [![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](SECURITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Release: v1.0.0](https://img.shields.io/badge/release-v1.0.0-blue.svg)](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0)
+[![Release: v1.1.0](https://img.shields.io/badge/release-v1.1.0-blue.svg)](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.1.0)
 
 Pipeline local de Engenharia de Dados desenvolvido com **PySpark**, **Apache Spark 4.1.2** e **Docker** para transformar dados de incidentes de TI em indicadores operacionais auditáveis.
 
@@ -13,6 +13,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 
 - carga completa em camadas Raw, Bronze, Silver e Gold;
 - carga incremental idempotente por lotes;
+- orquestração local do pipeline incremental com Apache Airflow 3.3.1;
 - reconciliação automática entre controles e arquivos físicos;
 - schema explícito, deduplicação, particionamento e Parquet;
 - Data Quality com quarentena;
@@ -332,16 +333,16 @@ Acesse http://localhost:8000 e encerre com Ctrl + C.
 
 ## Release estável
 
-A primeira versão estável do projeto é a **v1.0.0**. O histórico das mudanças está no [CHANGELOG.md](CHANGELOG.md), e o procedimento para preparar, versionar e publicar novas versões está em [RELEASING.md](RELEASING.md).
+A versão estável atual do projeto é a **v1.1.0**. O histórico das mudanças está no [CHANGELOG.md](CHANGELOG.md), e o procedimento para preparar, versionar e publicar novas versões está em [RELEASING.md](RELEASING.md).
 
 Antes de criar uma tag, execute o quality gate específico da release:
 
 ~~~bash
 docker compose run --rm spark \
-  python3 src/release_readiness.py --check --version 1.0.0
+  python3 src/release_readiness.py --check --version 1.1.0
 ~~~
 
-As notas completas da versão estão em [docs/releases/v1.0.0.md](docs/releases/v1.0.0.md). Depois que a tag for publicada, a release ficará disponível na [página v1.0.0 do GitHub](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0).
+As notas completas da versão estão em [docs/releases/v1.1.0.md](docs/releases/v1.1.0.md). Depois que a tag for publicada, a release ficará disponível na [página v1.1.0 do GitHub](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.1.0).
 
 ## Imagem Docker publicada
 
@@ -483,7 +484,8 @@ pyspark-it-incident-etl/
 |   |-- performance-benchmark.md
 |   |-- repository-ruleset.md
 |   |-- releases/
-|   |   `-- v1.0.0.md
+|   |   |-- v1.0.0.md
+|   |   `-- v1.1.0.md
 |   |-- index.html
 |   |-- css/
 |   |-- js/
