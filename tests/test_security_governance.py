@@ -14,6 +14,7 @@ def test_security_automation_files_exist():
         ".github/dependabot.yml",
         ".github/workflows/codeql.yml",
         ".github/workflows/dependency-review.yml",
+        ".github/workflows/container-image.yml",
     )
 
     assert all((ROOT / path).is_file() for path in expected_files)
@@ -100,7 +101,7 @@ def test_readme_exposes_security_status_and_policy():
     assert "actions/workflows/codeql.yml/badge.svg" in content
     assert "## Segurança automatizada" in content
     assert "[SECURITY.md](SECURITY.md)" in content
-    assert "239 passed" in content
+    assert "252 passed" in content
 
 
 def test_security_changes_are_documented_for_contributors():

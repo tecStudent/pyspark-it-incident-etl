@@ -7,7 +7,7 @@ O arquivo `.github/CODEOWNERS` mantém a responsabilidade técnica explícita e 
 ## Pré-requisitos
 
 - Task 16.0 integrada à `main`;
-- workflows `ci.yml`, `codeql.yml` e `dependency-review.yml` executados pelo menos uma vez;
+- workflows `ci.yml`, `codeql.yml`, `dependency-review.yml` e `container-image.yml` executados pelo menos uma vez;
 - permissão de administrador no repositório;
 - Dependency graph habilitado.
 
@@ -59,8 +59,11 @@ Adicione exatamente estes checks:
 | `Run PySpark tests` | `ci.yml` | Testes, cobertura, manifesto, release e smoke test |
 | `Analyze Python` | `codeql.yml` | Análise estática de segurança com CodeQL |
 | `Review dependency changes` | `dependency-review.yml` | Vulnerabilidades e licenças adicionadas pelo PR |
+| `Build and scan container image` | `container-image.yml` | Build, runtime mínimo e vulnerabilidades da imagem |
 
 Os nomes devem corresponder aos exibidos em um Pull Request recente. Não selecione checks antigos com nomes semelhantes.
+
+O check da imagem deve ser adicionado somente depois da primeira execução do workflow em um Pull Request. Antes disso, o GitHub ainda não oferece esse nome na busca de status checks.
 
 ## Validar a proteção
 

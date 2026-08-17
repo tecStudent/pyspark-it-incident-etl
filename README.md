@@ -1,6 +1,7 @@
 # PySpark IT Incident ETL
 
 [![PySpark Tests](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/ci.yml)
+[![Container Image](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/container-image.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/container-image.yml)
 [![CodeQL](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/tecStudent/pyspark-it-incident-etl/actions/workflows/codeql.yml)
 [![Security Policy](https://img.shields.io/badge/security-policy-blue.svg)](SECURITY.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -25,6 +26,7 @@ O projeto utiliza um dataset acadêmico do Enterprise Challenge da FIAP, no cont
 - dashboard operacional com cinco áreas analíticas e carregamento sob demanda;
 - testes automatizados, cobertura, smoke test end-to-end e CI com GitHub Actions;
 - segurança automatizada com CodeQL, Dependabot e revisão de dependências;
+- imagem Docker versionada no GHCR, validada com smoke test e Trivy;
 - governança de contribuição com templates, fluxo de revisão e código de conduta.
 
 A carga completa processa **122.543 incidentes**. Os dados analíticos são publicados em um dashboard web estático, sem expor o Excel ou os arquivos Parquet.
@@ -341,6 +343,21 @@ docker compose run --rm spark \
 
 As notas completas da versão estão em [docs/releases/v1.0.0.md](docs/releases/v1.0.0.md). Depois que a tag for publicada, a release ficará disponível na [página v1.0.0 do GitHub](https://github.com/tecStudent/pyspark-it-incident-etl/releases/tag/v1.0.0).
 
+## Imagem Docker publicada
+
+A imagem executável do projeto é publicada no GitHub Container Registry em `ghcr.io/tecstudent/pyspark-it-incident-etl`. Pull Requests constroem e examinam a imagem, mas somente pushes aprovados na `main` e tags `vX.Y.Z` publicam novas versões.
+
+~~~bash
+docker pull ghcr.io/tecstudent/pyspark-it-incident-etl:latest
+
+docker run --rm \
+  --entrypoint python3 \
+  ghcr.io/tecstudent/pyspark-it-incident-etl:latest \
+  -c "import pyspark; print(pyspark.__version__)"
+~~~
+
+O `.dockerignore` usa uma allowlist: entram apenas código, dependências, versão e a amostra pública do smoke test. O dataset acadêmico completo, os Parquets e os controles locais não são empacotados. Consulte o guia [Imagem Docker no GitHub Container Registry](docs/container-image.md) para conhecer as tags, executar o pipeline com volume persistente e diagnosticar a primeira publicação.
+
 ## Resultados de referência
 
 ### Carga completa
@@ -356,7 +373,7 @@ As notas completas da versão estão em [docs/releases/v1.0.0.md](docs/releases/
 | Itens no ranking de risco | 216 |
 | Dias previstos | 7 |
 | Recomendações operacionais | 18 |
-| Testes automatizados | 239 passed |
+| Testes automatizados | 252 passed |
 
 Os números representam uma execução local de referência e podem mudar quando as regras ou o dataset forem atualizados.
 
@@ -377,6 +394,7 @@ No snapshot mais recente utilizado durante o desenvolvimento:
 - Python e OpenJDK 21
 - Apache Parquet
 - Docker e Docker Compose
+- GitHub Container Registry e Trivy
 - Pytest, pytest-cov e OpenPyXL
 - HTML5, CSS3, JavaScript e Chart.js
 - Git, GitHub, GitHub Actions e GitHub Pages
@@ -392,6 +410,7 @@ pyspark-it-incident-etl/
 |   |   `-- config.yml
 |   |-- workflows/
 |   |   |-- ci.yml
+|   |   |-- container-image.yml
 |   |   |-- codeql.yml
 |   |   `-- dependency-review.yml
 |   |-- dependabot.yml
@@ -598,10 +617,10 @@ Resultado atual:
 
 ~~~text
 ................................................................................. [100%]
-239 passed
+252 passed
 ~~~
 
-Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release, governança de segurança e as validações auxiliares do smoke test.
+Os testes cobrem limpeza, tipagem, Data Quality, deduplicação, KPI, OLA, agregações, risco, previsão, recomendações, contratos JSON, manifesto, particionamento das tendências, controles incrementais, auditoria, reconciliação, integração estática da interface, relatório de cobertura, benchmark, preparação da release, governança de segurança, publicação da imagem e as validações auxiliares do smoke test.
 
 ### Web Vitals do dashboard
 
@@ -683,7 +702,7 @@ O CI:
 
 - utiliza actions/checkout@v7;
 - constrói a imagem Docker;
-- executa os 239 testes com cobertura de linhas e branches;
+- executa os 252 testes com cobertura de linhas e branches;
 - reprova quando a cobertura total fica abaixo de 50%;
 - publica o resumo da cobertura na página da execução;
 - disponibiliza JSON, XML e HTML no artefato coverage-report por 14 dias;
@@ -696,6 +715,8 @@ O CI:
 - executa o smoke test integrado com uma amostra reduzida, sem depender do dataset acadêmico completo.
 - verifica se versão, changelog, notas, screenshots, manifesto e arquivos de governança estão preparados para a release.
 
+O workflow `Container Image` é separado do CI de dados: constrói uma imagem executável, atualiza os pacotes de segurança do Ubuntu e valida o runtime como usuário não privilegiado. O Trivy gera um relatório completo, incluindo os JARs herdados do Spark/Hadoop, e mantém um gate bloqueante para vulnerabilidades corrigíveis de severidade alta ou crítica no sistema operacional e nas dependências controladas pelo projeto. Em Pull Requests e execuções manuais ele apenas valida; a publicação no GHCR ocorre exclusivamente após push na `main` ou de uma tag semântica.
+
 ## Segurança automatizada
 
 O repositório combina controles preventivos e verificações contínuas para proteger o código e a cadeia de dependências:
@@ -703,6 +724,8 @@ O repositório combina controles preventivos e verificações contínuas para pr
 - o CodeQL analisa o código Python em pushes e Pull Requests para `main`, em execução semanal e por acionamento manual;
 - o Dependency Review inspeciona as dependências introduzidas em cada Pull Request e reprova vulnerabilidades novas de severidade alta ou crítica;
 - o Dependabot procura semanalmente atualizações de pacotes Python e GitHub Actions, mantendo no máximo cinco Pull Requests abertos por ecossistema;
+- o Trivy reporta todo o runtime e bloqueia vulnerabilidades acionáveis do sistema operacional e das dependências controladas pelo projeto antes da publicação no GHCR;
+- a allowlist do `.dockerignore` impede que o dataset completo e os artefatos locais entrem na imagem;
 - os workflows usam permissões mínimas e nunca executam código de Pull Requests com `pull_request_target`;
 - atualizações de dependências permanecem sujeitas a testes e revisão humana antes do merge.
 
@@ -712,7 +735,7 @@ Depois do merge desta configuração, o mantenedor deve conferir em **Settings >
 
 ### Proteção da branch principal
 
-O arquivo `CODEOWNERS` identifica o responsável pelas áreas críticas do projeto. O ruleset recomendado para `main` exige Pull Request, os checks `Run PySpark tests`, `Analyze Python` e `Review dependency changes`, além de bloquear exclusões e force pushes.
+O arquivo `CODEOWNERS` identifica o responsável pelas áreas críticas do projeto. O ruleset recomendado para `main` exige Pull Request, os checks `Run PySpark tests`, `Analyze Python`, `Review dependency changes` e `Build and scan container image`, além de bloquear exclusões e force pushes.
 
 A configuração começa com zero aprovações obrigatórias para não bloquear o fluxo de um único mantenedor. Quando outro colaborador receber permissão de escrita, o projeto poderá exigir uma aprovação e revisão do Code Owner. Consulte o guia [Proteção da branch principal](docs/repository-ruleset.md) para aplicar e validar cada opção no GitHub.
 
@@ -764,6 +787,8 @@ docker compose down
 | CodeQL e revisão de dependências | Detectar vulnerabilidades antes do merge |
 | Dependabot semanal | Manter Python e GitHub Actions atualizados com revisão humana |
 | Ruleset da `main` e CODEOWNERS | Impedir bypass dos checks e explicitar responsabilidade técnica |
+| Imagem versionada no GHCR | Reutilizar exatamente o runtime validado e rastrear versão e commit |
+| Trivy antes da publicação | Impedir a distribuição de vulnerabilidades corrigíveis de alto risco |
 | Release readiness no CI | Bloquear versões incompletas ou inconsistentes antes da tag |
 | Baseline explicável | Manter a previsão transparente |
 | Recomendações determinísticas | Permitir testes, versão e rastreabilidade |
@@ -799,7 +824,6 @@ docker compose down
 - Ampliar progressivamente o limite mínimo de cobertura.
 - Orquestrar o pipeline com Apache Airflow.
 - Evoluir o armazenamento para Iceberg ou Delta Lake.
-- Publicar a imagem no GitHub Container Registry.
 - Substituir controles locais por uma camada transacional.
 
 ## Contexto acadêmico
