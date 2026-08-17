@@ -18,6 +18,10 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Tags de imagem para `latest`, branch, commit SHA e versões semânticas.
 - Smoke test do runtime, relatório completo de vulnerabilidades herdadas e gate Trivy para componentes acionáveis antes de publicar a imagem.
 - Allowlist do contexto Docker para excluir datasets e artefatos locais.
+- Orquestração local do pipeline incremental com Apache Airflow 3.3.1.
+- DAG com tarefas independentes para landing, Bronze, Silver, Gold, reconciliação e resumo.
+- Runtime Airflow reproduzível com LocalExecutor, PostgreSQL, Java 17 e PySpark 4.1.2.
+- Auditoria das execuções Airflow e documentação de retry, agendamento e troubleshooting.
 
 ### Alterado
 
@@ -26,7 +30,6 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 ### Planejado
 
 - Ampliação progressiva da cobertura automatizada.
-- Avaliação de orquestração com Apache Airflow.
 - Avaliação de armazenamento transacional com Iceberg ou Delta Lake.
 
 ## [1.0.0] - 2026-08-14
